@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name= "users" , uniqueConstraints = {
+@Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = "email")
 })
 
@@ -22,7 +22,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User implements UserDetails{
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,13 +46,12 @@ public class User implements UserDetails{
     private UserStatus status;
 
     @CreationTimestamp
-    @Column(name="created_At")
+    @Column(name = "created_At")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(name="last_updated")
+    @Column(name = "last_updated")
     private LocalDateTime lastUpdated;
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -68,7 +67,6 @@ public class User implements UserDetails{
     public boolean isCredentialsNonExpired() {
         return true;
     }
-
 
     @Override
     public String getPassword() {
@@ -89,6 +87,5 @@ public class User implements UserDetails{
     public boolean isEnabled() {
         return status == UserStatus.ACTIVE;
     }
-
 
 }

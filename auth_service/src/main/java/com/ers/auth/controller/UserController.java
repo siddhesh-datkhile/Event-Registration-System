@@ -1,47 +1,39 @@
 package com.ers.auth.controller;
 
-import com.ers.auth.dtos.ApiResponse;
-import com.ers.auth.dtos.LoginRequest;
-import com.ers.auth.dtos.LoginResponse;
-import com.ers.auth.security.JwtUtil;
-import com.ers.auth.service.AuthService;
+import com.ers.auth.Entity.User;
+import com.ers.auth.dtos.UserProfileResponse;
 import com.ers.auth.service.UserService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class UserController {
-
     @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private final AuthService authService;
+    @GetMapping("/profile")
+    public ResponseEntity<UserProfileResponse> getUserProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName(); // Extracted from JWT token via SecurityContext
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+        User user = userService.getUserByEmail(email);
 
-    @Autowired
-    private JwtUtil jwtUtil;
+        UserProfileResponse response = new UserProfileResponse(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getRole(),
+                user.getStatus());
 
-    @PostMapping("/login")
-    public ResponseEntity<ApiResponse<LoginResponse>> login(@RequestBody LoginRequest request) {
-
-        return ResponseEntity.ok(
-                new ApiResponse<>("Login successful", authService.login(request), 200)
-        );
+        return ResponseEntity.ok(response);
     }
-
 }
