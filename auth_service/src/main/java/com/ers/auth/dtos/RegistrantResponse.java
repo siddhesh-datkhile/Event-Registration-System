@@ -3,12 +3,11 @@ package com.ers.auth.dtos;
 import com.ers.auth.Entity.Role;
 import com.ers.auth.Entity.UserStatus;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor  // not using Data for concern of immutability
-public class OrganizerResponse {
+@AllArgsConstructor
+public class RegistrantResponse {
     private Long id;
     private String name;
     private String email;
