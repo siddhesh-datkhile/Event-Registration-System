@@ -3,6 +3,8 @@ package com.ers.auth.controller;
 import com.ers.auth.dtos.ApiResponse;
 import com.ers.auth.dtos.LoginRequest;
 import com.ers.auth.dtos.LoginResponse;
+import com.ers.auth.dtos.RegisterRequest;
+import com.ers.auth.dtos.UserProfileResponse;
 import com.ers.auth.security.JwtUtil;
 import com.ers.auth.service.AuthService;
 import com.ers.auth.service.UserService;
@@ -43,4 +45,13 @@ public class AuthController {
                 new ApiResponse<>("Login successful", authService.login(request), 200));
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<ApiResponse<UserProfileResponse>> register(@Valid @RequestBody RegisterRequest request) {
+        UserProfileResponse response = userService.register(request);
+        return org.springframework.http.ResponseEntity.status(org.springframework.http.HttpStatus.CREATED)
+                .body(new ApiResponse<>("User registered successfully", response, 201));
+    }
+
 }
+
+

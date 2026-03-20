@@ -5,6 +5,9 @@ import com.ers.auth.dtos.OrganizerRequest;
 import com.ers.auth.dtos.OrganizerResponse;
 import com.ers.auth.dtos.RegistrantRequest;
 import com.ers.auth.dtos.RegistrantResponse;
+import com.ers.auth.dtos.RegisterRequest;
+import com.ers.auth.dtos.UpdateProfileRequest;
+import com.ers.auth.dtos.UserProfileResponse;
 
 public interface UserService {
 
@@ -13,4 +16,8 @@ public interface UserService {
     OrganizerResponse createOrganizer(OrganizerRequest request);
 
     RegistrantResponse createRegistrant(RegistrantRequest request);
+
+    UserProfileResponse register(RegisterRequest request);
+
+    UserProfileResponse updateProfile(String email, UpdateProfileRequest request);
 }

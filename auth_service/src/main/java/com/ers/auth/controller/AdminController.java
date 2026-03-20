@@ -29,7 +29,7 @@ public class AdminController {
 
     @PostMapping("/registrants")
     public ResponseEntity<?> addRegistrant(@RequestBody com.ers.auth.dtos.RegistrantRequest request) {
-        
+
         com.ers.auth.dtos.RegistrantResponse registrantResponse = userService.createRegistrant(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(registrantResponse);
