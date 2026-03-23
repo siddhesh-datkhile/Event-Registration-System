@@ -1,9 +1,11 @@
 package com.ers.auth.controller;
 
-import com.ers.auth.Entity.User;
+import com.ers.auth.entity.User;
 import com.ers.auth.dtos.UpdateProfileRequest;
 import com.ers.auth.dtos.UserProfileResponse;
+import com.ers.auth.entity.UserProfile;
 import com.ers.auth.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/auth/user")
 @RequiredArgsConstructor
 public class UserController {
 

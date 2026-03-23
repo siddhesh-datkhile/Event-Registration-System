@@ -37,14 +37,14 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html")
-                        .permitAll()
+                                "/swagger-ui.html"
+                        ).permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/admin/**").permitAll()
-                        .anyRequest().authenticated())
-                .addFilterBefore(jwtFilter,
-                        org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
+                        .anyRequest().permitAll()
+                );
 
         return http.build();
     }
+
+
 }

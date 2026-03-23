@@ -1,9 +1,9 @@
 package com.ers.auth.service;
 
-import com.ers.auth.Entity.Role;
-import com.ers.auth.Entity.User;
-import com.ers.auth.Entity.UserProfile;
-import com.ers.auth.Entity.UserStatus;
+import com.ers.auth.entity.Role;
+import com.ers.auth.entity.User;
+import com.ers.auth.entity.UserProfile;
+import com.ers.auth.entity.UserStatus;
 import com.ers.auth.dtos.OrganizerRequest;
 import com.ers.auth.dtos.OrganizerResponse;
 import com.ers.auth.dtos.RegistrantRequest;
@@ -143,6 +143,8 @@ public class UserServiceImpl implements UserService {
         User user = getUserByEmail(email);
 
         UserProfile profile = user.getProfile();
+
+        //create new user profile for first time if profile is null
         if (profile == null) {
             profile = new UserProfile();
             profile.setUser(user);
@@ -173,5 +175,8 @@ public class UserServiceImpl implements UserService {
                 savedUser.getProfile().getPhone(),
                 savedUser.getProfile().getAddress(),
                 savedUser.getProfile().getDob());
+
     }
+
+
 }

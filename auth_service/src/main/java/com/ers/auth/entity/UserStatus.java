@@ -1,4 +1,4 @@
-package com.ers.auth.Entity;
+package com.ers.auth.entity;
 
 public enum UserStatus {
     ACTIVE ,

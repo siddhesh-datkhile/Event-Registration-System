@@ -40,19 +40,19 @@ public class JwtUtil {
 
         String username = authentication.getName(); // email / username
 
-        String roles = authentication.getAuthorities()
+        List<String> roles = authentication.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
-                .reduce((a, b) -> a + "," + b)
-                .orElse("");
+                .toList();
+
+        Key key = Keys.hmacShaKeyFor(secretKey.getBytes());
 
         return Jwts.builder()
                 .setSubject(username)
                 .claim("roles", roles)
                 .setIssuedAt(new Date())
-                .setExpiration(
-                        new Date(System.currentTimeMillis() + expirationMillis))
-                .signWith(signingKey, SignatureAlgorithm.HS256)
+                .setExpiration(new Date(System.currentTimeMillis() + expirationMillis))
+                .signWith(key) // ✅ SAME as gateway
                 .compact();
     }
 

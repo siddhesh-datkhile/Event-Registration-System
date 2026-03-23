@@ -1,6 +1,6 @@
 package com.ers.auth.repository;
 
-import com.ers.auth.Entity.User;
+import com.ers.auth.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

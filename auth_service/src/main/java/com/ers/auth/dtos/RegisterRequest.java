@@ -1,10 +1,12 @@
 package com.ers.auth.dtos;
 
-import com.ers.auth.Entity.Role;
+import com.ers.auth.entity.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+
+import java.time.LocalDate;
 
 @Data
 public class RegisterRequest {

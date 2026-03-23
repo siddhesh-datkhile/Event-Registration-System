@@ -1,6 +1,6 @@
 package com.ers.auth.controller;
 
-import com.ers.auth.Entity.User;
+import com.ers.auth.entity.User;
 import com.ers.auth.dtos.OrganizerRequest;
 import com.ers.auth.dtos.OrganizerResponse;
 import com.ers.auth.service.UserService;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/auth/admin")
 public class AdminController {
 
     @Autowired

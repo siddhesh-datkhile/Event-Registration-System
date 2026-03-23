@@ -1,9 +1,8 @@
 package com.ers.auth.dtos;
 
-import com.ers.auth.Entity.Role;
-import com.ers.auth.Entity.UserStatus;
+import com.ers.auth.entity.Role;
+import com.ers.auth.entity.UserStatus;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 
 @Getter

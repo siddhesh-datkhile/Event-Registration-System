@@ -1,7 +1,7 @@
-package com.ers.auth.Entity;
+package com.ers.auth.entity;
 
 public enum Role {
-    ADMIN ,
+    ADMIN,
     ORGANIZER,
     REGISTRANT
 }

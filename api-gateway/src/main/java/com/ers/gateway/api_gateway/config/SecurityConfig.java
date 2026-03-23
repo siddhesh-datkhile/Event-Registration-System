@@ -1,0 +1,64 @@
+package com.ers.gateway.api_gateway.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
+
+@Configuration
+@EnableWebFluxSecurity
+public class SecurityConfig {
+
+    @Bean
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+        return http
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .httpBasic(httpBasic -> httpBasic.disable())
+                .formLogin(form -> form.disable())
+                .authorizeExchange(exchanges -> exchanges
+                        .pathMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/webjars/**"
+                        ).permitAll()
+
+                        // ── Public: No token required ─────────────────────────────
+                        .pathMatchers("/api/auth/**").permitAll()
+//
+//                        // ── Admin: Full access to user management ─────────────────
+//                        // Admin creates/manages organizers and registrants
+//                        .pathMatchers("/api/admin/**").hasRole("ADMIN")
+//
+//                        // ── Events: Organizer CRUD, Admin full access ─────────────
+//                        // Organizers and Admin can create/update/delete events
+//                        .pathMatchers(
+//                                "POST:/api/events/**",
+//                                "PUT:/api/events/**",
+//                                "DELETE:/api/events/**",
+//                                "PATCH:/api/events/**"
+//                        ).hasAnyRole("ORGANIZER", "ADMIN")
+//
+//                        // Anyone authenticated can search/filter/view events
+//                        .pathMatchers("GET:/api/events/**").hasAnyRole("ORGANIZER", "REGISTRANT", "ADMIN")
+//
+//                        // ── Registration: Registrant can register for events ───────
+//                        .pathMatchers("/api/registrations/**").hasAnyRole("REGISTRANT", "ADMIN")
+//
+//                        // ── Payments: Registrant pays and prints receipts ──────────
+//                        .pathMatchers("/api/payments/**").hasAnyRole("REGISTRANT", "ADMIN")
+//                        .pathMatchers("/api/receipts/**").hasAnyRole("REGISTRANT", "ADMIN")
+//
+//                        // ── Profile: Any authenticated user ───────────────────────
+//                        .pathMatchers("/user/**").hasAnyRole("ORGANIZER", "REGISTRANT", "ADMIN")
+
+                        // ── All other requests require authentication ──────────────
+                        .anyExchange().permitAll()
+                )
+                // JWT GlobalFilter manages the SecurityContext — no sessions needed
+                .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
+                .build();
+    }
+}
