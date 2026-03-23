@@ -14,4 +14,7 @@ public interface EventService {
     List<EventResponse> getAllEvents();
     EventResponse getEventById(Long id);
     EventResponse changeEventStatus(Long id, EventStatus status);
+    
+    void reserveSeat(Long id);
+    void releaseSeat(Long id);
 }

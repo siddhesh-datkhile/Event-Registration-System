@@ -13,6 +13,7 @@ public class EventResponse {
     private LocalDateTime eventDate;
     private Double entryFee;
     private Integer capacity;
+    private Integer availableSeats;
     private EventStatus status;
     private Long organizerId;
     private Long venueId;

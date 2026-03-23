@@ -29,6 +29,8 @@ public class Event {
     private Double entryFee;
 
     private Integer capacity;
+    
+    private Integer availableSeats;
 
     @Enumerated(EnumType.STRING)
     private EventStatus status;

@@ -60,5 +60,15 @@ public class EventController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/{id}/reserve-seat")
+    public ResponseEntity<Void> reserveSeat(@PathVariable Long id) {
+        eventService.reserveSeat(id);
+        return ResponseEntity.ok().build();
+    }
 
+    @PostMapping("/{id}/release-seat")
+    public ResponseEntity<Void> releaseSeat(@PathVariable Long id) {
+        eventService.releaseSeat(id);
+        return ResponseEntity.ok().build();
+    }
 }
