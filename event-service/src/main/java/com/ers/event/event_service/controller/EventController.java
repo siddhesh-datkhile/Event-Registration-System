@@ -59,4 +59,6 @@ public class EventController {
         EventResponse response = eventService.changeEventStatus(id, status);
         return ResponseEntity.ok(response);
     }
+
+
 }

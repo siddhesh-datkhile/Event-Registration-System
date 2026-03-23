@@ -29,8 +29,7 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
     // Routes that do NOT require a JWT token
     private static final List<String> PUBLIC_PATHS = List.of(
             "/api/auth/login",
-            "/api/auth/register"
-    );
+            "/api/auth/register");
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -71,19 +70,17 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         List<String> roles = claims.get("roles", List.class);
 
         // Build authentication object (so Spring Security can enforce hasRole() rules)
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(
-                        email,
-                        null,
-                        roles.stream()
-                                .map(role -> new SimpleGrantedAuthority(role))
-                                .toList()
-                );
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                email,
+                null,
+                roles.stream()
+                        .map(role -> new SimpleGrantedAuthority(role))
+                        .toList());
 
         // Forward user info as headers to downstream services
         ServerHttpRequest mutatedRequest = request.mutate()
                 .header("X-User-Email", email)
-                .header("X-User-Role", String.join(",", roles)) // ✅ convert to String
+                .header("X-User-Role", String.join(",", roles))
                 .build();
 
         return chain.filter(exchange.mutate().request(mutatedRequest).build())
