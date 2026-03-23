@@ -34,6 +34,8 @@ public class Payment {
 
     private String transactionId;
 
+    private String razorpayOrderId;
+
     private LocalDateTime paymentDate;
 
     @OneToOne(mappedBy = "payment", cascade = CascadeType.ALL)

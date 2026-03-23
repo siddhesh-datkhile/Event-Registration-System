@@ -7,4 +7,6 @@ public class EventDto {
     private Long id;
     private String title;
     private Integer capacity;
+    private Double entryFee;
+    private Integer availableSeats;
 }

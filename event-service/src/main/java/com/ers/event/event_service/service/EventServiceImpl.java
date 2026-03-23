@@ -102,6 +102,11 @@ public class EventServiceImpl implements EventService {
     @Override
     public void reserveSeat(Long id) {
         Event event = eventRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Event not found"));
+        
+        if (event.getStatus() != EventStatus.OPEN) {
+            throw new IllegalArgumentException("Event is not open for booking.");
+        }
+        
         if (event.getAvailableSeats() == null) {
             event.setAvailableSeats(event.getCapacity());
         }

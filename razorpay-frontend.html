@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Razorpay Test Frontend</title>
+    <!-- Include Razorpay Checkout SDK -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        h2 { margin-bottom: 20px; color: #333; }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        button {
+            background-color: #3399cc;
+            color: #fff;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        button:hover { background-color: #2b82ad; }
+        .log {
+            margin-top: 20px;
+            text-align: left;
+            font-size: 13px;
+            color: #666;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 6px;
+            height: 100px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Secure Event Checkout</h2>
+    <input type="number" id="registrationId" placeholder="Enter your Registration ID" />
+    <button id="pay-btn" onclick="initiatePayment()">Pay with Razorpay</button>
+    <div class="log" id="status-log">Status awaiting...</div>
+</div>
+
+<script>
+    const logEl = document.getElementById("status-log");
+    const log = (msg) => {
+        logEl.innerHTML += `<div>> ${msg}</div>`;
+        logEl.scrollTop = logEl.scrollHeight;
+    };
+
+    // Replace with your EXACT registration-service URL
+    const API_BASE_URL = "http://localhost:8083/api/payments";
+    
+    // Replace with your Razorpay Key ID
+    const RAZORPAY_KEY = "rzp_test_SUah4LvPVpASiA";
+
+    async function initiatePayment() {
+        const regId = document.getElementById("registrationId").value;
+        if (!regId) return alert("Please enter a Registration ID");
+
+        log("1. Contacting server to create Order...");
+
+        try {
+            // Call your backend to create an order
+            const response = await fetch(`${API_BASE_URL}/create-order`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ registrationId: parseInt(regId) })
+            });
+
+            if (!response.ok) {
+                const err = await response.text();
+                log(`Error: ${err}`);
+                return;
+            }
+
+            const data = await response.json();
+            log(`2. Order created! Order ID: ${data.razorpayOrderId}`);
+
+            if(data.amount === 0) {
+                log(`Success! Event is free. No payment gateway needed.`);
+                return;
+            }
+
+            // Open the Razorpay Checkout Modal
+            const options = {
+                key: RAZORPAY_KEY,
+                amount: data.amount * 100, // Amount in paise
+                currency: data.currency || "INR",
+                name: "Event Registration System",
+                description: "Ticket Booking Payment",
+                order_id: data.razorpayOrderId,
+                handler: function (response) {
+                    log(`3. Payment Captured by Razorpay!`);
+                    log(`Payment ID: ${response.razorpay_payment_id}`);
+                    log(`A Webhook is now secretly firing to your backend!`);
+                },
+                theme: { color: "#3399cc" }
+            };
+
+            const rzp = new Razorpay(options);
+            rzp.on('payment.failed', function (response){
+                log(`Payment Failed: ${response.error.description}`);
+            });
+            rzp.open();
+
+        } catch (error) {
+            log(`Fetch error: ${error.message}`);
+        }
+    }
+</script>
+
+</body>
+</html>
