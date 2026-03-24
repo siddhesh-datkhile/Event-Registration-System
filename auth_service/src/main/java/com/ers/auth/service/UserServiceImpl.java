@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+// import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
                 .role(Role.ORGANIZER)
                 .status(UserStatus.ACTIVE)
                 .build();
-                
+
         UserProfile profile = new UserProfile();
         profile.setName(request.getName());
         profile.setUser(user);
@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
                 .role(Role.REGISTRANT)
                 .status(UserStatus.ACTIVE)
                 .build();
-                
+
         UserProfile profile = new UserProfile();
         profile.setName(request.getName());
         profile.setUser(user);
@@ -116,14 +116,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserProfileResponse register(RegisterRequest request) {
         log.info("Attempting to register new user with email: {} as role: {}", request.getEmail(), request.getRole());
-        
+
         if (userRepository.existsByEmail(request.getEmail())) {
             log.warn("Registration failed: User already exists with email {}", request.getEmail());
             throw new RuntimeException("User already exists");
         }
-        
+
         if (request.getRole() != Role.ORGANIZER && request.getRole() != Role.REGISTRANT) {
-            log.warn("Registration failed: Invalid role {} specified for user {}", request.getRole(), request.getEmail());
+            log.warn("Registration failed: Invalid role {} specified for user {}", request.getRole(),
+                    request.getEmail());
             throw new RuntimeException("Invalid role for registration. Allowed roles: ORGANIZER, REGISTRANT");
         }
 
@@ -133,7 +134,7 @@ public class UserServiceImpl implements UserService {
                 .role(request.getRole())
                 .status(UserStatus.ACTIVE)
                 .build();
-                
+
         UserProfile profile = new UserProfile();
         profile.setName(request.getName());
         profile.setAddress(request.getAddress());
@@ -163,7 +164,7 @@ public class UserServiceImpl implements UserService {
 
         UserProfile profile = user.getProfile();
 
-        //create new user profile for first time if profile is null
+        // create new user profile for first time if profile is null
         if (profile == null) {
             profile = new UserProfile();
             profile.setUser(user);
@@ -197,6 +198,5 @@ public class UserServiceImpl implements UserService {
                 savedUser.getProfile().getDob());
 
     }
-
 
 }

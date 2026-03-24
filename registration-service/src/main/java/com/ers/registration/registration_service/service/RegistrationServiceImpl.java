@@ -42,6 +42,15 @@ public class RegistrationServiceImpl implements RegistrationService {
         } catch (FeignException.NotFound ex) {
             log.error("Event not found in event-service for ID: {}", request.getEventId());
             throw new EventNotFoundException("Event not found with id: " + request.getEventId());
+        } catch (feign.RetryableException ex) {
+            log.error("Timeout or connection error communicating with event-service: {}", ex.getMessage());
+            throw new RuntimeException("Event service is currently unavailable. Please try again later.", ex);
+        } catch (FeignException.ServiceUnavailable | FeignException.GatewayTimeout ex) {
+            log.error("Event service is unavailable or timed out: {}", ex.getMessage());
+            throw new RuntimeException("Event service is currently unavailable. Please try again later.", ex);
+        } catch (FeignException.InternalServerError ex) {
+            log.error("Event service experienced an internal error: {}", ex.getMessage());
+            throw new RuntimeException("Event service experienced an internal error. Please try again later.", ex);
         } catch (FeignException ex) {
             log.error("Failed to communicate with event-service for event ID: {}. Status: {}", request.getEventId(), ex.status());
             throw new RuntimeException("Error communicating with event service", ex);
@@ -59,8 +68,17 @@ public class RegistrationServiceImpl implements RegistrationService {
         } catch (FeignException.BadRequest | FeignException.Conflict ex) {
             log.warn("Seat reservation failed for event ID: {} - event is fully booked", request.getEventId());
             throw new EventFullException("Event is fully booked.");
+        } catch (feign.RetryableException ex) {
+            log.error("Timeout or connection error while reserving seat for event ID: {}", request.getEventId(), ex);
+            throw new RuntimeException("Event service is currently unavailable. Please try again later.", ex);
+        } catch (FeignException.ServiceUnavailable | FeignException.GatewayTimeout ex) {
+            log.error("Event service is unavailable or timed out while reserving seat for event ID: {}", request.getEventId(), ex);
+            throw new RuntimeException("Event service is currently unavailable. Please try again later.", ex);
+        } catch (FeignException.InternalServerError ex) {
+            log.error("Event service experienced an internal error while reserving seat for event ID: {}", request.getEventId(), ex);
+            throw new RuntimeException("Event service experienced an internal error. Please try again later.", ex);
         } catch (FeignException ex) {
-            if (ex.status() == 400 || ex.status() == 409 || ex.status() == 500) {
+            if (ex.status() == 400 || ex.status() == 409) {
                 log.warn("Seat reservation failed for event ID: {} with status: {}", request.getEventId(), ex.status());
                 throw new EventFullException("Event is fully booked or unavailable.");
             }
@@ -112,8 +130,17 @@ public class RegistrationServiceImpl implements RegistrationService {
             log.debug("Releasing seat in event-service for event ID: {}", registration.getEventId());
             eventClient.releaseSeat(registration.getEventId());
             log.info("Seat released in event-service for event ID: {}", registration.getEventId());
-        } catch (Exception ex) {
+        } catch (feign.RetryableException ex) {
+            log.error("Timeout or connection error while releasing seat for event ID: {}", registration.getEventId(), ex);
+            throw new RuntimeException("Event service is currently unavailable. Please try again later.", ex);
+        } catch (FeignException.ServiceUnavailable | FeignException.GatewayTimeout | FeignException.InternalServerError ex) {
+            log.error("Event service is unavailable or timed out while releasing seat for event ID: {}", registration.getEventId(), ex);
+            throw new RuntimeException("Event service is currently unavailable or experienced an error. Please try again later.", ex);
+        } catch (FeignException ex) {
             log.error("Failed to release seat in event-service for event ID: {}", registration.getEventId(), ex);
+            throw new RuntimeException("Failed to release seat on event-service.", ex);
+        } catch (Exception ex) {
+            log.error("Unexpected error while releasing seat in event-service for event ID: {}", registration.getEventId(), ex);
             throw new RuntimeException("Failed to release seat on event-service.", ex);
         }
 

@@ -16,4 +16,6 @@ public interface RegistrationRepository extends JpaRepository<Registration, Long
     List<Registration> findByUserId(Long userId);
     
     List<Registration> findByEventId(Long eventId);
+    
+    List<Registration> findByStatusAndCreatedAtBefore(com.ers.registration.registration_service.entity.RegistrationStatus status, java.time.LocalDateTime dateTime);
 }

@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -67,7 +66,10 @@ public class JwtAuthenticationFilter implements WebFilter, Ordered {
 
         // Extract user info from JWT claims
         String email = claims.getSubject();
-        List<String> roles = claims.get("roles", List.class);
+        List<?> rawRoles = claims.get("roles", List.class);
+        List<String> roles = rawRoles != null
+                ? rawRoles.stream().map(Object::toString).toList()
+                : List.of();
         Object userIdObj = claims.get("userId");
         String userIdStr = userIdObj != null ? userIdObj.toString() : "";
 

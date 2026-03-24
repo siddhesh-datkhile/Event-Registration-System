@@ -121,7 +121,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public void reserveSeat(Long id) {
         log.info("Reserving seat for event ID: {}", id);
-        Event event = eventRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Event not found"));
+        Event event = eventRepository.findByIdWithLock(id).orElseThrow(() -> new ResourceNotFoundException("Event not found"));
         
         if (event.getStatus() != EventStatus.OPEN) {
             log.warn("Seat reservation failed for event ID: {} - Event is not OPEN (status: {})", id, event.getStatus());
@@ -143,7 +143,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public void releaseSeat(Long id) {
         log.info("Releasing seat for event ID: {}", id);
-        Event event = eventRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Event not found"));
+        Event event = eventRepository.findByIdWithLock(id).orElseThrow(() -> new ResourceNotFoundException("Event not found"));
         if (event.getAvailableSeats() == null) {
             event.setAvailableSeats(event.getCapacity());
         }

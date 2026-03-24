@@ -5,17 +5,15 @@ import com.ers.auth.dtos.LoginRequest;
 import com.ers.auth.dtos.LoginResponse;
 import com.ers.auth.dtos.RegisterRequest;
 import com.ers.auth.dtos.UserProfileResponse;
-import com.ers.auth.security.JwtUtil;
+// import com.ers.auth.security.JwtUtil;
 import com.ers.auth.service.AuthService;
 import com.ers.auth.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-// import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-// import org.springframework.security.core.Authentication;
-// import org.springframework.security.core.AuthenticationException;
+// import org.springframework.security.authentication.AuthenticationManager;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,11 +30,11 @@ public class AuthController {
     @Autowired
     private final AuthService authService;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    // @Autowired
+    // private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private JwtUtil jwtUtil;
+    // @Autowired
+    // private JwtUtil jwtUtil;
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(@RequestBody LoginRequest request) {
@@ -53,5 +51,3 @@ public class AuthController {
     }
 
 }
-
-

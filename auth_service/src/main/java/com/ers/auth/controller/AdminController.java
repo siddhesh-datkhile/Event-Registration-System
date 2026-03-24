@@ -1,6 +1,6 @@
 package com.ers.auth.controller;
 
-import com.ers.auth.entity.User;
+
 import com.ers.auth.dtos.OrganizerRequest;
 import com.ers.auth.dtos.OrganizerResponse;
 import com.ers.auth.service.UserService;

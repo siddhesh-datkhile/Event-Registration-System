@@ -45,26 +45,23 @@ public class AuthServiceImplTest {
 
     @Test
     void testLogin_Success() {
-        // Arrange
         Authentication authentication = mock(Authentication.class);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(authentication);
-                
-        when(jwtUtil.createToken(authentication)).thenReturn("mocked.jwt.token");
+
+        when(jwtUtil.createToken(authentication, any(Long.class))).thenReturn("mocked.jwt.token");
         when(authentication.getName()).thenReturn("test@example.com");
-        
+
         User mockUser = new User();
         when(userService.getUserByEmail("test@example.com")).thenReturn(mockUser);
 
-        // Act
         LoginResponse response = authService.login(validRequest);
 
-        // Assert
         assertNotNull(response);
         assertEquals("mocked.jwt.token", response.getToken());
-        
+
         verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
-        verify(jwtUtil).createToken(authentication);
+        verify(jwtUtil).createToken(eq(authentication), any(Long.class));
         verify(userService).getUserByEmail("test@example.com");
     }
 
