@@ -11,12 +11,14 @@ import com.ers.registration.registration_service.repository.PaymentRepository;
 import com.ers.registration.registration_service.repository.ReceiptRepository;
 import com.ers.registration.registration_service.repository.RegistrationRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ReceiptServiceImpl implements ReceiptService {
 
     private final RegistrationRepository registrationRepository;
@@ -26,24 +28,39 @@ public class ReceiptServiceImpl implements ReceiptService {
 
     @Override
     public String generateReceiptHtml(Long registrationId) {
+        log.info("Generating HTML receipt for registration ID: {}", registrationId);
         Registration registration = registrationRepository.findById(registrationId)
-                .orElseThrow(() -> new RuntimeException("Registration not found."));
+                .orElseThrow(() -> {
+                    log.error("Receipt generation failed: Registration not found with ID: {}", registrationId);
+                    return new RuntimeException("Registration not found.");
+                });
 
         if (registration.getStatus() != RegistrationStatus.CONFIRMED) {
+            log.warn("Receipt generation denied for registration ID: {} - status is {}", registrationId, registration.getStatus());
             throw new RuntimeException("Cannot generate receipt. Registration is not confirmed.");
         }
 
         Payment payment = paymentRepository.findByRegistrationId(registrationId)
-                .orElseThrow(() -> new RuntimeException("No payment record found for this registration."));
+                .orElseThrow(() -> {
+                    log.error("No payment record found for registration ID: {}", registrationId);
+                    return new RuntimeException("No payment record found for this registration.");
+                });
 
         if (payment.getPaymentStatus() != PaymentStatus.SUCCESS) {
+            log.warn("Receipt generation denied for registration ID: {} - payment status is {}", registrationId, payment.getPaymentStatus());
             throw new RuntimeException("Cannot generate receipt. Payment is not successful.");
         }
 
         Receipt receipt = receiptRepository.findByPaymentId(payment.getId())
-                .orElseThrow(() -> new RuntimeException("Receipt record not found. Please try again later."));
+                .orElseThrow(() -> {
+                    log.error("Receipt record missing for payment ID: {}", payment.getId());
+                    return new RuntimeException("Receipt record not found. Please try again later.");
+                });
 
+        log.debug("Fetching event details for event ID: {}", registration.getEventId());
         EventDto event = eventClient.getEventById(registration.getEventId());
+
+        log.info("Building HTML receipt for registration ID: {}, receipt number: {}", registrationId, receipt.getReceiptNumber());
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 

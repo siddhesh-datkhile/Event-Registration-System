@@ -19,8 +19,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
     @Autowired
     public final UserRepository userRepository;
@@ -29,13 +32,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserByEmail(String email) {
+        log.debug("Fetching user by email: {}", email);
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> {
+                    log.error("User lookup failed: No user found for email {}", email);
+                    return new RuntimeException("User not found");
+                });
     }
 
     @Override
     public OrganizerResponse createOrganizer(OrganizerRequest request) {
+        log.info("Attempting to create Organizer with email: {}", request.getEmail());
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            log.warn("Organizer creation failed: User already exists with email {}", request.getEmail());
             throw new RuntimeException("User already exists");
         }
 
@@ -57,6 +66,7 @@ public class UserServiceImpl implements UserService {
         user.setProfile(profile);
 
         User savedUser = userRepository.save(user);
+        log.info("Successfully created Organizer with email: {} and ID: {}", savedUser.getEmail(), savedUser.getId());
 
         return new OrganizerResponse(
                 savedUser.getId(),
@@ -69,7 +79,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public RegistrantResponse createRegistrant(RegistrantRequest request) {
+        log.info("Attempting to create Registrant with email: {}", request.getEmail());
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            log.warn("Registrant creation failed: User already exists with email {}", request.getEmail());
             throw new RuntimeException("User already exists");
         }
 
@@ -91,6 +103,7 @@ public class UserServiceImpl implements UserService {
         user.setProfile(profile);
 
         User savedUser = userRepository.save(user);
+        log.info("Successfully created Registrant with email: {} and ID: {}", savedUser.getEmail(), savedUser.getId());
 
         return new RegistrantResponse(
                 savedUser.getId(),
@@ -102,11 +115,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserProfileResponse register(RegisterRequest request) {
+        log.info("Attempting to register new user with email: {} as role: {}", request.getEmail(), request.getRole());
+        
         if (userRepository.existsByEmail(request.getEmail())) {
+            log.warn("Registration failed: User already exists with email {}", request.getEmail());
             throw new RuntimeException("User already exists");
         }
         
         if (request.getRole() != Role.ORGANIZER && request.getRole() != Role.REGISTRANT) {
+            log.warn("Registration failed: Invalid role {} specified for user {}", request.getRole(), request.getEmail());
             throw new RuntimeException("Invalid role for registration. Allowed roles: ORGANIZER, REGISTRANT");
         }
 
@@ -126,6 +143,7 @@ public class UserServiceImpl implements UserService {
         user.setProfile(profile);
 
         User savedUser = userRepository.save(user);
+        log.info("Successfully registered user with email: {} and ID: {}", savedUser.getEmail(), savedUser.getId());
 
         return new UserProfileResponse(
                 savedUser.getId(),
@@ -140,6 +158,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserProfileResponse updateProfile(String email, UpdateProfileRequest request) {
+        log.info("Updating profile for user: {}", email);
         User user = getUserByEmail(email);
 
         UserProfile profile = user.getProfile();
@@ -165,6 +184,7 @@ public class UserServiceImpl implements UserService {
         }
 
         User savedUser = userRepository.save(user);
+        log.info("Profile successfully updated for user: {}", savedUser.getEmail());
 
         return new UserProfileResponse(
                 savedUser.getId(),

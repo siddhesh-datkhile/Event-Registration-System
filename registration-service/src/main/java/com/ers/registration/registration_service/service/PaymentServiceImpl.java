@@ -18,6 +18,7 @@ import com.razorpay.Utils;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ import java.util.Optional;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
@@ -51,17 +53,24 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public PaymentResponse createPaymentOrder(PaymentRequest request) {
+        log.info("Creating payment order for registration ID: {}", request.getRegistrationId());
         Registration registration = registrationRepository.findById(request.getRegistrationId())
-                .orElseThrow(() -> new RuntimeException("Registration not found"));
+                .orElseThrow(() -> {
+                    log.error("Registration not found for ID: {}", request.getRegistrationId());
+                    return new RuntimeException("Registration not found");
+                });
 
         if (registration.getStatus() != RegistrationStatus.PENDING) {
+            log.warn("Cannot create payment for registration ID: {} - status is {}", request.getRegistrationId(), registration.getStatus());
             throw new RuntimeException("Registration is not in PENDING state.");
         }
 
+        log.debug("Fetching event details for event ID: {}", registration.getEventId());
         EventDto event = eventClient.getEventById(registration.getEventId());
         Double entryFee = event.getEntryFee();
 
         if (entryFee == null || entryFee <= 0) {
+            log.info("Event ID: {} is free. Confirming registration directly.", registration.getEventId());
             // Free event logic
             registration.setStatus(RegistrationStatus.CONFIRMED);
             registrationRepository.save(registration);
@@ -79,8 +88,9 @@ public class PaymentServiceImpl implements PaymentService {
                     .receiptNumber("REC-FREE-" + registration.getId())
                     .generatedAt(java.time.LocalDateTime.now())
                     .build();
-            receiptRepository.save(receipt);
+            receipt = receiptRepository.save(receipt);
 
+            log.info("Free event registration confirmed for registration ID: {}", registration.getId());
             return PaymentResponse.builder()
                     .status("SUCCESS")
                     .message("Event is free. Registration confirmed.")
@@ -89,6 +99,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         try {
+            log.info("Initiating Razorpay order for registration ID: {}, amount: {} paise", registration.getId(), (int)(entryFee * 100));
             RazorpayClient razorpay = new RazorpayClient(keyId, keySecret);
 
             JSONObject orderRequest = new JSONObject();
@@ -100,6 +111,7 @@ public class PaymentServiceImpl implements PaymentService {
 
             Order order = razorpay.orders.create(orderRequest);
             String razorpayOrderId = order.get("id");
+            log.info("Razorpay order created: {} for registration ID: {}", razorpayOrderId, registration.getId());
 
             Payment payment = Payment.builder()
                     .registration(registration)
@@ -119,15 +131,18 @@ public class PaymentServiceImpl implements PaymentService {
                     .build();
 
         } catch (Exception e) {
+            log.error("Razorpay order creation failed for registration ID: {}", registration.getId(), e);
             throw new RuntimeException("Error while creating Razorpay Order", e);
         }
     }
 
     @Override
     public void handleWebhook(String payload, String signature) {
+        log.info("Received Razorpay webhook");
         try {
             boolean isSignatureValid = Utils.verifyWebhookSignature(payload, signature, webhookSecret);
             if (!isSignatureValid) {
+                log.error("Invalid Razorpay webhook signature");
                 throw new RuntimeException("Invalid webhook signature");
             }
 
@@ -141,13 +156,14 @@ public class PaymentServiceImpl implements PaymentService {
 
             Optional<Payment> paymentOpt = paymentRepository.findByRazorpayOrderId(razorpayOrderId);
             if (paymentOpt.isEmpty()) {
-                // If it's a completely unknown payment just ignore or log
+                log.warn("Webhook received for unknown Razorpay order ID: {}. Ignoring.", razorpayOrderId);
                 return;
             }
 
             Payment payment = paymentOpt.get();
 
             if ("payment.captured".equals(event)) {
+                log.info("Payment captured for order ID: {}, transaction ID: {}", razorpayOrderId, transactionId);
                 payment.setPaymentStatus(PaymentStatus.SUCCESS);
                 payment.setTransactionId(transactionId);
 
@@ -162,14 +178,19 @@ public class PaymentServiceImpl implements PaymentService {
                         .generatedAt(java.time.LocalDateTime.now())
                         .build();
                 receiptRepository.save(receipt);
+                log.info("Registration confirmed and receipt generated for registration ID: {}", registration.getId());
 
             } else if ("payment.failed".equals(event)) {
+                log.warn("Payment failed for Razorpay order ID: {}, transaction ID: {}", razorpayOrderId, transactionId);
                 payment.setPaymentStatus(PaymentStatus.FAILED);
                 payment.setTransactionId(transactionId);
                 paymentRepository.save(payment);
+            } else {
+                log.debug("Unhandled webhook event type '{}' for order ID: {}", event, razorpayOrderId);
             }
 
         } catch (Exception e) {
+            log.error("Webhook processing failed", e);
             throw new RuntimeException("Webhook processing failed", e);
         }
     }

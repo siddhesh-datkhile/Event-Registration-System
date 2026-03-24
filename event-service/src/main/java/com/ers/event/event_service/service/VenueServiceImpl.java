@@ -5,6 +5,7 @@ import com.ers.event.event_service.dto.VenueResponse;
 import com.ers.event.event_service.enities.Venue;
 import com.ers.event.event_service.repository.VenueRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,23 +13,27 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class VenueServiceImpl implements VenueService {
 
     private final VenueRepository venueRepository;
 
     @Override
     public VenueResponse createVenue(VenueCreateRequest request) {
+        log.info("Creating venue '{}' in city: {}", request.getName(), request.getCity());
         Venue venue = new Venue();
         venue.setName(request.getName());
         venue.setAddress(request.getAddress());
         venue.setCity(request.getCity());
 
         Venue savedVenue = venueRepository.save(venue);
+        log.info("Venue created successfully with ID: {}", savedVenue.getId());
         return mapToResponse(savedVenue);
     }
 
     @Override
     public List<VenueResponse> getAllVenues() {
+        log.debug("Fetching all venues");
         return venueRepository.findAll().stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());

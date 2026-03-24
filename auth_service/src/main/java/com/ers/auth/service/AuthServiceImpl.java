@@ -10,8 +10,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthServiceImpl implements  AuthService{
     
     private final AuthenticationManager authenticationManager;
@@ -22,6 +25,7 @@ public class AuthServiceImpl implements  AuthService{
 
     @Override
     public LoginResponse login(LoginRequest dto) {
+        log.info("Attempting login for user: {}", dto.getEmail());
 
         Authentication authToken =
                 new UsernamePasswordAuthenticationToken(
@@ -30,10 +34,14 @@ public class AuthServiceImpl implements  AuthService{
         Authentication authenticated =
                 authenticationManager.authenticate(authToken);
 
+        log.debug("Authentication successful for user: {}", dto.getEmail());
+
         String email = authenticated.getName();
         User user = userService.getUserByEmail(email);
 
         String jwt = jwtUtil.createToken(authenticated, user.getId());
+        
+        log.info("JWT payload created for user: {} with ID: {}", email, user.getId());
 
         return new LoginResponse(
                 jwt

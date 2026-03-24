@@ -12,6 +12,7 @@ import com.ers.event.event_service.repository.VenueRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
@@ -27,6 +29,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventResponse createEvent(EventCreateRequest request) {
+        log.info("Creating event '{}' for organizer ID: {}", request.getTitle(), request.getOrganizerId());
         Event event = new Event();
         event.setTitle(request.getTitle());
         event.setDescription(request.getDescription());
@@ -39,17 +42,25 @@ public class EventServiceImpl implements EventService {
 
         if (request.getVenueId() != null) {
             Venue venue = venueRepository.findById(request.getVenueId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Venue not found"));
+                    .orElseThrow(() -> {
+                        log.error("Venue not found with ID: {}", request.getVenueId());
+                        return new ResourceNotFoundException("Venue not found");
+                    });
             event.setVenue(venue);
         }
 
         Event savedEvent = eventRepository.save(event);
+        log.info("Event created successfully with ID: {} and title: '{}'", savedEvent.getId(), savedEvent.getTitle());
         return mapToResponse(savedEvent);
     }
 
     @Override
     public EventResponse updateEvent(Long id, EventUpdateRequest request) {
-        Event event = eventRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Event not found"));
+        log.info("Updating event with ID: {}", id);
+        Event event = eventRepository.findById(id).orElseThrow(() -> {
+            log.error("Event not found with ID: {}", id);
+            return new ResourceNotFoundException("Event not found");
+        });
 
         if (request.getTitle() != null)
             event.setTitle(request.getTitle());
@@ -69,13 +80,19 @@ public class EventServiceImpl implements EventService {
         }
 
         Event updatedEvent = eventRepository.save(event);
+        log.info("Event updated successfully for ID: {}", updatedEvent.getId());
         return mapToResponse(updatedEvent);
     }
 
     @Override
     public void deleteEvent(Long id) {
-        Event event = eventRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Event not found"));
+        log.info("Deleting event with ID: {}", id);
+        Event event = eventRepository.findById(id).orElseThrow(() -> {
+            log.error("Cannot delete: Event not found with ID: {}", id);
+            return new ResourceNotFoundException("Event not found");
+        });
         eventRepository.delete(event);
+        log.info("Event deleted successfully with ID: {}", id);
     }
 
     @Override
@@ -93,17 +110,21 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventResponse changeEventStatus(Long id, EventStatus status) {
+        log.info("Changing status of event ID: {} to {}", id, status);
         Event event = eventRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Event not found"));
         event.setStatus(status);
         Event updatedEvent = eventRepository.save(event);
+        log.info("Event ID: {} status changed to {}", id, status);
         return mapToResponse(updatedEvent);
     }
 
     @Override
     public void reserveSeat(Long id) {
+        log.info("Reserving seat for event ID: {}", id);
         Event event = eventRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Event not found"));
         
         if (event.getStatus() != EventStatus.OPEN) {
+            log.warn("Seat reservation failed for event ID: {} - Event is not OPEN (status: {})", id, event.getStatus());
             throw new IllegalArgumentException("Event is not open for booking.");
         }
         
@@ -111,14 +132,17 @@ public class EventServiceImpl implements EventService {
             event.setAvailableSeats(event.getCapacity());
         }
         if (event.getAvailableSeats() <= 0) {
+            log.warn("Seat reservation failed for event ID: {} - No available seats", id);
             throw new IllegalArgumentException("No available seats for this event.");
         }
         event.setAvailableSeats(event.getAvailableSeats() - 1);
         eventRepository.save(event);
+        log.info("Seat reserved for event ID: {}. Remaining seats: {}", id, event.getAvailableSeats());
     }
 
     @Override
     public void releaseSeat(Long id) {
+        log.info("Releasing seat for event ID: {}", id);
         Event event = eventRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Event not found"));
         if (event.getAvailableSeats() == null) {
             event.setAvailableSeats(event.getCapacity());
@@ -126,6 +150,9 @@ public class EventServiceImpl implements EventService {
         if (event.getCapacity() != null && event.getAvailableSeats() < event.getCapacity()) {
             event.setAvailableSeats(event.getAvailableSeats() + 1);
             eventRepository.save(event);
+            log.info("Seat released for event ID: {}. Available seats: {}", id, event.getAvailableSeats());
+        } else {
+            log.warn("Release skipped for event ID: {} - seats already at full capacity", id);
         }
     }
 
