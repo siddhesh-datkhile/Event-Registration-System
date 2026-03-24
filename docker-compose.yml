@@ -1,0 +1,77 @@
+version: '3.8'
+
+networks:
+  ers-network:
+    driver: bridge
+
+services:
+  service-registry:
+    build:
+      context: ./service-registry
+      dockerfile: Dockerfile
+    container_name: service-registry
+    ports:
+      - "8761:8761"
+    networks:
+      - ers-network
+    restart: unless-stopped
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+    networks:
+      - ers-network
+    depends_on:
+      - service-registry
+    restart: unless-stopped
+
+  auth-service:
+    build:
+      context: ./auth_service
+      dockerfile: Dockerfile
+    container_name: auth-service
+    ports:
+      - "8081:8081"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+    networks:
+      - ers-network
+    depends_on:
+      - service-registry
+    restart: unless-stopped
+
+  event-service:
+    build:
+      context: ./event-service
+      dockerfile: Dockerfile
+    container_name: event-service
+    ports:
+      - "8082:8082"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+    networks:
+      - ers-network
+    depends_on:
+      - service-registry
+    restart: unless-stopped
+
+  registration-service:
+    build:
+      context: ./registration-service
+      dockerfile: Dockerfile
+    container_name: registration-service
+    ports:
+      - "8083:8083"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+    networks:
+      - ers-network
+    depends_on:
+      - service-registry
+    restart: unless-stopped
