@@ -3,8 +3,8 @@ package com.ers.gateway.api_gateway.filter;
 import com.ers.gateway.api_gateway.security.JwtUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cloud.gateway.filter.GatewayFilterChain;
-import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
+public class JwtAuthenticationFilter implements WebFilter, Ordered {
 
     private final JwtUtil jwtUtil;
 
@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
             "/api/auth/register");
 
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
 
@@ -68,6 +68,8 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         // Extract user info from JWT claims
         String email = claims.getSubject();
         List<String> roles = claims.get("roles", List.class);
+        Object userIdObj = claims.get("userId");
+        String userIdStr = userIdObj != null ? userIdObj.toString() : "";
 
         // Build authentication object (so Spring Security can enforce hasRole() rules)
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
@@ -81,6 +83,7 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         ServerHttpRequest mutatedRequest = request.mutate()
                 .header("X-User-Email", email)
                 .header("X-User-Role", String.join(",", roles))
+                .header("X-User-Id", userIdStr)
                 .build();
 
         return chain.filter(exchange.mutate().request(mutatedRequest).build())

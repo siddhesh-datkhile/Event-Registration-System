@@ -21,8 +21,10 @@ public class RegistrationController {
     private final RegistrationService registrationService;
 
     @PostMapping("/register")
-    public ResponseEntity<RegistrationResponse> register(@Valid @RequestBody RegistrationRequest request) {
-        RegistrationResponse response = registrationService.register(request);
+    public ResponseEntity<RegistrationResponse> register(
+            @Valid @RequestBody RegistrationRequest request,
+            @org.springframework.web.bind.annotation.RequestHeader(value = "X-User-Id", required = true) Long userId) {
+        RegistrationResponse response = registrationService.register(request, userId);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 

@@ -23,9 +23,9 @@ public class RegistrationServiceImpl implements RegistrationService {
     private final EventClient eventClient;
 
     @Override
-    public RegistrationResponse register(RegistrationRequest request) {
+    public RegistrationResponse register(RegistrationRequest request, Long userId) {
         // 1. Check for duplicate registration
-        if (registrationRepository.existsByUserIdAndEventId(request.getUserId(), request.getEventId())) {
+        if (registrationRepository.existsByUserIdAndEventId(userId, request.getEventId())) {
             throw new DuplicateRegistrationException("User is already registered for this event.");
         }
 
@@ -58,7 +58,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         // 4. Save registration
         Registration registration = Registration.builder()
-                .userId(request.getUserId())
+                .userId(userId)
                 .eventId(request.getEventId())
                 .status(RegistrationStatus.PENDING)
                 .build();

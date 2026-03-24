@@ -36,7 +36,7 @@ public class JwtUtil {
     }
 
     // CREATE TOKEN
-    public String createToken(Authentication authentication) {
+    public String createToken(Authentication authentication, Long userId) {
 
         String username = authentication.getName(); // email / username
 
@@ -50,6 +50,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .setSubject(username)
                 .claim("roles", roles)
+                .claim("userId", userId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationMillis))
                 .signWith(key) // ✅ SAME as gateway
