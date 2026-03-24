@@ -6,9 +6,11 @@ import com.ers.registration.registration_service.dto.PaymentRequest;
 import com.ers.registration.registration_service.dto.PaymentResponse;
 import com.ers.registration.registration_service.entity.Payment;
 import com.ers.registration.registration_service.entity.PaymentStatus;
+import com.ers.registration.registration_service.entity.Receipt;
 import com.ers.registration.registration_service.entity.Registration;
 import com.ers.registration.registration_service.entity.RegistrationStatus;
 import com.ers.registration.registration_service.repository.PaymentRepository;
+import com.ers.registration.registration_service.repository.ReceiptRepository;
 import com.ers.registration.registration_service.repository.RegistrationRepository;
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
@@ -35,6 +37,8 @@ public class PaymentServiceImpl implements PaymentService {
     private RegistrationRepository registrationRepository;
     @Autowired
     private EventClient eventClient;
+    @Autowired
+    private ReceiptRepository receiptRepository;
 
     @Value("${razorpay.key.id}")
     private String keyId;
@@ -61,6 +65,21 @@ public class PaymentServiceImpl implements PaymentService {
             // Free event logic
             registration.setStatus(RegistrationStatus.CONFIRMED);
             registrationRepository.save(registration);
+
+            Payment payment = Payment.builder()
+                    .registration(registration)
+                    .amount(0.0)
+                    .paymentStatus(PaymentStatus.SUCCESS)
+                    .transactionId("FREE_" + registration.getId())
+                    .build();
+            payment = paymentRepository.save(payment);
+
+            Receipt receipt = Receipt.builder()
+                    .payment(payment)
+                    .receiptNumber("REC-FREE-" + registration.getId())
+                    .generatedAt(java.time.LocalDateTime.now())
+                    .build();
+            receiptRepository.save(receipt);
 
             return PaymentResponse.builder()
                     .status("SUCCESS")
@@ -135,7 +154,14 @@ public class PaymentServiceImpl implements PaymentService {
                 Registration registration = payment.getRegistration();
                 registration.setStatus(RegistrationStatus.CONFIRMED);
                 registrationRepository.save(registration);
-                paymentRepository.save(payment);
+                payment = paymentRepository.save(payment);
+
+                Receipt receipt = Receipt.builder()
+                        .payment(payment)
+                        .receiptNumber("REC-RZP-" + registration.getId() + "-" + System.currentTimeMillis() % 1000)
+                        .generatedAt(java.time.LocalDateTime.now())
+                        .build();
+                receiptRepository.save(receipt);
 
             } else if ("payment.failed".equals(event)) {
                 payment.setPaymentStatus(PaymentStatus.FAILED);

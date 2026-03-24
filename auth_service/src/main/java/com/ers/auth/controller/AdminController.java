@@ -19,7 +19,7 @@ public class AdminController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/organizers")
+    @PostMapping("/organizer")
     public ResponseEntity<?> addOrganizer(@RequestBody OrganizerRequest request) {
 
         OrganizerResponse organizerResponse = userService.createOrganizer(request);
