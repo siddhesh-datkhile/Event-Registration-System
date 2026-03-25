@@ -12,6 +12,7 @@ import com.ers.auth.dtos.RegisterRequest;
 import com.ers.auth.dtos.UpdateProfileRequest;
 import com.ers.auth.dtos.UserProfileResponse;
 import com.ers.auth.repository.UserRepository;
+import com.ers.auth.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,7 +37,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> {
                     log.error("User lookup failed: No user found for email {}", email);
-                    return new RuntimeException("User not found");
+                    return new ResourceNotFoundException("User not found");
                 });
     }
 

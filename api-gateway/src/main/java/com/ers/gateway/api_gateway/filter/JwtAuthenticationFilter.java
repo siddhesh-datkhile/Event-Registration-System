@@ -28,7 +28,8 @@ public class JwtAuthenticationFilter implements WebFilter, Ordered {
     // Routes that do NOT require a JWT token
     private static final List<String> PUBLIC_PATHS = List.of(
             "/api/auth/login",
-            "/api/auth/register");
+            "/api/auth/register",
+            "/api/auth/refreshtoken");
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {

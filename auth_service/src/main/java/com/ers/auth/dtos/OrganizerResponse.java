@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor  // not using Data for concern of immutability
+@AllArgsConstructor // not using Data for concern of immutability
 public class OrganizerResponse {
     private Long id;
     private String name;

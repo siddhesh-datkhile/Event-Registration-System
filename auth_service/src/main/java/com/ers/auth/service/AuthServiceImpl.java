@@ -1,6 +1,7 @@
 package com.ers.auth.service;
 
 import com.ers.auth.entity.User;
+import com.ers.auth.entity.RefreshToken;
 import com.ers.auth.dtos.LoginRequest;
 import com.ers.auth.dtos.LoginResponse;
 import com.ers.auth.security.JwtUtil;
@@ -20,6 +21,7 @@ public class AuthServiceImpl implements  AuthService{
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final UserService userService;
+    private final RefreshTokenService refreshTokenService;
 
 
 
@@ -43,8 +45,11 @@ public class AuthServiceImpl implements  AuthService{
         
         log.info("JWT payload created for user: {} with ID: {}", email, user.getId());
 
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
+
         return new LoginResponse(
-                jwt
+                jwt,
+                refreshToken.getToken()
         );
 
     }
