@@ -1,6 +1,7 @@
 package com.ers.auth.service;
 
 import com.ers.auth.entity.RefreshToken;
+import com.ers.auth.entity.User;
 import com.ers.auth.repository.RefreshTokenRepository;
 import com.ers.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,14 +25,15 @@ public class RefreshTokenService {
 
     @Transactional
     public RefreshToken createRefreshToken(Long userId) {
-        RefreshToken refreshToken = new RefreshToken();
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        
+        // Find existing token or create a new one
+        RefreshToken refreshToken = refreshTokenRepository.findByUser(user)
+                .orElse(new RefreshToken());
 
-        refreshToken.setUser(userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found")));
+        refreshToken.setUser(user);
         refreshToken.setExpiryDate(Instant.now().plusMillis(refreshExpirationMs));
         refreshToken.setToken(UUID.randomUUID().toString());
-
-        // Remove any existing token for this user so they only have 1 active session on this device
-        refreshTokenRepository.deleteByUser(refreshToken.getUser());
 
         return refreshTokenRepository.save(refreshToken);
     }

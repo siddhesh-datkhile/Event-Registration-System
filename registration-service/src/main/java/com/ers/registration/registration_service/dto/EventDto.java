@@ -9,4 +9,5 @@ public class EventDto {
     private Integer capacity;
     private Double entryFee;
     private Integer availableSeats;
+    private String status;
 }

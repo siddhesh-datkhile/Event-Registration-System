@@ -5,6 +5,7 @@ import com.ers.auth.dtos.LoginRequest;
 import com.ers.auth.dtos.LoginResponse;
 import com.ers.auth.dtos.RegisterRequest;
 import com.ers.auth.dtos.UserProfileResponse;
+
 // import com.ers.auth.security.JwtUtil;
 import com.ers.auth.service.AuthService;
 import com.ers.auth.service.UserService;
@@ -71,7 +72,8 @@ public class AuthController {
                 .map(refreshTokenService::verifyExpiration)
                 .map(RefreshToken::getUser)
                 .map(user -> {
-                    Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(), null, user.getAuthorities());
+                    Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(), null,
+                            user.getAuthorities());
                     String token = jwtUtil.createToken(auth, user.getId());
                     return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
                 })
