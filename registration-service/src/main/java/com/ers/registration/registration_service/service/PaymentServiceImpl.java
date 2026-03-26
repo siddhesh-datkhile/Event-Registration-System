@@ -33,14 +33,10 @@ import java.util.Optional;
 @Slf4j
 public class PaymentServiceImpl implements PaymentService {
 
-    @Autowired
-    private PaymentRepository paymentRepository;
-    @Autowired
-    private RegistrationRepository registrationRepository;
-    @Autowired
-    private EventClient eventClient;
-    @Autowired
-    private ReceiptRepository receiptRepository;
+    private final PaymentRepository paymentRepository;
+    private final RegistrationRepository registrationRepository;
+    private final EventClient eventClient;
+    private final ReceiptRepository receiptRepository;
 
     @Value("${razorpay.key.id}")
     private String keyId;
@@ -61,7 +57,8 @@ public class PaymentServiceImpl implements PaymentService {
                 });
 
         if (registration.getStatus() != RegistrationStatus.PENDING) {
-            log.warn("Cannot create payment for registration ID: {} - status is {}", request.getRegistrationId(), registration.getStatus());
+            log.warn("Cannot create payment for registration ID: {} - status is {}", request.getRegistrationId(),
+                    registration.getStatus());
             throw new RuntimeException("Registration is not in PENDING state.");
         }
 
@@ -99,7 +96,8 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         try {
-            log.info("Initiating Razorpay order for registration ID: {}, amount: {} paise", registration.getId(), (int)(entryFee * 100));
+            log.info("Initiating Razorpay order for registration ID: {}, amount: {} paise", registration.getId(),
+                    (int) (entryFee * 100));
             RazorpayClient razorpay = new RazorpayClient(keyId, keySecret);
 
             JSONObject orderRequest = new JSONObject();
@@ -181,7 +179,8 @@ public class PaymentServiceImpl implements PaymentService {
                 log.info("Registration confirmed and receipt generated for registration ID: {}", registration.getId());
 
             } else if ("payment.failed".equals(event)) {
-                log.warn("Payment failed for Razorpay order ID: {}, transaction ID: {}", razorpayOrderId, transactionId);
+                log.warn("Payment failed for Razorpay order ID: {}, transaction ID: {}", razorpayOrderId,
+                        transactionId);
                 payment.setPaymentStatus(PaymentStatus.FAILED);
                 payment.setTransactionId(transactionId);
                 paymentRepository.save(payment);
