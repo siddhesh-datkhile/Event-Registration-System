@@ -4,6 +4,7 @@ package com.ers.auth.controller;
 import com.ers.auth.dtos.OrganizerRequest;
 import com.ers.auth.dtos.OrganizerResponse;
 import com.ers.auth.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class AdminController {
     private UserService userService;
 
     @PostMapping("/organizer")
-    public ResponseEntity<?> addOrganizer(@RequestBody OrganizerRequest request) {
+    public ResponseEntity<?> addOrganizer(@Valid @RequestBody OrganizerRequest request) {
 
         OrganizerResponse organizerResponse = userService.createOrganizer(request);
 
@@ -28,7 +29,7 @@ public class AdminController {
     }
 
     @PostMapping("/registrants")
-    public ResponseEntity<?> addRegistrant(@RequestBody com.ers.auth.dtos.RegistrantRequest request) {
+    public ResponseEntity<?> addRegistrant(@Valid @RequestBody com.ers.auth.dtos.RegistrantRequest request) {
 
         com.ers.auth.dtos.RegistrantResponse registrantResponse = userService.createRegistrant(request);
 

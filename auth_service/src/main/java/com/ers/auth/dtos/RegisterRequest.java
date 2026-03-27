@@ -6,7 +6,9 @@ import com.ers.auth.entity.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
@@ -20,6 +22,7 @@ public class RegisterRequest {
     private String email;
 
     @NotBlank(message = "Password is required")
+    @Size(min = 6, max = 100, message = "Password must be between 6 and 100 characters")
     private String password;
 
     @NotBlank(message = "Phone No is required")
@@ -30,6 +33,7 @@ public class RegisterRequest {
     private String address;
 
     @NotNull(message = "DOB is required")
+    @Past(message = "DOB must be in the past")
     private LocalDate dob;
 
     @NotNull(message = "Role is required")

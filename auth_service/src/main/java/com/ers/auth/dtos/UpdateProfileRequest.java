@@ -18,7 +18,6 @@ public class UpdateProfileRequest {
     private String phone;
 
     @NotBlank(message = "Address is required")
-    
     private String address;
 
     @NotNull(message = "DOB is required")

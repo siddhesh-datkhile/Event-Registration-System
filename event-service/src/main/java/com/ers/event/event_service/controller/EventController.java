@@ -5,6 +5,7 @@ import com.ers.event.event_service.dto.EventResponse;
 import com.ers.event.event_service.dto.EventUpdateRequest;
 import com.ers.event.event_service.enities.EventStatus;
 import com.ers.event.event_service.service.EventService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +22,13 @@ public class EventController {
     private final EventService eventService;
 
     @PostMapping
-    public ResponseEntity<EventResponse> createEvent(@RequestBody EventCreateRequest request) {
+    public ResponseEntity<EventResponse> createEvent(@Valid @RequestBody EventCreateRequest request) {
         EventResponse response = eventService.createEvent(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EventResponse> updateEvent(@PathVariable Long id, @RequestBody EventUpdateRequest request) {
+    public ResponseEntity<EventResponse> updateEvent(@PathVariable Long id, @Valid @RequestBody EventUpdateRequest request) {
         EventResponse response = eventService.updateEvent(id, request);
         return ResponseEntity.ok(response);
     }
