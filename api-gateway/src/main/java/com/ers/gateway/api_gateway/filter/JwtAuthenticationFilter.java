@@ -29,7 +29,8 @@ public class JwtAuthenticationFilter implements WebFilter, Ordered {
     private static final List<String> PUBLIC_PATHS = List.of(
             "/api/auth/login",
             "/api/auth/register",
-            "/api/auth/refreshtoken");
+            "/api/auth/refreshtoken",
+            "/api/events");         // GET /api/events/** is public (browse & detail)
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
