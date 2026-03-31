@@ -133,11 +133,17 @@ public class EventServiceImpl implements EventService {
         if (event.getAvailableSeats() == null) {
             event.setAvailableSeats(event.getCapacity());
         }
-        if (event.getAvailableSeats() <= 0) {
+        if (event.getAvailableSeats() == 0) {
             log.warn("Seat reservation failed for event ID: {} - No available seats", id);
             throw new IllegalArgumentException("No available seats for this event.");
         }
         event.setAvailableSeats(event.getAvailableSeats() - 1);
+
+        if (event.getAvailableSeats() == 0) {
+            log.info("Event ID: {} is now sold out. Changing status to CLOSED.", id);
+            event.setStatus(EventStatus.CLOSED);
+        }
+
         eventRepository.save(event);
         log.info("Seat reserved for event ID: {}. Remaining seats: {}", id, event.getAvailableSeats());
     }
@@ -152,6 +158,12 @@ public class EventServiceImpl implements EventService {
         }
         if (event.getCapacity() != null && event.getAvailableSeats() < event.getCapacity()) {
             event.setAvailableSeats(event.getAvailableSeats() + 1);
+
+            if (event.getAvailableSeats() > 0 && event.getStatus() == EventStatus.CLOSED) {
+                log.info("Event ID: {} has available seats again. Changing status to OPEN.", id);
+                event.setStatus(EventStatus.OPEN);
+            }
+
             eventRepository.save(event);
             log.info("Seat released for event ID: {}. Available seats: {}", id, event.getAvailableSeats());
         } else {
