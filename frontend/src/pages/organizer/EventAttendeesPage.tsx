@@ -2,19 +2,37 @@ import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { getEventRegistrations, type RegistrationResponse } from '../../api/registrations'
 import { getEventById, type Event } from '../../api/events'
+import { fetchUserProfile, type UserProfileResponse } from '../../api/auth'
+
+type AttendeeRecord = RegistrationResponse & {
+  userProfile?: UserProfileResponse
+}
 
 export default function EventAttendeesPage() {
   const { id } = useParams<{ id: string }>()
-  const [registrations, setRegistrations] = useState<RegistrationResponse[]>([])
+  const [registrations, setRegistrations] = useState<AttendeeRecord[]>([])
   const [event, setEvent] = useState<Event | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!id) return
     Promise.all([getEventById(id), getEventRegistrations(id)])
-      .then(([eventData, regData]) => {
+      .then(async ([eventData, regData]) => {
         setEvent(eventData)
-        setRegistrations(regData)
+        
+        const enrichedRegistrations = await Promise.all(
+          regData.map(async (reg) => {
+            try {
+              const profile = await fetchUserProfile(reg.userId)
+              return { ...reg, userProfile: profile }
+            } catch (err) {
+              console.error(`Failed to fetch profile for user ${reg.userId}`, err)
+              return reg
+            }
+          })
+        )
+        
+        setRegistrations(enrichedRegistrations)
       })
       .finally(() => setLoading(false))
   }, [id])
@@ -45,7 +63,8 @@ export default function EventAttendeesPage() {
             <thead className='border-b border-slate-200 bg-slate-50 text-slate-600'>
               <tr>
                 <th className='px-6 py-4 font-semibold'>Reg ID</th>
-                <th className='px-6 py-4 font-semibold'>User ID</th>
+                <th className='px-6 py-4 font-semibold'>Attendee Name</th>
+                <th className='px-6 py-4 font-semibold'>Contact</th>
                 <th className='px-6 py-4 font-semibold'>Date</th>
                 <th className='px-6 py-4 font-semibold'>Status</th>
               </tr>
@@ -54,7 +73,17 @@ export default function EventAttendeesPage() {
               {registrations.map((reg) => (
                 <tr key={reg.id} className='hover:bg-slate-50'>
                   <td className='px-6 py-4 text-slate-900'>#{reg.id}</td>
-                  <td className='px-6 py-4 text-slate-600'>User {reg.userId}</td>
+                  <td className='px-6 py-4 text-slate-900 font-medium'>
+                    {reg.userProfile?.name || `User ${reg.userId}`}
+                  </td>
+                  <td className='px-6 py-4 text-slate-600'>
+                    <div className='flex flex-col'>
+                      <span className='text-sm'>{reg.userProfile?.email || 'N/A'}</span>
+                      {reg.userProfile?.phone && (
+                        <span className='text-xs text-slate-400'>{reg.userProfile.phone}</span>
+                      )}
+                    </div>
+                  </td>
                   <td className='px-6 py-4 text-slate-600'>
                     {new Date(reg.registrationDate).toLocaleDateString()}
                   </td>

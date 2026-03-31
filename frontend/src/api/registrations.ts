@@ -27,3 +27,8 @@ export async function getEventRegistrations(eventId: number | string): Promise<R
   const res = await api.get<RegistrationResponse[]>(`/api/registrations/event/${eventId}`)
   return res.data
 }
+
+export async function getAllRegistrations(): Promise<RegistrationResponse[]> {
+  const res = await api.get<RegistrationResponse[]>('/api/registrations/admin/all')
+  return res.data
+}

@@ -27,7 +27,8 @@ function Navbar({ variant = 'default' }: NavbarProps) {
   }
 
   const isOrganizer = user?.roles?.includes('ROLE_ORGANIZER') || user?.roles?.includes('ORGANIZER')
-  const dashboardPath = isOrganizer ? '/organizer/dashboard' : '/dashboard'
+  const isAdmin = user?.roles?.includes('ROLE_ADMIN') || user?.roles?.includes('ADMIN')
+  const dashboardPath = isAdmin ? '/admin/dashboard' : isOrganizer ? '/organizer/dashboard' : '/dashboard'
 
   return (
     <header

@@ -13,6 +13,8 @@ public interface UserService {
 
     User getUserByEmail(String email);
 
+    UserProfileResponse getUserProfileById(Long id);
+
     OrganizerResponse createOrganizer(OrganizerRequest request);
 
     RegistrantResponse createRegistrant(RegistrantRequest request);

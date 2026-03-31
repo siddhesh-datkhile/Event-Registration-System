@@ -14,6 +14,11 @@ import OrganizerDashboard from './pages/organizer/OrganizerDashboard.tsx'
 import OrganizerEventsPage from './pages/organizer/OrganizerEventsPage.tsx'
 import ManageEventPage from './pages/organizer/ManageEventPage.tsx'
 import EventAttendeesPage from './pages/organizer/EventAttendeesPage.tsx'
+
+import AdminDashboardPage from './pages/admin/AdminDashboardPage.tsx'
+import AdminUsersPage from './pages/admin/AdminUsersPage.tsx'
+import AdminEventsPage from './pages/admin/AdminEventsPage.tsx'
+import AdminRegistrationsPage from './pages/admin/AdminRegistrationsPage.tsx'
 function App() {
   return (
     <div>
@@ -44,6 +49,14 @@ function App() {
             <Route path='/organizer/events/new' element={<ManageEventPage />} />
             <Route path='/organizer/events/:id/edit' element={<ManageEventPage />} />
             <Route path='/organizer/events/:id/attendees' element={<EventAttendeesPage />} />
+          </Route>
+
+          {/* Protected Routes for Admin */}
+          <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
+            <Route path='/admin/dashboard' element={<AdminDashboardPage />} />
+            <Route path='/admin/users' element={<AdminUsersPage />} />
+            <Route path='/admin/events' element={<AdminEventsPage />} />
+            <Route path='/admin/registrations' element={<AdminRegistrationsPage />} />
           </Route>
 
         </Route>

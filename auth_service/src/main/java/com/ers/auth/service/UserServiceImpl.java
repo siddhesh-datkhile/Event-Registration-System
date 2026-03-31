@@ -42,6 +42,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserProfileResponse getUserProfileById(Long id) {
+        log.debug("Fetching user profile by ID: {}", id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        
+        UserProfile profile = user.getProfile();
+        
+        return new UserProfileResponse(
+                user.getId(),
+                profile != null ? profile.getName() : null,
+                user.getEmail(),
+                user.getRole(),
+                user.getStatus(),
+                profile != null ? profile.getPhone() : null,
+                profile != null ? profile.getAddress() : null,
+                profile != null ? profile.getDob() : null
+        );
+    }
+
+    @Override
     public OrganizerResponse createOrganizer(OrganizerRequest request) {
         log.info("Attempting to create Organizer with email: {}", request.getEmail());
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {

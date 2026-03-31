@@ -49,4 +49,10 @@ public class RegistrationController {
         java.util.List<RegistrationResponse> responses = registrationService.getEventRegistrations(eventId);
         return ResponseEntity.ok(responses);
     }
+
+    @GetMapping("/admin/all")
+    public ResponseEntity<java.util.List<RegistrationResponse>> getAllRegistrations() {
+        java.util.List<RegistrationResponse> responses = registrationService.getAllRegistrations();
+        return ResponseEntity.ok(responses);
+    }
 }

@@ -64,6 +64,28 @@ export async function refreshAccessToken(refreshToken: string): Promise<TokenRef
   return res.data
 }
 
+export async function fetchUserProfile(id: number): Promise<UserProfileResponse> {
+  const res = await api.get<UserProfileResponse>(`/api/auth/user/${id}`)
+  return res.data
+}
+
+// ── Admin endpoints ────────────────────────────────────────────────────────
+
+export async function getAllUsers(): Promise<UserProfileResponse[]> {
+  const res = await api.get<UserProfileResponse[]>('/api/auth/admin/users')
+  return res.data
+}
+
+export async function addOrganizer(payload: Partial<RegisterRequest>): Promise<UserProfileResponse> {
+  const res = await api.post<UserProfileResponse>('/api/auth/admin/organizer', payload)
+  return res.data
+}
+
+export async function addRegistrant(payload: Partial<RegisterRequest>): Promise<UserProfileResponse> {
+  const res = await api.post<UserProfileResponse>('/api/auth/admin/registrants', payload)
+  return res.data
+}
+
 // ── Token helpers (localStorage) ───────────────────────────────────────────
 
 export function saveTokens(token: string, refreshToken: string) {

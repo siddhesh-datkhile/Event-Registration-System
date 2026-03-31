@@ -36,12 +36,14 @@ public class SecurityConfig {
                                                                 "/webjars/**")
                                                 .permitAll()
 
+                                                // ── Admin: Full access to user management ─────────────────
+                                                // Admin creates/manages organizers and registrants
+                                                .pathMatchers("/api/auth/admin/**").hasRole("ADMIN")
+                                                .pathMatchers("/api/admin/**").hasRole("ADMIN")
+                                                
                                                 // ── Public: No token required ─────────────────────────────
                                                 .pathMatchers("/api/auth/**").permitAll()
                                                 .pathMatchers("/api/payments/webhook").permitAll()
-                                                // ── Admin: Full access to user management ─────────────────
-                                                // Admin creates/manages organizers and registrants
-                                                .pathMatchers("/api/admin/**").hasRole("ADMIN")
 
                                                 // ── Events: Organizer CRUD, Admin full access ─────────────
                                                 // Organizers and Admin can create/update/delete events
@@ -62,6 +64,7 @@ public class SecurityConfig {
                                                 .permitAll()
 
                                                 // ── Registration: Registrant can register, Organizer can view event registrants ───────
+                                                .pathMatchers("/api/registrations/admin/**").hasRole("ADMIN")
                                                 .pathMatchers(org.springframework.http.HttpMethod.GET, "/api/registrations/event/**").hasAnyRole("ORGANIZER", "ADMIN")
                                                 .pathMatchers("/api/registrations/**").hasAnyRole("REGISTRANT", "ADMIN")
 

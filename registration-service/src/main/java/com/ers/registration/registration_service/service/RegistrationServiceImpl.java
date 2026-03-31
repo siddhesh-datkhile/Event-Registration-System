@@ -197,4 +197,20 @@ public class RegistrationServiceImpl implements RegistrationService {
             return resp;
         }).toList();
     }
+
+    @Override
+    public java.util.List<RegistrationResponse> getAllRegistrations() {
+        log.info("Fetching all registrations for Admin");
+        java.util.List<Registration> registrations = registrationRepository.findAll();
+
+        return registrations.stream().map(reg -> {
+            RegistrationResponse resp = new RegistrationResponse();
+            resp.setId(reg.getId());
+            resp.setUserId(reg.getUserId());
+            resp.setEventId(reg.getEventId());
+            resp.setRegistrationDate(reg.getCreatedAt());
+            resp.setStatus(reg.getStatus());
+            return resp;
+        }).toList();
+    }
 }
