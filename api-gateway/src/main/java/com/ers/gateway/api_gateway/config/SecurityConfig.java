@@ -61,7 +61,8 @@ public class SecurityConfig {
                                                 .pathMatchers(org.springframework.http.HttpMethod.GET, "/api/events/**")
                                                 .permitAll()
 
-                                                // ── Registration: Registrant can register for events ───────
+                                                // ── Registration: Registrant can register, Organizer can view event registrants ───────
+                                                .pathMatchers(org.springframework.http.HttpMethod.GET, "/api/registrations/event/**").hasAnyRole("ORGANIZER", "ADMIN")
                                                 .pathMatchers("/api/registrations/**").hasAnyRole("REGISTRANT", "ADMIN")
 
                                                 // ── Payments: Registrant pays and prints receipts ──────────

@@ -2,17 +2,20 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { getEventById, createEvent, updateEvent, deleteEvent, type EventStatus } from '../../api/events'
+import { getAllVenues, type Venue } from '../../api/venues'
 import { getCurrentUser } from '../../api/auth'
 
 export default function ManageEventPage() {
   const { id } = useParams<{ id: string }>()
   const isEditing = Boolean(id)
   const navigate = useNavigate()
+
   const user = getCurrentUser()
 
   const [loading, setLoading] = useState(isEditing)
   const [saving, setSaving] = useState(false)
-  
+  const [venues, setVenues] = useState<Venue[]>([])
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -21,33 +24,47 @@ export default function ManageEventPage() {
     capacity: 100,
     status: 'OPEN' as EventStatus,
     organizerId: user?.id || 0,
+    venueId: 0,
   })
 
   useEffect(() => {
-    if (isEditing && id) {
-      getEventById(id)
-        .then((data) => {
+    Promise.all([
+      isEditing && id ? getEventById(id) : Promise.resolve(null),
+      getAllVenues()
+    ])
+      .then(([eventData, venuesData]) => {
+        setVenues(venuesData)
+        
+        // If we have venues, default to the first one if creating a new event
+        if (!isEditing && venuesData.length > 0) {
+          setFormData((prev) => ({ ...prev, venueId: venuesData[0].id }))
+        }
+
+        if (eventData) {
           setFormData({
-            title: data.title,
-            description: data.description,
-            // Format datetime-local requires YYYY-MM-DDThh:mm
-            eventDate: data.eventDate ? data.eventDate.slice(0, 16) : '',
-            entryFee: data.entryFee,
-            capacity: data.capacity,
-            status: data.status,
-            organizerId: data.organizerId,
+            title: eventData.title,
+            description: eventData.description,
+            eventDate: eventData.eventDate ? eventData.eventDate.slice(0, 16) : '',
+            entryFee: eventData.entryFee,
+            capacity: eventData.capacity,
+            status: eventData.status,
+            organizerId: eventData.organizerId,
+            venueId: eventData.venueId || (venuesData.length > 0 ? venuesData[0].id : 0),
           })
-        })
-        .catch(() => toast.error('Failed to load event'))
-        .finally(() => setLoading(false))
-    }
+        }
+      })
+      .catch((err) => {
+        console.error(err)
+        toast.error('Failed to load form data')
+      })
+      .finally(() => setLoading(false))
   }, [id, isEditing])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({
       ...prev,
-      [name]: name === 'entryFee' || name === 'capacity' ? Number(value) : value,
+      [name]: (name === 'entryFee' || name === 'capacity' || name === 'venueId') ? Number(value) : value,
     }))
   }
 
@@ -162,6 +179,25 @@ export default function ManageEventPage() {
                 <option value='CLOSED'>Closed</option>
               </select>
             </div>
+          </div>
+
+          <div>
+            <label className='mb-1 block text-sm font-medium text-slate-700'>Venue</label>
+            <select
+              required
+              name='venueId'
+              value={formData.venueId}
+              onChange={handleChange}
+              className='w-full rounded-lg border border-slate-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500'
+            >
+              {venues.length === 0 ? (
+                <option value='0' disabled>No venues available. Please contact admin.</option>
+              ) : (
+                venues.map(v => (
+                  <option key={v.id} value={v.id}>{v.name} ({v.address}, {v.city})</option>
+                ))
+              )}
+            </select>
           </div>
 
           <div className='grid gap-6 sm:grid-cols-2'>

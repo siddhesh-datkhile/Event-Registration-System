@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { clearTokens, isLoggedIn } from '../api/auth'
+import { clearTokens, isLoggedIn, getCurrentUser } from '../api/auth'
 
 type NavbarProps = {
   variant?: 'default' | 'sticky'
@@ -9,17 +9,25 @@ type NavbarProps = {
 function Navbar({ variant = 'default' }: NavbarProps) {
   const navigate = useNavigate()
   const [loggedIn, setLoggedIn] = useState(isLoggedIn())
+  const [user, setUser] = useState(getCurrentUser())
 
   useEffect(() => {
-    const handleAuthChange = () => setLoggedIn(isLoggedIn())
+    const handleAuthChange = () => {
+      setLoggedIn(isLoggedIn())
+      setUser(getCurrentUser())
+    }
     window.addEventListener('auth-change', handleAuthChange)
     return () => window.removeEventListener('auth-change', handleAuthChange)
   }, [])
 
   const handleLogout = () => {
     clearTokens()
+    setUser(null)
     navigate('/login')
   }
+
+  const isOrganizer = user?.roles?.includes('ROLE_ORGANIZER') || user?.roles?.includes('ORGANIZER')
+  const dashboardPath = isOrganizer ? '/organizer/dashboard' : '/dashboard'
 
   return (
     <header
@@ -55,7 +63,7 @@ function Navbar({ variant = 'default' }: NavbarProps) {
           {loggedIn ? (
             <>
               <NavLink
-                to='/dashboard'
+                to={dashboardPath}
                 className={({ isActive }) =>
                   [
                     'text-slate-700 hover:text-slate-900',

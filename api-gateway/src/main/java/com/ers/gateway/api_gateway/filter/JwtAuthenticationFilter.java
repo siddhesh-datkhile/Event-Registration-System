@@ -29,16 +29,14 @@ public class JwtAuthenticationFilter implements WebFilter, Ordered {
     private static final List<String> PUBLIC_PATHS = List.of(
             "/api/auth/login",
             "/api/auth/register",
-            "/api/auth/refreshtoken",
-            "/api/events");         // GET /api/events/** is public (browse & detail)
+            "/api/auth/refreshtoken");
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
-        String path = request.getURI().getPath();
 
         // Skip JWT validation for public routes
-        if (isPublicPath(path)) {
+        if (isPublicPath(request)) {
             return chain.filter(exchange);
         }
 
@@ -94,7 +92,14 @@ public class JwtAuthenticationFilter implements WebFilter, Ordered {
                 .contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication));
     }
 
-    private boolean isPublicPath(String path) {
+    private boolean isPublicPath(ServerHttpRequest request) {
+        String path = request.getURI().getPath();
+        String method = request.getMethod().name();
+
+        if (path.startsWith("/api/events") && "GET".equalsIgnoreCase(method)) {
+            return true;
+        }
+
         return PUBLIC_PATHS.stream().anyMatch(path::startsWith);
     }
 
