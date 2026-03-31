@@ -15,6 +15,8 @@ public interface UserService {
 
     UserProfileResponse getUserProfileById(Long id);
 
+    java.util.List<UserProfileResponse> getAllUsers();
+
     OrganizerResponse createOrganizer(OrganizerRequest request);
 
     RegistrantResponse createRegistrant(RegistrantRequest request);

@@ -130,7 +130,7 @@ export default function AdminUsersPage() {
                     <td className='px-6 py-4 text-slate-600'>{u.email}</td>
                     <td className='px-6 py-4'>
                       <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold
-                        ${u.role === 'ADMIN' ? 'bg-red-100 text-red-800' : 
+                        ${u.role === 'ADMIN' ? 'bg-red-100 text-red-800' :
                           u.role === 'ORGANIZER' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'
                         }`}
                       >
@@ -139,7 +139,7 @@ export default function AdminUsersPage() {
                     </td>
                     <td className='px-6 py-4'>
                       <span className='inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-800'>
-                        {u.status || 'ACTIVE'}
+                        ACTIVE
                       </span>
                     </td>
                   </tr>

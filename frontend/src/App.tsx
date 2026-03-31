@@ -46,6 +46,10 @@ function App() {
           <Route element={<ProtectedRoute allowedRoles={['ORGANIZER']} />}>
             <Route path='/organizer/dashboard' element={<OrganizerDashboard />} />
             <Route path='/organizer/events' element={<OrganizerEventsPage />} />
+          </Route>
+
+          {/* Shared Routes: Organizers & Admins */}
+          <Route element={<ProtectedRoute allowedRoles={['ORGANIZER', 'ADMIN']} />}>
             <Route path='/organizer/events/new' element={<ManageEventPage />} />
             <Route path='/organizer/events/:id/edit' element={<ManageEventPage />} />
             <Route path='/organizer/events/:id/attendees' element={<EventAttendeesPage />} />

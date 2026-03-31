@@ -62,6 +62,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public java.util.List<UserProfileResponse> getAllUsers() {
+        log.debug("Fetching all users for Admin");
+        return userRepository.findAll().stream()
+                .map(user -> {
+                    UserProfile profile = user.getProfile();
+                    return new UserProfileResponse(
+                            user.getId(),
+                            profile != null ? profile.getName() : null,
+                            user.getEmail(),
+                            user.getRole(),
+                            user.getStatus(),
+                            profile != null ? profile.getPhone() : null,
+                            profile != null ? profile.getAddress() : null,
+                            profile != null ? profile.getDob() : null
+                    );
+                }).collect(java.util.stream.Collectors.toList());
+    }
+
+    @Override
     public OrganizerResponse createOrganizer(OrganizerRequest request) {
         log.info("Attempting to create Organizer with email: {}", request.getEmail());
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
