@@ -38,6 +38,7 @@ public class SecurityConfig {
 
                                                 // ── Public: No token required ─────────────────────────────
                                                 .pathMatchers("/api/auth/**").permitAll()
+                                                .pathMatchers("/api/payments/webhook").permitAll()
                                                 // ── Admin: Full access to user management ─────────────────
                                                 // Admin creates/manages organizers and registrants
                                                 .pathMatchers("/api/admin/**").hasRole("ADMIN")

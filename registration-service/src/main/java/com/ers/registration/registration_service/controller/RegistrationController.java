@@ -42,4 +42,11 @@ public class RegistrationController {
         java.util.List<RegistrationResponse> responses = registrationService.getUserRegistrations(userId);
         return ResponseEntity.ok(responses);
     }
+
+    @GetMapping("/event/{eventId}")
+    public ResponseEntity<java.util.List<RegistrationResponse>> getEventRegistrations(
+            @PathVariable Long eventId) {
+        java.util.List<RegistrationResponse> responses = registrationService.getEventRegistrations(eventId);
+        return ResponseEntity.ok(responses);
+    }
 }

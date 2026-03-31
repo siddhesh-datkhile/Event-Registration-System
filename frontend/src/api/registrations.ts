@@ -22,3 +22,8 @@ export async function cancelRegistration(registrationId: number): Promise<Regist
   const res = await api.post<RegistrationResponse>(`/api/registrations/${registrationId}/cancel`)
   return res.data
 }
+
+export async function getEventRegistrations(eventId: number | string): Promise<RegistrationResponse[]> {
+  const res = await api.get<RegistrationResponse[]>(`/api/registrations/event/${eventId}`)
+  return res.data
+}

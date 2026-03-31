@@ -10,6 +10,10 @@ import EventDetailPage from './pages/EventDetailPage.tsx'
 import ProtectedRoute from './Components/ProtectedRoute.tsx'
 import DashboardPage from './pages/registrant/DashboardPage.tsx'
 import MyRegistrationsPage from './pages/registrant/MyRegistrationsPage.tsx'
+import OrganizerDashboard from './pages/organizer/OrganizerDashboard.tsx'
+import OrganizerEventsPage from './pages/organizer/OrganizerEventsPage.tsx'
+import ManageEventPage from './pages/organizer/ManageEventPage.tsx'
+import EventAttendeesPage from './pages/organizer/EventAttendeesPage.tsx'
 function App() {
   return (
     <div>
@@ -33,6 +37,14 @@ function App() {
             <Route path='/dashboard/registrations' element={<MyRegistrationsPage />} />
           </Route>
 
+          {/* Protected Routes for Organizers */}
+          <Route element={<ProtectedRoute allowedRoles={['ORGANIZER']} />}>
+            <Route path='/organizer/dashboard' element={<OrganizerDashboard />} />
+            <Route path='/organizer/events' element={<OrganizerEventsPage />} />
+            <Route path='/organizer/events/new' element={<ManageEventPage />} />
+            <Route path='/organizer/events/:id/edit' element={<ManageEventPage />} />
+            <Route path='/organizer/events/:id/attendees' element={<EventAttendeesPage />} />
+          </Route>
 
         </Route>
       </Routes>

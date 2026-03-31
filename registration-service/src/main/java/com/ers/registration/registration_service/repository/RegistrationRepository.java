@@ -11,7 +11,9 @@ import java.util.List;
 @Repository
 public interface RegistrationRepository extends JpaRepository<Registration, Long> {
 
-    boolean existsByUserIdAndEventId(Long userId, Long eventId);
+    boolean existsByUserIdAndEventIdAndStatusNot(Long userId, Long eventId, RegistrationStatus status);
+
+    java.util.Optional<Registration> findByUserIdAndEventId(Long userId, Long eventId);
 
     long countByEventId(Long eventId);
 

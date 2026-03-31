@@ -8,8 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "registrations",
-       uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "event_id"}))
+@Table(name = "registrations")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

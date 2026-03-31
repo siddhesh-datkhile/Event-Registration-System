@@ -21,7 +21,8 @@ export interface RegisterRequest {
 
 export interface LoginResponse {
   token: string
-  refreshToken: string
+  refreshToken: string,
+  user: UserProfileResponse
 }
 
 export interface TokenRefreshResponse {
@@ -83,4 +84,27 @@ export function getToken(): string | null {
 
 export function isLoggedIn(): boolean {
   return !!getToken()
+}
+
+export function decodeToken(token: string) {
+  try {
+    const base64Url = token.split('.')[1]
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
+    const jsonPayload = decodeURIComponent(
+      window.atob(base64)
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    )
+    return JSON.parse(jsonPayload)
+  } catch (e) {
+    return null
+  }
+}
+
+export function getCurrentUser() {
+  const token = getToken()
+  if (!token) return null
+  const decoded = decodeToken(token)
+  return decoded ? { id: decoded.userId, roles: decoded.roles, email: decoded.sub } : null
 }

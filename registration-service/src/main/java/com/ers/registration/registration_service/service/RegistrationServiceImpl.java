@@ -28,8 +28,8 @@ public class RegistrationServiceImpl implements RegistrationService {
     public RegistrationResponse register(RegistrationRequest request, Long userId) {
         log.info("Processing registration for user ID: {} to event ID: {}", userId, request.getEventId());
 
-        // 1. Check for duplicate registration
-        if (registrationRepository.existsByUserIdAndEventId(userId, request.getEventId())) {
+        // 1. Check for active duplicate registration
+        if (registrationRepository.existsByUserIdAndEventIdAndStatusNot(userId, request.getEventId(), RegistrationStatus.CANCELLED)) {
             log.warn("Duplicate registration attempt: user ID {} is already registered for event ID {}", userId,
                     request.getEventId());
             throw new DuplicateRegistrationException("User is already registered for this event.");
@@ -168,9 +168,25 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     public java.util.List<RegistrationResponse> getUserRegistrations(Long userId) {
-        log.info("Fetching CONFIRMED registrations for user ID: {}", userId);
-        java.util.List<Registration> registrations = registrationRepository.findByUserIdAndStatus(userId, RegistrationStatus.CONFIRMED);
-        
+        log.info("Fetching registrations for user ID: {}", userId);
+        java.util.List<Registration> registrations = registrationRepository.findByUserId(userId);
+
+        return registrations.stream().map(reg -> {
+            RegistrationResponse resp = new RegistrationResponse();
+            resp.setId(reg.getId());
+            resp.setUserId(reg.getUserId());
+            resp.setEventId(reg.getEventId());
+            resp.setRegistrationDate(reg.getCreatedAt());
+            resp.setStatus(reg.getStatus());
+            return resp;
+        }).toList();
+    }
+
+    @Override
+    public java.util.List<RegistrationResponse> getEventRegistrations(Long eventId) {
+        log.info("Fetching registrations for event ID: {}", eventId);
+        java.util.List<Registration> registrations = registrationRepository.findByEventId(eventId);
+
         return registrations.stream().map(reg -> {
             RegistrationResponse resp = new RegistrationResponse();
             resp.setId(reg.getId());

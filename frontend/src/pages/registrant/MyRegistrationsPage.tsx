@@ -4,6 +4,8 @@ import { getMyRegistrations, cancelRegistration, type RegistrationResponse } fro
 import { getAllEvents, type Event } from '../../api/events'
 import { EventCard } from '../../Components/EventCard'
 import { toast } from 'react-toastify'
+import { getReceiptHtml } from '../../api/receipts'
+import { createPaymentOrder } from '../../api/payments'
 
 interface RegistrationRow extends RegistrationResponse {
   event?: Event
@@ -61,6 +63,49 @@ function MyRegistrationsPage() {
     }
   }
 
+  const handlePayNow = async (regId: number, event: Event) => {
+    try {
+      toast.info('Initializing payment...')
+      const paymentOrder = await createPaymentOrder(regId)
+      
+      const options = {
+          key: "rzp_test_SUah4LvPVpASiA",
+          amount: paymentOrder.amount * 100, // Razorpay expects paise
+          currency: paymentOrder.currency,
+          name: "Event Registration System",
+          description: `Registration for ${event.title}`,
+          order_id: paymentOrder.razorpayOrderId,
+          handler: function () {
+              toast.success('Payment successful!')
+              setRegistrations((prev) =>
+                  prev.map((r) => (r.id === regId ? { ...r, status: 'CONFIRMED' } : r))
+              )
+          },
+          theme: { color: "#4f46e5" }
+      };
+      
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on('payment.failed', function (response: any){
+          toast.error(`Payment failed: ${response.error.description}`);
+      });
+      rzp.open();
+    } catch (err: any) {
+      toast.error('Failed to initialize payment.')
+    }
+  }
+
+  const [receiptHtml, setReceiptHtml] = useState<string | null>(null)
+
+  const handleViewReceipt = async (regId: number) => {
+    try {
+      toast.info('Fetching receipt...', { autoClose: 1000 })
+      const html = await getReceiptHtml(regId)
+      setReceiptHtml(html)
+    } catch (error) {
+      toast.error('Failed to load receipt.')
+    }
+  }
+
   return (
     <div className='mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8'>
       <div className='sm:flex sm:items-center'>
@@ -110,14 +155,32 @@ function MyRegistrationsPage() {
                         <span className='font-medium text-slate-900'>{new Date(reg.registrationDate).toLocaleDateString()}</span>
                       </div>
 
-                      {(reg.status === 'CONFIRMED' || reg.status === 'PENDING') && (
-                        <button
-                          onClick={() => handleCancel(reg.id)}
-                          className='mt-2 inline-flex w-full items-center justify-center rounded-lg border border-red-200 bg-white px-3 py-2 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50 hover:text-red-700'
-                        >
-                          Cancel Registration
-                        </button>
-                      )}
+                      <div className='mt-2 flex flex-col gap-2'>
+                        {reg.status === 'PENDING' && (
+                          <button
+                            onClick={() => handlePayNow(reg.id, reg.event!)}
+                            className='inline-flex w-full items-center justify-center rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-700'
+                          >
+                            Pay Now
+                          </button>
+                        )}
+                        {reg.status === 'CONFIRMED' && (
+                          <button
+                            onClick={() => handleViewReceipt(reg.id)}
+                            className='inline-flex w-full items-center justify-center rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700'
+                          >
+                            View Receipt
+                          </button>
+                        )}
+                        {(reg.status === 'CONFIRMED' || reg.status === 'PENDING') && (
+                          <button
+                            onClick={() => handleCancel(reg.id)}
+                            className='inline-flex w-full items-center justify-center rounded-lg border border-red-200 bg-white px-3 py-2 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50 hover:text-red-700'
+                          >
+                            Cancel Registration
+                          </button>
+                        )}
+                      </div>
                     </div>
                   }
                 />
@@ -130,6 +193,26 @@ function MyRegistrationsPage() {
           </div>
         )}
       </div>
+
+      {/* Receipt Modal */}
+      {receiptHtml && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="relative w-full max-w-3xl max-h-[90vh] bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col">
+            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4 bg-slate-50">
+              <h2 className="text-lg font-semibold text-slate-800">Registration Receipt</h2>
+              <button 
+                onClick={() => setReceiptHtml(null)} 
+                className="rounded-full p-2 text-slate-500 hover:bg-slate-200 hover:text-slate-800 transition-colors"
+                title="Close"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto" dangerouslySetInnerHTML={{ __html: receiptHtml }} />
+          </div>
+        </div>
+      )}
+
     </div>
   )
 }

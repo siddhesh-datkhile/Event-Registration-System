@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom'
 import { getEventById, type Event, type EventStatus } from '../api/events'
 import { createRegistration, getMyRegistrations } from '../api/registrations'
 import { isLoggedIn } from '../api/auth'
+import { createPaymentOrder } from '../api/payments'
 import { toast } from 'react-toastify'
 
 const STATUS_LABELS: Record<EventStatus, string> = {
@@ -62,9 +63,43 @@ function EventDetailPage() {
 
     setRegistering(true)
     try {
-      await createRegistration(event.id)
-      toast.success('Successfully registered for the event!')
-      navigate('/dashboard/registrations')
+      const reg = await createRegistration(event.id)
+      
+      if (event.entryFee > 0) {
+        toast.info('Initializing payment...')
+        const paymentOrder = await createPaymentOrder(reg.id)
+        
+        const options = {
+            key: "rzp_test_SUah4LvPVpASiA",
+            amount: paymentOrder.amount * 100, // Razorpay expects amount in paise
+            currency: paymentOrder.currency,
+            name: "Event Registration System",
+            description: `Registration for ${event.title}`,
+            order_id: paymentOrder.razorpayOrderId,
+            handler: function () {
+                toast.success('Payment successful! Registration confirmed.')
+                navigate('/dashboard/registrations')
+            },
+            prefill: {
+                name: "User",
+                email: "user@example.com",
+                contact: "9999999999"
+            },
+            theme: {
+                color: "#4f46e5"
+            }
+        };
+        
+        const rzp = new (window as any).Razorpay(options);
+        rzp.on('payment.failed', function (response: any){
+            toast.error(`Payment failed: ${response.error.description}`);
+            navigate('/dashboard/registrations')
+        });
+        rzp.open();
+      } else {
+        toast.success('Successfully registered for the free event!')
+        navigate('/dashboard/registrations')
+      }
     } catch (err: any) {
       if (err.response?.status === 409 || err.response?.data?.message?.includes('already')) {
         toast.error('You are already registered for this event.')
