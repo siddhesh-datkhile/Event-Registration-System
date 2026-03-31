@@ -19,6 +19,10 @@ import AdminDashboardPage from './pages/admin/AdminDashboardPage.tsx'
 import AdminUsersPage from './pages/admin/AdminUsersPage.tsx'
 import AdminEventsPage from './pages/admin/AdminEventsPage.tsx'
 import AdminRegistrationsPage from './pages/admin/AdminRegistrationsPage.tsx'
+import AdminVenuesPage from './pages/admin/AdminVenuesPage.tsx'
+import UserProfilePage from './pages/UserProfilePage.tsx'
+import UnauthorizedPage from './pages/UnauthorizedPage.tsx'
+import ErrorPage from './pages/ErrorPage.tsx'
 function App() {
   return (
     <div>
@@ -61,8 +65,16 @@ function App() {
             <Route path='/admin/users' element={<AdminUsersPage />} />
             <Route path='/admin/events' element={<AdminEventsPage />} />
             <Route path='/admin/registrations' element={<AdminRegistrationsPage />} />
+            <Route path='/admin/venues' element={<AdminVenuesPage />} />
+          </Route>
+          {/* Shared Route: Profile Page for all authenticated users */}
+          <Route element={<ProtectedRoute allowedRoles={['REGISTRANT', 'ORGANIZER', 'ADMIN']} />}>
+            <Route path='/profile' element={<UserProfilePage />} />
           </Route>
 
+          {/* Fallbacks */}
+          <Route path='/unauthorized' element={<UnauthorizedPage />} />
+          <Route path='*' element={<ErrorPage />} />
         </Route>
       </Routes>
 

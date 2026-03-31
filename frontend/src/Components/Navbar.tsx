@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { clearTokens, isLoggedIn, getCurrentUser } from '../api/auth'
+import { UserCircle } from 'lucide-react'
 
 type NavbarProps = {
   variant?: 'default' | 'sticky'
@@ -74,6 +75,9 @@ function Navbar({ variant = 'default' }: NavbarProps) {
               >
                 Dashboard
               </NavLink>
+              <Link to='/profile' className='text-slate-700 hover:text-indigo-600 transition-colors' title='User Profile'>
+                <UserCircle className='w-6 h-6' />
+              </Link>
               <button
                 onClick={handleLogout}
                 className='text-slate-700 hover:text-slate-900'

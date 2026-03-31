@@ -17,6 +17,14 @@ export interface RegisterRequest {
   role: 'ORGANIZER' | 'REGISTRANT'
 }
 
+export interface UpdateProfileRequest {
+  name: string
+  phone: string
+  address: string
+  dob: string
+}
+
+
 // ── Response types ─────────────────────────────────────────────────────────
 
 export interface LoginResponse {
@@ -68,6 +76,12 @@ export async function fetchUserProfile(id: number): Promise<UserProfileResponse>
   const res = await api.get<UserProfileResponse>(`/api/auth/user/${id}`)
   return res.data
 }
+
+export async function updateProfile(payload: UpdateProfileRequest): Promise<UserProfileResponse> {
+  const res = await api.put<UserProfileResponse>('/api/auth/user/profile', payload)
+  return res.data
+}
+
 
 // ── Admin endpoints ────────────────────────────────────────────────────────
 

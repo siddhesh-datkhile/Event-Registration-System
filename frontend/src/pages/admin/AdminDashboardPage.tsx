@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { getAllEvents } from '../../api/events'
 import { getAllUsers } from '../../api/auth'
 import { getAllRegistrations } from '../../api/registrations'
+import { getAllVenues } from '../../api/venues'
 
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState({
@@ -11,6 +12,7 @@ export default function AdminDashboardPage() {
     registrants: 0,
     events: 0,
     registrations: 0,
+    venues: 0,
   })
   const [loading, setLoading] = useState(true)
 
@@ -18,15 +20,17 @@ export default function AdminDashboardPage() {
     Promise.all([
       getAllUsers().catch(() => []), 
       getAllEvents().catch(() => []), 
-      getAllRegistrations().catch(() => [])
+      getAllRegistrations().catch(() => []),
+      getAllVenues().catch(() => [])
     ])
-      .then(([users, events, regs]) => {
+      .then(([users, events, regs, venuesList]) => {
         setStats({
           totalUsers: users.length,
           organizers: users.filter((u) => u.role === 'ORGANIZER').length,
           registrants: users.filter((u) => u.role === 'REGISTRANT').length,
           events: events.length,
           registrations: regs.length,
+          venues: venuesList.length,
         })
       })
       .finally(() => setLoading(false))
@@ -65,6 +69,10 @@ export default function AdminDashboardPage() {
         <Link to='/admin/events' className='rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:ring-2 ring-indigo-500 transition-all'>
           <h3 className='text-sm font-medium text-slate-500'>Total Events</h3>
           <p className='mt-2 text-3xl font-bold text-slate-900'>{stats.events}</p>
+        </Link>
+        <Link to='/admin/venues' className='rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:ring-2 ring-indigo-500 transition-all'>
+          <h3 className='text-sm font-medium text-slate-500'>Platform Venues</h3>
+          <p className='mt-2 text-3xl font-bold text-slate-900'>{stats.venues}</p>
         </Link>
         <Link to='/admin/registrations' className='rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:ring-2 ring-indigo-500 transition-all sm:col-span-2 lg:col-span-4'>
           <h3 className='text-sm font-medium text-slate-500'>Platform Registrations</h3>
