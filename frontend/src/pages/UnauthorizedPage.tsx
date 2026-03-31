@@ -6,7 +6,7 @@ export default function UnauthorizedPage() {
 
   return (
     <div className='flex min-h-[80vh] flex-col items-center justify-center px-4 py-12'>
-      <div className='flex max-w-lg flex-col items-center rounded-3xl border border-red-100 bg-white p-10 text-center shadow-lg'>
+      <div className='flex max-w-lg flex-col items-center rounded-3xl border border-red-100 bg-slate-50 p-10 text-center shadow-lg'>
         <div className='mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-red-50 text-red-500'>
           <ShieldAlert className='h-12 w-12' />
         </div>
@@ -19,7 +19,7 @@ export default function UnauthorizedPage() {
         <div className='flex w-full flex-col gap-3 sm:flex-row'>
           <button
             onClick={() => navigate(-1)}
-            className='inline-flex flex-1 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-2'
+            className='inline-flex flex-1 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 px-5 py-3 text-sm font-semibold text-slate-600 shadow-sm hover:bg-white focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-2'
           >
             <ArrowLeft className='mr-2 h-4 w-4' />
             Go Back
@@ -27,7 +27,7 @@ export default function UnauthorizedPage() {
           
           <Link
             to='/'
-            className='inline-flex flex-1 items-center justify-center rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
+            className='inline-flex flex-1 items-center justify-center rounded-xl bg-violet-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:ring-offset-2'
           >
             <Home className='mr-2 h-4 w-4' />
             Return Home

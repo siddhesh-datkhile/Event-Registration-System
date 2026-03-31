@@ -13,7 +13,7 @@ const STATUS_LABELS: Record<EventStatus, string> = {
 
 const STATUS_COLORS: Record<EventStatus, string> = {
   OPEN: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20',
-  CLOSED: 'bg-slate-50 text-slate-600 ring-slate-500/20',
+  CLOSED: 'bg-white text-slate-600 ring-slate-500/20',
 }
 
 function formatDate(iso: string) {
@@ -30,15 +30,15 @@ function formatDate(iso: string) {
 function SkeletonDetail() {
   return (
     <div className='animate-pulse'>
-      <div className='h-4 w-28 rounded bg-slate-200' />
-      <div className='mt-6 h-10 w-2/3 rounded-lg bg-slate-200' />
-      <div className='mt-3 h-5 w-24 rounded-full bg-slate-200' />
+      <div className='h-4 w-28 rounded bg-slate-100' />
+      <div className='mt-6 h-10 w-2/3 rounded-lg bg-slate-100' />
+      <div className='mt-3 h-5 w-24 rounded-full bg-slate-100' />
       <div className='mt-8 space-y-3'>
         {[100, 80, 90, 70].map((w, i) => (
-          <div key={i} className={`h-4 rounded bg-slate-100`} style={{ width: `${w}%` }} />
+          <div key={i} className={`h-4 rounded bg-white`} style={{ width: `${w}%` }} />
         ))}
       </div>
-      <div className='mt-8 h-12 w-48 rounded-xl bg-slate-200' />
+      <div className='mt-8 h-12 w-48 rounded-xl bg-slate-100' />
     </div>
   )
 }
@@ -181,12 +181,12 @@ function EventDetailPage() {
 
             {/* Details grid */}
             <dl className='mt-8 grid gap-4 sm:grid-cols-2'>
-              <div className='rounded-2xl border border-slate-200 bg-white p-5'>
+              <div className='rounded-2xl border border-slate-200 bg-slate-50 p-5'>
                 <dt className='text-sm font-medium text-slate-500'>Date & Time</dt>
                 <dd className='mt-1 font-semibold text-slate-900'>{formatDate(event.eventDate)}</dd>
               </div>
 
-              <div className='rounded-2xl border border-slate-200 bg-white p-5'>
+              <div className='rounded-2xl border border-slate-200 bg-slate-50 p-5'>
                 <dt className='text-sm font-medium text-slate-500'>Entry Fee</dt>
                 <dd className='mt-1 text-2xl font-bold text-slate-900'>
                   {event.entryFee === 0 ? (
@@ -197,17 +197,17 @@ function EventDetailPage() {
                 </dd>
               </div>
 
-              <div className='rounded-2xl border border-slate-200 bg-white p-5'>
+              <div className='rounded-2xl border border-slate-200 bg-slate-50 p-5'>
                 <dt className='text-sm font-medium text-slate-500'>Total Capacity</dt>
                 <dd className='mt-1 text-2xl font-bold text-slate-900'>{event.capacity}</dd>
               </div>
 
-              <div className='rounded-2xl border border-slate-200 bg-white p-5'>
+              <div className='rounded-2xl border border-slate-200 bg-slate-50 p-5'>
                 <dt className='mb-2 text-sm font-medium text-slate-500'>Seat Availability</dt>
                 <dd className='font-semibold text-slate-900'>
                   {event.availableSeats} of {event.capacity} left
                 </dd>
-                <div className='mt-2 h-2 w-full rounded-full bg-slate-100'>
+                <div className='mt-2 h-2 w-full rounded-full bg-white'>
                   <div
                     className={[
                       'h-2 rounded-full transition-all',
@@ -226,7 +226,7 @@ function EventDetailPage() {
 
           {/* Sidebar CTA */}
           <div className='lg:col-span-1'>
-            <div className='sticky top-24 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm'>
+            <div className='sticky top-24 rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm'>
               <div className='text-center'>
                 <div className='text-3xl font-bold text-slate-900'>
                   {event.entryFee === 0 ? (
@@ -238,12 +238,12 @@ function EventDetailPage() {
                 <p className='mt-1 text-sm text-slate-500'>per person</p>
               </div>
 
-              <div className='mt-4 rounded-xl bg-slate-50 px-4 py-3 text-sm'>
+              <div className='mt-4 rounded-xl bg-white px-4 py-3 text-sm'>
                 <div className='flex items-center justify-between text-slate-600'>
                   <span>Available seats</span>
                   <span className='font-semibold text-slate-900'>{event.availableSeats}</span>
                 </div>
-                <div className='mt-2 h-1.5 w-full rounded-full bg-slate-200'>
+                <div className='mt-2 h-1.5 w-full rounded-full bg-slate-100'>
                   <div
                     className={[
                       'h-1.5 rounded-full',
@@ -255,7 +255,7 @@ function EventDetailPage() {
               </div>
 
               {event.status === 'CLOSED' ? (
-                <div className='rounded-2xl bg-slate-50 p-4 text-center text-sm font-semibold text-slate-600 border border-slate-200'>
+                <div className='rounded-2xl bg-white p-4 text-center text-sm font-semibold text-slate-600 border border-slate-200'>
                   This event is closed.
                 </div>
               ) : hasRegistered ? (
@@ -264,21 +264,21 @@ function EventDetailPage() {
                     You are already registered!
                   </div>
                   <button
-                    className='mt-3 flex w-full items-center justify-center rounded-xl border border-indigo-600 bg-white px-5 py-3 text-sm font-semibold text-indigo-600 transition-colors hover:bg-indigo-50'
+                    className='mt-3 flex w-full items-center justify-center rounded-xl border border-indigo-600 bg-slate-50 px-5 py-3 text-sm font-semibold text-violet-600 transition-colors hover:bg-violet-50'
                     onClick={() => navigate('/dashboard/registrations')}
                   >
                     View My Tickets
                   </button>
                 </div>
               ) : event.availableSeats === 0 ? (
-                <div className='rounded-2xl bg-slate-50 p-4 text-center text-sm font-semibold text-slate-600 border border-slate-200'>
+                <div className='rounded-2xl bg-white p-4 text-center text-sm font-semibold text-slate-600 border border-slate-200'>
                   Tickets Sold Out
                 </div>
               ) : (
                 <button
                   onClick={handleRegister}
                   disabled={registering}
-                  className='mt-5 flex w-full items-center justify-center rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-70 disabled:cursor-not-allowed'
+                  className='mt-5 flex w-full items-center justify-center rounded-xl bg-violet-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-violet-700 disabled:opacity-70 disabled:cursor-not-allowed'
                 >
                   {registering ? 'Registering...' : 'Register for this Event'}
                 </button>

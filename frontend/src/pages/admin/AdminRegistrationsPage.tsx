@@ -65,10 +65,10 @@ export default function AdminRegistrationsPage() {
         </div>
       </div>
 
-      <div className='mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm'>
+      <div className='mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 shadow-sm'>
         <div className='overflow-x-auto'>
           <table className='w-full whitespace-nowrap text-left text-sm'>
-            <thead className='border-b border-slate-200 bg-slate-50 text-slate-600'>
+            <thead className='border-b border-slate-200 bg-white text-slate-600'>
               <tr>
                 <th className='px-6 py-4 font-semibold'>Reg ID</th>
                 <th className='px-6 py-4 font-semibold'>Event Name</th>
@@ -79,14 +79,14 @@ export default function AdminRegistrationsPage() {
             </thead>
             <tbody className='divide-y divide-slate-100'>
               {registrations.map((reg) => (
-                <tr key={reg.id} className='hover:bg-slate-50'>
+                <tr key={reg.id} className='hover:bg-white'>
                   <td className='px-6 py-4 text-slate-900 font-medium'>#{reg.id}</td>
                   <td className='px-6 py-4 text-slate-900'>
                     {reg.event?.title || `Event ID: ${reg.eventId}`}
                   </td>
                   <td className='px-6 py-4'>
                     <div className='flex flex-col'>
-                      <span className='font-medium text-slate-800'>{reg.userProfile?.name || `User ${reg.userId}`}</span>
+                      <span className='font-medium text-slate-900'>{reg.userProfile?.name || `User ${reg.userId}`}</span>
                       <span className='text-xs text-slate-500'>{reg.userProfile?.email || 'N/A'}</span>
                     </div>
                   </td>

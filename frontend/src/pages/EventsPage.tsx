@@ -12,19 +12,19 @@ const STATUS_LABELS: Record<EventStatus, string> = {
 // ---- Skeleton card ----
 function SkeletonCard() {
   return (
-    <div className='animate-pulse rounded-2xl border border-slate-200 bg-white p-6'>
+    <div className='animate-pulse rounded-2xl border border-slate-200 bg-slate-50 p-6'>
       <div className='mb-4 flex items-center justify-between'>
-        <div className='h-5 w-20 rounded-full bg-slate-200' />
-        <div className='h-5 w-16 rounded-full bg-slate-200' />
+        <div className='h-5 w-20 rounded-full bg-slate-100' />
+        <div className='h-5 w-16 rounded-full bg-slate-100' />
       </div>
-      <div className='h-6 w-3/4 rounded-lg bg-slate-200' />
-      <div className='mt-3 h-4 w-full rounded bg-slate-100' />
-      <div className='mt-1 h-4 w-5/6 rounded bg-slate-100' />
+      <div className='h-6 w-3/4 rounded-lg bg-slate-100' />
+      <div className='mt-3 h-4 w-full rounded bg-white' />
+      <div className='mt-1 h-4 w-5/6 rounded bg-white' />
       <div className='mt-6 flex items-center justify-between'>
-        <div className='h-4 w-24 rounded bg-slate-200' />
-        <div className='h-4 w-20 rounded bg-slate-200' />
+        <div className='h-4 w-24 rounded bg-slate-100' />
+        <div className='h-4 w-20 rounded bg-slate-100' />
       </div>
-      <div className='mt-5 h-9 w-full rounded-lg bg-slate-200' />
+      <div className='mt-5 h-9 w-full rounded-lg bg-slate-100' />
     </div>
   )
 }
@@ -65,7 +65,7 @@ function EventsPage() {
           placeholder='Search events…'
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className='w-full max-w-sm rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none focus:border-indigo-500 sm:w-80'
+          className='w-full max-w-sm rounded-xl border border-slate-200 px-4 py-2.5 text-sm outline-none focus:border-violet-600 sm:w-80'
         />
 
         <div className='flex flex-wrap gap-2'>
@@ -74,8 +74,8 @@ function EventsPage() {
             className={[
               'rounded-full px-4 py-1.5 text-sm font-semibold transition-colors',
               activeStatus === 'ALL'
-                ? 'bg-indigo-600 text-white'
-                : 'border border-slate-300 text-slate-700 hover:bg-slate-50',
+                ? 'bg-violet-600 text-white'
+                : 'border border-slate-200 text-slate-600 hover:bg-white',
             ].join(' ')}
           >
             All
@@ -87,8 +87,8 @@ function EventsPage() {
               className={[
                 'rounded-full px-4 py-1.5 text-sm font-semibold transition-colors',
                 activeStatus === s
-                  ? 'bg-indigo-600 text-white'
-                  : 'border border-slate-300 text-slate-700 hover:bg-slate-50',
+                  ? 'bg-violet-600 text-white'
+                  : 'border border-slate-200 text-slate-600 hover:bg-white',
               ].join(' ')}
             >
               {STATUS_LABELS[s]}

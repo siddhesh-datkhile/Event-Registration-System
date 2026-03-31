@@ -112,7 +112,7 @@ export default function ManageEventPage() {
         </Link>
       </div>
 
-      <div className='rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8'>
+      <div className='rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm sm:p-8'>
         <div className='flex items-center justify-between'>
           <h1 className='text-2xl font-bold text-slate-900'>
             {isEditing ? 'Edit Event' : 'Create New Event'}
@@ -130,50 +130,50 @@ export default function ManageEventPage() {
 
         <form onSubmit={handleSubmit} className='mt-8 space-y-6'>
           <div>
-            <label className='mb-1 block text-sm font-medium text-slate-700'>Event Title</label>
+            <label className='mb-1 block text-sm font-medium text-slate-600'>Event Title</label>
             <input
               required
               type='text'
               name='title'
               value={formData.title}
               onChange={handleChange}
-              className='w-full rounded-lg border border-slate-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500'
+              className='w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-violet-600 focus:outline-none focus:ring-1 focus:ring-violet-600'
               placeholder='e.g. Annual Tech Conference'
             />
           </div>
 
           <div>
-            <label className='mb-1 block text-sm font-medium text-slate-700'>Description</label>
+            <label className='mb-1 block text-sm font-medium text-slate-600'>Description</label>
             <textarea
               required
               name='description'
               value={formData.description}
               onChange={handleChange}
               rows={4}
-              className='w-full rounded-lg border border-slate-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500'
+              className='w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-violet-600 focus:outline-none focus:ring-1 focus:ring-violet-600'
               placeholder='Describe the event details...'
             />
           </div>
 
           <div className='grid gap-6 sm:grid-cols-2'>
             <div>
-              <label className='mb-1 block text-sm font-medium text-slate-700'>Date & Time</label>
+              <label className='mb-1 block text-sm font-medium text-slate-600'>Date & Time</label>
               <input
                 required
                 type='datetime-local'
                 name='eventDate'
                 value={formData.eventDate}
                 onChange={handleChange}
-                className='w-full rounded-lg border border-slate-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500'
+                className='w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-violet-600 focus:outline-none focus:ring-1 focus:ring-violet-600'
               />
             </div>
             <div>
-              <label className='mb-1 block text-sm font-medium text-slate-700'>Status</label>
+              <label className='mb-1 block text-sm font-medium text-slate-600'>Status</label>
               <select
                 name='status'
                 value={formData.status}
                 onChange={handleChange}
-                className='w-full rounded-lg border border-slate-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500'
+                className='w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-violet-600 focus:outline-none focus:ring-1 focus:ring-violet-600'
               >
                 <option value='OPEN'>Open</option>
                 <option value='CLOSED'>Closed</option>
@@ -182,13 +182,13 @@ export default function ManageEventPage() {
           </div>
 
           <div>
-            <label className='mb-1 block text-sm font-medium text-slate-700'>Venue</label>
+            <label className='mb-1 block text-sm font-medium text-slate-600'>Venue</label>
             <select
               required
               name='venueId'
               value={formData.venueId}
               onChange={handleChange}
-              className='w-full rounded-lg border border-slate-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500'
+              className='w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-violet-600 focus:outline-none focus:ring-1 focus:ring-violet-600'
             >
               {venues.length === 0 ? (
                 <option value='0' disabled>No venues available. Please contact admin.</option>
@@ -202,7 +202,7 @@ export default function ManageEventPage() {
 
           <div className='grid gap-6 sm:grid-cols-2'>
             <div>
-              <label className='mb-1 block text-sm font-medium text-slate-700'>Entry Fee (₹)</label>
+              <label className='mb-1 block text-sm font-medium text-slate-600'>Entry Fee (₹)</label>
               <input
                 required
                 type='number'
@@ -210,11 +210,11 @@ export default function ManageEventPage() {
                 name='entryFee'
                 value={formData.entryFee}
                 onChange={handleChange}
-                className='w-full rounded-lg border border-slate-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500'
+                className='w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-violet-600 focus:outline-none focus:ring-1 focus:ring-violet-600'
               />
             </div>
             <div>
-              <label className='mb-1 block text-sm font-medium text-slate-700'>Total Capacity</label>
+              <label className='mb-1 block text-sm font-medium text-slate-600'>Total Capacity</label>
               <input
                 required
                 type='number'
@@ -222,7 +222,7 @@ export default function ManageEventPage() {
                 name='capacity'
                 value={formData.capacity}
                 onChange={handleChange}
-                className='w-full rounded-lg border border-slate-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500'
+                className='w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-violet-600 focus:outline-none focus:ring-1 focus:ring-violet-600'
               />
             </div>
           </div>
@@ -231,7 +231,7 @@ export default function ManageEventPage() {
             <button
               type='submit'
               disabled={saving}
-              className='w-full rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-70'
+              className='w-full rounded-xl bg-violet-600 px-4 py-3 text-sm font-semibold text-white hover:bg-violet-700 disabled:opacity-70'
             >
               {saving ? 'Saving...' : isEditing ? 'Save Changes' : 'Create Event'}
             </button>

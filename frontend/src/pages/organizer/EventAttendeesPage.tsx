@@ -55,12 +55,12 @@ export default function EventAttendeesPage() {
         )}
       </div>
 
-      <div className='overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm'>
+      <div className='overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 shadow-sm'>
         {registrations.length === 0 ? (
           <div className='p-8 text-center text-slate-500'>No attendees registered for this event yet.</div>
         ) : (
           <table className='w-full min-w-full text-left text-sm'>
-            <thead className='border-b border-slate-200 bg-slate-50 text-slate-600'>
+            <thead className='border-b border-slate-200 bg-white text-slate-600'>
               <tr>
                 <th className='px-6 py-4 font-semibold'>Reg ID</th>
                 <th className='px-6 py-4 font-semibold'>Attendee Name</th>
@@ -71,7 +71,7 @@ export default function EventAttendeesPage() {
             </thead>
             <tbody className='divide-y divide-slate-100'>
               {registrations.map((reg) => (
-                <tr key={reg.id} className='hover:bg-slate-50'>
+                <tr key={reg.id} className='hover:bg-white'>
                   <td className='px-6 py-4 text-slate-900'>#{reg.id}</td>
                   <td className='px-6 py-4 text-slate-900 font-medium'>
                     {reg.userProfile?.name || `User ${reg.userId}`}

@@ -35,12 +35,12 @@ function Navbar({ variant = 'default' }: NavbarProps) {
     <header
       className={[
         variant === 'sticky' ? 'sticky top-0 z-40' : '',
-        'border-b border-slate-200 bg-white/90 backdrop-blur'
+        'border-b border-slate-200 bg-slate-50/90 backdrop-blur'
       ].join(' ')}
     >
       <div className='mx-auto flex max-w-6xl items-center justify-between px-4 py-3'>
         <Link to='/' className='flex items-center gap-3'>
-          <div className='flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-white font-semibold'>
+          <div className='flex h-10 w-10 items-center justify-center rounded-xl bg-violet-600 text-white font-semibold'>
             ER
           </div>
           <div className='leading-tight'>
@@ -54,7 +54,7 @@ function Navbar({ variant = 'default' }: NavbarProps) {
             to='/events'
             className={({ isActive }) =>
               [
-                'text-slate-700 hover:text-slate-900',
+                'text-slate-600 hover:text-slate-900',
                 isActive ? 'font-bold text-slate-900' : '',
               ].join(' ')
             }
@@ -68,19 +68,19 @@ function Navbar({ variant = 'default' }: NavbarProps) {
                 to={dashboardPath}
                 className={({ isActive }) =>
                   [
-                    'text-slate-700 hover:text-slate-900',
+                    'text-slate-600 hover:text-slate-900',
                     isActive ? 'font-bold text-slate-900' : '',
                   ].join(' ')
                 }
               >
                 Dashboard
               </NavLink>
-              <Link to='/profile' className='text-slate-700 hover:text-indigo-600 transition-colors' title='User Profile'>
+              <Link to='/profile' className='text-slate-600 hover:text-violet-600 transition-colors' title='User Profile'>
                 <UserCircle className='w-6 h-6' />
               </Link>
               <button
                 onClick={handleLogout}
-                className='text-slate-700 hover:text-slate-900'
+                className='text-slate-600 hover:text-slate-900'
               >
                 Logout
               </button>
@@ -91,7 +91,7 @@ function Navbar({ variant = 'default' }: NavbarProps) {
                 to='/login'
                 className={({ isActive }) =>
                   [
-                    'text-slate-700 hover:text-slate-900',
+                    'text-slate-600 hover:text-slate-900',
                     isActive ? 'text-slate-900' : ''
                   ].join(' ')
                 }
@@ -104,8 +104,8 @@ function Navbar({ variant = 'default' }: NavbarProps) {
                   [
                     'inline-flex items-center justify-center rounded-lg px-4 py-2',
                     isActive
-                      ? 'bg-indigo-700 text-white'
-                      : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                      ? 'bg-violet-700 text-white'
+                      : 'bg-violet-600 text-white hover:bg-violet-700'
                   ].join(' ')
                 }
               >

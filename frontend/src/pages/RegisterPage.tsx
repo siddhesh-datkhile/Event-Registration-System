@@ -46,7 +46,7 @@ function RegisterPage() {
 
   return (
     <div className='flex w-full flex-1 items-center justify-center py-10'>
-      <div className='w-full max-w-md rounded-3xl border border-slate-200 bg-white p-8 shadow-sm'>
+      <div className='w-full max-w-md rounded-3xl border border-slate-200 bg-slate-50 p-8 shadow-sm'>
         <h1 className='text-center text-3xl font-bold'>Create account</h1>
         <p className='mt-2 text-center text-slate-600'>
           Create an account as an Organizer or Registrant.
@@ -63,7 +63,7 @@ function RegisterPage() {
 
         <form className='mt-8 space-y-4' onSubmit={onSubmit}>
           <div className='space-y-2'>
-            <label htmlFor='name' className='text-sm font-medium text-slate-700'>
+            <label htmlFor='name' className='text-sm font-medium text-slate-600'>
               Full name
             </label>
             <input
@@ -74,12 +74,12 @@ function RegisterPage() {
               placeholder='Your full name'
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className='w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500'
+              className='w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-violet-600'
             />
           </div>
 
           <div className='space-y-2'>
-            <label htmlFor='email' className='text-sm font-medium text-slate-700'>
+            <label htmlFor='email' className='text-sm font-medium text-slate-600'>
               Email
             </label>
             <input
@@ -90,12 +90,12 @@ function RegisterPage() {
               placeholder='you@example.com'
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className='w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500'
+              className='w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-violet-600'
             />
           </div>
 
           <div className='space-y-2'>
-            <label htmlFor='password' className='text-sm font-medium text-slate-700'>
+            <label htmlFor='password' className='text-sm font-medium text-slate-600'>
               Password
             </label>
             <input
@@ -106,12 +106,12 @@ function RegisterPage() {
               placeholder='••••••••'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className='w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500'
+              className='w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-violet-600'
             />
           </div>
 
           <div className='space-y-2'>
-            <label htmlFor='phone' className='text-sm font-medium text-slate-700'>
+            <label htmlFor='phone' className='text-sm font-medium text-slate-600'>
               Phone number
             </label>
             <input
@@ -125,12 +125,12 @@ function RegisterPage() {
               placeholder='10-digit phone'
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className='w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500'
+              className='w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-violet-600'
             />
           </div>
 
           <div className='space-y-2'>
-            <label htmlFor='address' className='text-sm font-medium text-slate-700'>
+            <label htmlFor='address' className='text-sm font-medium text-slate-600'>
               Address
             </label>
             <textarea
@@ -141,12 +141,12 @@ function RegisterPage() {
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               rows={3}
-              className='w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500'
+              className='w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-violet-600'
             />
           </div>
 
           <div className='space-y-2'>
-            <label htmlFor='dob' className='text-sm font-medium text-slate-700'>
+            <label htmlFor='dob' className='text-sm font-medium text-slate-600'>
               Date of birth
             </label>
             <input
@@ -156,12 +156,12 @@ function RegisterPage() {
               required
               value={dob}
               onChange={(e) => setDob(e.target.value)}
-              className='w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500'
+              className='w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-violet-600'
             />
           </div>
 
           <div className='space-y-2'>
-            <label htmlFor='role' className='text-sm font-medium text-slate-700'>
+            <label htmlFor='role' className='text-sm font-medium text-slate-600'>
               Account type
             </label>
             <select
@@ -170,7 +170,7 @@ function RegisterPage() {
               required
               value={role}
               onChange={(e) => setRole(e.target.value as 'ORGANIZER' | 'REGISTRANT')}
-              className='w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500'
+              className='w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-violet-600'
             >
               <option value='ORGANIZER'>Organizer</option>
               <option value='REGISTRANT'>Registrant</option>
@@ -180,14 +180,14 @@ function RegisterPage() {
           <button
             type='submit'
             disabled={isSubmitting}
-            className='mt-2 inline-flex w-full items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-70'
+            className='mt-2 inline-flex w-full items-center justify-center rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-70'
           >
             {isSubmitting ? 'Creating...' : 'Create account'}
           </button>
 
           <div className='text-center text-sm text-slate-600'>
             Already have an account?{' '}
-            <Link to='/login' className='font-semibold text-indigo-700 hover:text-indigo-800'>
+            <Link to='/login' className='font-semibold text-violet-600 hover:text-indigo-800'>
               Sign in
             </Link>
           </div>

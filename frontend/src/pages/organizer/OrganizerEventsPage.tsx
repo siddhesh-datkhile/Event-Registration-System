@@ -36,19 +36,19 @@ export default function OrganizerEventsPage() {
         </div>
         <Link
           to='/organizer/events/new'
-          className='inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700'
+          className='inline-flex items-center justify-center rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-700'
         >
           + Create New Event
         </Link>
       </div>
 
       {events.length === 0 ? (
-        <div className='mt-10 rounded-2xl border border-dashed border-slate-300 bg-slate-50 py-16 text-center shadow-sm'>
+        <div className='mt-10 rounded-2xl border border-dashed border-slate-200 bg-white py-16 text-center shadow-sm'>
           <h3 className='text-lg font-semibold text-slate-900'>No events yet</h3>
           <p className='mt-2 text-sm text-slate-500'>You haven't created any events yet.</p>
           <Link
             to='/organizer/events/new'
-            className='mt-6 inline-block font-semibold text-indigo-600 hover:text-indigo-800'
+            className='mt-6 inline-block font-semibold text-violet-600 hover:text-indigo-800'
           >
             Create your first event &rarr;
           </Link>
@@ -60,16 +60,16 @@ export default function OrganizerEventsPage() {
               key={event.id}
               event={event}
               actionSlot={
-                <div className='mt-4 flex flex-col gap-2 border-t border-slate-100 pt-4 sm:flex-row'>
+                <div className='mt-4 flex flex-col gap-2 border-t border-slate-200 pt-4 sm:flex-row'>
                   <Link
                     to={`/organizer/events/${event.id}/edit`}
-                    className='flex-1 inline-flex items-center justify-center rounded-lg bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-200'
+                    className='flex-1 inline-flex items-center justify-center rounded-lg bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100'
                   >
                     Edit Event
                   </Link>
                   <Link
                     to={`/organizer/events/${event.id}/attendees`}
-                    className='flex-1 inline-flex items-center justify-center rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-2 text-xs font-semibold text-indigo-700 hover:bg-indigo-100'
+                    className='flex-1 inline-flex items-center justify-center rounded-lg border border-violet-200 bg-violet-50 px-3 py-2 text-xs font-semibold text-violet-600 hover:bg-violet-100'
                   >
                     Attendees
                   </Link>

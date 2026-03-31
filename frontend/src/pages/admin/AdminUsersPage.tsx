@@ -52,45 +52,45 @@ export default function AdminUsersPage() {
         </div>
         <button
           onClick={() => setShowAddForm(!showAddForm)}
-          className='inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 transition'
+          className='inline-flex items-center justify-center rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-700 transition'
         >
           {showAddForm ? 'Cancel Creation' : '+ Add New User'}
         </button>
       </div>
 
       {showAddForm && (
-        <div className='mt-6 rounded-2xl border border-indigo-100 bg-indigo-50/50 p-6'>
+        <div className='mt-6 rounded-2xl border border-violet-100 bg-violet-50/50 p-6'>
           <h2 className='text-lg font-semibold text-slate-900'>Create Pre-Authorized Account</h2>
           <p className='text-sm text-slate-500 mb-6'>Users will be created instantly with default privileges.</p>
           <form onSubmit={handleAddUser} className='flex flex-col gap-4 sm:flex-row sm:items-end'>
             <div className='flex-1'>
-              <label className='block text-sm font-medium text-slate-700'>Full Name</label>
+              <label className='block text-sm font-medium text-slate-600'>Full Name</label>
               <input
                 type='text'
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className='mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border'
+                className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2 border'
                 placeholder='Jane Doe'
               />
             </div>
             <div className='flex-1'>
-              <label className='block text-sm font-medium text-slate-700'>Email Address</label>
+              <label className='block text-sm font-medium text-slate-600'>Email Address</label>
               <input
                 type='email'
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className='mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border'
+                className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2 border'
                 placeholder='jane@example.com'
               />
             </div>
             <div className='flex-1'>
-              <label className='block text-sm font-medium text-slate-700'>Initial Role</label>
+              <label className='block text-sm font-medium text-slate-600'>Initial Role</label>
               <select
                 value={newRole}
                 onChange={(e) => setNewRole(e.target.value as 'ORGANIZER' | 'REGISTRANT')}
-                className='mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border bg-white'
+                className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2 border bg-slate-50'
               >
                 <option value='REGISTRANT'>Registrant</option>
                 <option value='ORGANIZER'>Organizer</option>
@@ -99,7 +99,7 @@ export default function AdminUsersPage() {
             <button
               type='submit'
               disabled={submitting}
-              className='inline-flex items-center justify-center rounded-lg bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-50 h-[42px]'
+              className='inline-flex items-center justify-center rounded-lg bg-violet-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 disabled:opacity-50 h-[42px]'
             >
               {submitting ? 'Creating...' : 'Provision User'}
             </button>
@@ -110,10 +110,10 @@ export default function AdminUsersPage() {
       {loading ? (
         <div className='mt-12 text-center text-slate-500'>Loading users...</div>
       ) : (
-        <div className='mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm'>
+        <div className='mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 shadow-sm'>
           <div className='overflow-x-auto'>
             <table className='w-full whitespace-nowrap text-left text-sm'>
-              <thead className='border-b border-slate-200 bg-slate-50 text-slate-600'>
+              <thead className='border-b border-slate-200 bg-white text-slate-600'>
                 <tr>
                   <th className='px-6 py-4 font-semibold'>ID</th>
                   <th className='px-6 py-4 font-semibold'>Name</th>
@@ -124,7 +124,7 @@ export default function AdminUsersPage() {
               </thead>
               <tbody className='divide-y divide-slate-100'>
                 {users.map((u) => (
-                  <tr key={u.id} className='hover:bg-slate-50'>
+                  <tr key={u.id} className='hover:bg-white'>
                     <td className='px-6 py-4 text-slate-900'>#{u.id}</td>
                     <td className='px-6 py-4 text-slate-900 font-medium'>{u.name || 'N/A'}</td>
                     <td className='px-6 py-4 text-slate-600'>{u.email}</td>
