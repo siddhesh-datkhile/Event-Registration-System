@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Users, UserCheck, UserPlus, CalendarDays, MapPin, ClipboardList } from 'lucide-react'
 import { getAllEvents } from '../../api/events'
 import { getAllUsers } from '../../api/auth'
 import { getAllRegistrations } from '../../api/registrations'
@@ -55,28 +56,58 @@ export default function AdminDashboardPage() {
 
       <div className='mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4'>
         <Link to='/admin/users' className='rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:ring-2 ring-indigo-500 transition-all'>
-          <h3 className='text-sm font-medium text-slate-500'>Total Users</h3>
-          <p className='mt-2 text-3xl font-bold text-slate-900'>{stats.totalUsers}</p>
+          <div className='flex items-center gap-3'>
+            <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600'>
+              <Users className='h-5 w-5' />
+            </div>
+            <h3 className='text-sm font-medium text-slate-500'>Total Users</h3>
+          </div>
+          <p className='mt-4 text-3xl font-bold text-slate-900'>{stats.totalUsers}</p>
         </Link>
         <Link to='/admin/users' className='rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:ring-2 ring-indigo-500 transition-all'>
-          <h3 className='text-sm font-medium text-slate-500'>Organizers</h3>
-          <p className='mt-2 text-3xl font-bold text-slate-900'>{stats.organizers}</p>
+          <div className='flex items-center gap-3'>
+            <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-50 text-purple-600'>
+              <UserCheck className='h-5 w-5' />
+            </div>
+            <h3 className='text-sm font-medium text-slate-500'>Organizers</h3>
+          </div>
+          <p className='mt-4 text-3xl font-bold text-slate-900'>{stats.organizers}</p>
         </Link>
         <Link to='/admin/users' className='rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:ring-2 ring-indigo-500 transition-all'>
-          <h3 className='text-sm font-medium text-slate-500'>Registrants</h3>
-          <p className='mt-2 text-3xl font-bold text-slate-900'>{stats.registrants}</p>
+          <div className='flex items-center gap-3'>
+            <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600'>
+              <UserPlus className='h-5 w-5' />
+            </div>
+            <h3 className='text-sm font-medium text-slate-500'>Registrants</h3>
+          </div>
+          <p className='mt-4 text-3xl font-bold text-slate-900'>{stats.registrants}</p>
         </Link>
         <Link to='/admin/events' className='rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:ring-2 ring-indigo-500 transition-all'>
-          <h3 className='text-sm font-medium text-slate-500'>Total Events</h3>
-          <p className='mt-2 text-3xl font-bold text-slate-900'>{stats.events}</p>
+          <div className='flex items-center gap-3'>
+            <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600'>
+              <CalendarDays className='h-5 w-5' />
+            </div>
+            <h3 className='text-sm font-medium text-slate-500'>Total Events</h3>
+          </div>
+          <p className='mt-4 text-3xl font-bold text-slate-900'>{stats.events}</p>
         </Link>
         <Link to='/admin/venues' className='rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:ring-2 ring-indigo-500 transition-all'>
-          <h3 className='text-sm font-medium text-slate-500'>Platform Venues</h3>
-          <p className='mt-2 text-3xl font-bold text-slate-900'>{stats.venues}</p>
+          <div className='flex items-center gap-3'>
+            <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-orange-50 text-orange-600'>
+              <MapPin className='h-5 w-5' />
+            </div>
+            <h3 className='text-sm font-medium text-slate-500'>Platform Venues</h3>
+          </div>
+          <p className='mt-4 text-3xl font-bold text-slate-900'>{stats.venues}</p>
         </Link>
         <Link to='/admin/registrations' className='rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:ring-2 ring-indigo-500 transition-all sm:col-span-2 lg:col-span-4'>
-          <h3 className='text-sm font-medium text-slate-500'>Platform Registrations</h3>
-          <p className='mt-2 text-3xl font-bold text-slate-900'>{stats.registrations}</p>
+          <div className='flex items-center gap-3'>
+            <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-pink-50 text-pink-600'>
+              <ClipboardList className='h-5 w-5' />
+            </div>
+            <h3 className='text-sm font-medium text-slate-500'>Platform Registrations</h3>
+          </div>
+          <p className='mt-4 text-3xl font-bold text-slate-900'>{stats.registrations}</p>
         </Link>
       </div>
     </div>
