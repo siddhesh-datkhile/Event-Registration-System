@@ -1,13 +1,14 @@
+import type {  EventStatus, Event  } from '../model'
 import { Link } from 'react-router-dom'
-import type { Event, EventStatus } from '../api/events'
+import type {} from '../api/events'
 import React from 'react'
 
-const STATUS_LABELS: Record<EventStatus, string> = {
+const STATUS_LABELS: Record<string, string> = {
   OPEN: 'Open',
   CLOSED: 'Closed',
 }
 
-const STATUS_COLORS: Record<EventStatus, string> = {
+const STATUS_COLORS: Record<string, string> = {
   OPEN: 'bg-emerald-100 text-emerald-700',
   CLOSED: 'bg-white text-slate-600',
 }

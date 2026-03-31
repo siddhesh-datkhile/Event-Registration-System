@@ -1,5 +1,6 @@
+import type {  Venue  } from '../../model'
 import { useEffect, useState } from 'react'
-import { getAllVenues, addVenue, type Venue } from '../../api/venues'
+import { getAllVenues, addVenue } from '../../api/venues'
 import { toast } from 'react-toastify'
 
 export default function AdminVenuesPage() {

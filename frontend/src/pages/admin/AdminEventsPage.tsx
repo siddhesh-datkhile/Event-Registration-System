@@ -1,6 +1,7 @@
+import type {  Event  } from '../../model'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { getAllEvents, type Event } from '../../api/events'
+import { getAllEvents } from '../../api/events'
 import { EventCard } from '../../Components/EventCard'
 
 export default function AdminEventsPage() {

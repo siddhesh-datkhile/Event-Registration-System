@@ -1,5 +1,6 @@
+import type {  UpdateProfileRequest, UserProfileResponse  } from '../model'
 import { useEffect, useState } from 'react'
-import { fetchUserProfile, getCurrentUser, updateProfile, type UserProfileResponse, type UpdateProfileRequest } from '../api/auth'
+import { fetchUserProfile, getCurrentUser, updateProfile } from '../api/auth'
 import { UserCircle, Mail, Phone, MapPin, Calendar, Shield } from 'lucide-react'
 import { toast } from 'react-toastify'
 

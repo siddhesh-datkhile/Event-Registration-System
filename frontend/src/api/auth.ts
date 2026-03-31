@@ -1,52 +1,5 @@
 import api from './axiosInstance'
-
-// ── Request types (matching backend DTOs) ──────────────────────────────────
-
-export interface LoginRequest {
-  email: string
-  password: string
-}
-
-export interface RegisterRequest {
-  name: string
-  email: string
-  password: string
-  phone: string
-  address: string
-  dob: string        // ISO date string: "YYYY-MM-DD"  (maps to LocalDate)
-  role: 'ORGANIZER' | 'REGISTRANT'
-}
-
-export interface UpdateProfileRequest {
-  name: string
-  phone: string
-  address: string
-  dob: string
-}
-
-
-// ── Response types ─────────────────────────────────────────────────────────
-
-export interface LoginResponse {
-  token: string
-  refreshToken: string,
-  user: UserProfileResponse
-}
-
-export interface TokenRefreshResponse {
-  accessToken: string
-  refreshToken: string
-}
-
-export interface UserProfileResponse {
-  id: number
-  name: string
-  email: string
-  phone: string
-  address: string
-  dob: string
-  role: string
-}
+import type {  LoginRequest, RegisterRequest, UpdateProfileRequest, LoginResponse, TokenRefreshResponse, UserProfileResponse  } from '../model'
 
 /** Generic wrapper returned by every auth endpoint */
 interface ApiResponse<T> {

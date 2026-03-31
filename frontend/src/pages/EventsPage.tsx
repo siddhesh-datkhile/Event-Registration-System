@@ -1,10 +1,11 @@
+import type {  EventStatus, Event  } from '../model'
 import { useEffect, useState } from 'react'
-import { getAllEvents, type Event, type EventStatus } from '../api/events'
+import { getAllEvents } from '../api/events'
 import { EventCard } from '../Components/EventCard'
 
 const ALL_STATUSES: EventStatus[] = ['OPEN', 'CLOSED']
 
-const STATUS_LABELS: Record<EventStatus, string> = {
+const STATUS_LABELS: Record<string, string> = {
   OPEN: 'Open',
   CLOSED: 'Closed',
 }

@@ -1,8 +1,9 @@
+import type {  RegistrationResponse, UserProfileResponse, Event  } from '../../model'
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { getEventRegistrations, type RegistrationResponse } from '../../api/registrations'
-import { getEventById, type Event } from '../../api/events'
-import { fetchUserProfile, type UserProfileResponse } from '../../api/auth'
+import { getEventRegistrations } from '../../api/registrations'
+import { getEventById } from '../../api/events'
+import { fetchUserProfile } from '../../api/auth'
 
 type AttendeeRecord = RegistrationResponse & {
   userProfile?: UserProfileResponse

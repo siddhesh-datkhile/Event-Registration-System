@@ -1,8 +1,9 @@
+import type {  Venue, EventStatus, Event  } from '../../model'
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { getEventById, createEvent, updateEvent, deleteEvent, type EventStatus } from '../../api/events'
-import { getAllVenues, type Venue } from '../../api/venues'
+import { getEventById, createEvent, updateEvent, deleteEvent } from '../../api/events'
+import { getAllVenues } from '../../api/venues'
 import { getCurrentUser } from '../../api/auth'
 
 export default function ManageEventPage() {

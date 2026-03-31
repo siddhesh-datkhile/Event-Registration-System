@@ -1,21 +1,5 @@
 import api from './axiosInstance'
-
-export type EventStatus = 'OPEN' | 'CLOSED'
-
-export interface Event {
-  id: number
-  title: string
-  description: string
-  eventDate: string        // ISO LocalDateTime string from backend
-  entryFee: number
-  capacity: number
-  availableSeats: number
-  status: EventStatus
-  organizerId: number
-  venueId: number
-  createdAt: string
-  updatedAt: string
-}
+import type {  EventStatus, Event  } from '../model'
 
 export async function getAllEvents(): Promise<Event[]> {
   const res = await api.get<Event[]>('/api/events')

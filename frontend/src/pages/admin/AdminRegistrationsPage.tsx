@@ -1,7 +1,8 @@
+import type {  RegistrationResponse, UserProfileResponse, Event  } from '../../model'
 import { useEffect, useState } from 'react'
-import { getAllRegistrations, type RegistrationResponse } from '../../api/registrations'
-import { fetchUserProfile, type UserProfileResponse } from '../../api/auth'
-import { getAllEvents, type Event } from '../../api/events'
+import { getAllRegistrations } from '../../api/registrations'
+import { fetchUserProfile } from '../../api/auth'
+import { getAllEvents } from '../../api/events'
 
 type EnhancedRegistration = RegistrationResponse & {
   userProfile?: UserProfileResponse

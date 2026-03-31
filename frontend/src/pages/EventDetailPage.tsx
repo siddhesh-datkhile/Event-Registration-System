@@ -1,17 +1,18 @@
+import type {  EventStatus, Event  } from '../model'
 import { useEffect, useState } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
-import { getEventById, type Event, type EventStatus } from '../api/events'
+import { getEventById } from '../api/events'
 import { createRegistration, getMyRegistrations } from '../api/registrations'
 import { isLoggedIn } from '../api/auth'
 import { createPaymentOrder } from '../api/payments'
 import { toast } from 'react-toastify'
 
-const STATUS_LABELS: Record<EventStatus, string> = {
+const STATUS_LABELS: Record<string, string> = {
   OPEN: 'Open',
   CLOSED: 'Closed',
 }
 
-const STATUS_COLORS: Record<EventStatus, string> = {
+const STATUS_COLORS: Record<string, string> = {
   OPEN: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20',
   CLOSED: 'bg-white text-slate-600 ring-slate-500/20',
 }

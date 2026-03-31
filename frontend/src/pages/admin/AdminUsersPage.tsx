@@ -1,5 +1,6 @@
+import type {  UserProfileResponse  } from '../../model'
 import { useEffect, useState } from 'react'
-import { getAllUsers, addOrganizer, addRegistrant, type UserProfileResponse } from '../../api/auth'
+import { getAllUsers, addOrganizer, addRegistrant } from '../../api/auth'
 import { toast } from 'react-toastify'
 
 export default function AdminUsersPage() {

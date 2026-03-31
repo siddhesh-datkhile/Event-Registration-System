@@ -1,7 +1,8 @@
+import type {  RegistrationResponse  } from '../../model'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
-import { getMyRegistrations, type RegistrationResponse } from '../../api/registrations'
+import { getMyRegistrations } from '../../api/registrations'
 import { toast } from 'react-toastify'
 
 function DashboardPage() {

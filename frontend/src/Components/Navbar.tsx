@@ -1,3 +1,4 @@
+import type {  Event  } from '../model'
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { clearTokens, isLoggedIn, getCurrentUser } from '../api/auth'

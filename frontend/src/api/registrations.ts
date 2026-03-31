@@ -1,12 +1,5 @@
 import api from './axiosInstance'
-
-export interface RegistrationResponse {
-  id: number
-  userId: number
-  eventId: number
-  registrationDate: string
-  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED'
-}
+import type {  RegistrationResponse  } from '../model'
 
 export async function getMyRegistrations(): Promise<RegistrationResponse[]> {
   const res = await api.get<RegistrationResponse[]>('/api/registrations/my-registrations')

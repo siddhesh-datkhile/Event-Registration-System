@@ -1,13 +1,5 @@
 import api from './axiosInstance'
-
-export interface Venue {
-  id: number
-  name: string
-  address: string
-  city: string
-  createdAt?: string
-  updatedAt?: string
-}
+import type {  Venue  } from '../model'
 
 export async function getAllVenues(): Promise<Venue[]> {
   const res = await api.get<Venue[]>('/api/venues')
