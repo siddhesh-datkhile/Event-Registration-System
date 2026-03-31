@@ -1,19 +1,18 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { getEventById, type Event, type EventStatus } from '../api/events'
+import { createRegistration, getMyRegistrations } from '../api/registrations'
+import { isLoggedIn } from '../api/auth'
+import { toast } from 'react-toastify'
 
 const STATUS_LABELS: Record<EventStatus, string> = {
-  UPCOMING: 'Upcoming',
-  ONGOING: 'Ongoing',
-  COMPLETED: 'Completed',
-  CANCELLED: 'Cancelled',
+  OPEN: 'Open',
+  CLOSED: 'Closed',
 }
 
 const STATUS_COLORS: Record<EventStatus, string> = {
-  UPCOMING: 'bg-indigo-100 text-indigo-700',
-  ONGOING: 'bg-emerald-100 text-emerald-700',
-  COMPLETED: 'bg-slate-100 text-slate-600',
-  CANCELLED: 'bg-red-100 text-red-600',
+  OPEN: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20',
+  CLOSED: 'bg-slate-50 text-slate-600 ring-slate-500/20',
 }
 
 function formatDate(iso: string) {
@@ -49,13 +48,57 @@ function EventDetailPage() {
   const [event, setEvent] = useState<Event | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [registering, setRegistering] = useState(false)
+  const [hasRegistered, setHasRegistered] = useState(false)
+
+  const handleRegister = async () => {
+    if (!event) return
+
+    if (!isLoggedIn()) {
+      toast.info('Please log in to register for this event.')
+      navigate('/login')
+      return
+    }
+
+    setRegistering(true)
+    try {
+      await createRegistration(event.id)
+      toast.success('Successfully registered for the event!')
+      navigate('/dashboard/registrations')
+    } catch (err: any) {
+      if (err.response?.status === 409 || err.response?.data?.message?.includes('already')) {
+        toast.error('You are already registered for this event.')
+      } else {
+        toast.error('Failed to register. The event might be full or closed.')
+      }
+    } finally {
+      setRegistering(false)
+    }
+  }
 
   useEffect(() => {
     if (!id) return
-    getEventById(id)
-      .then(setEvent)
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false))
+    const fetchData = async () => {
+      try {
+        const ev = await getEventById(id)
+        setEvent(ev)
+
+        if (isLoggedIn()) {
+          const regs = await getMyRegistrations()
+          const alreadyReg = regs.find(
+            (r) => r.eventId === ev.id && (r.status === 'CONFIRMED' || r.status === 'PENDING')
+          )
+          if (alreadyReg) {
+            setHasRegistered(true)
+          }
+        }
+      } catch (err: any) {
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
   }, [id])
 
   const seatPct = event ? Math.round((event.availableSeats / event.capacity) * 100) : 0
@@ -176,22 +219,34 @@ function EventDetailPage() {
                 </div>
               </div>
 
-              {event.status === 'CANCELLED' ? (
-                <div className='mt-5 rounded-xl bg-red-50 px-4 py-3 text-center text-sm font-semibold text-red-600'>
-                  This event has been cancelled
+              {event.status === 'CLOSED' ? (
+                <div className='rounded-2xl bg-slate-50 p-4 text-center text-sm font-semibold text-slate-600 border border-slate-200'>
+                  This event is closed.
+                </div>
+              ) : hasRegistered ? (
+                <div className='space-y-4'>
+                  <div className='rounded-2xl bg-emerald-50 p-4 text-center text-sm font-semibold text-emerald-700 border border-emerald-100'>
+                    You are already registered!
+                  </div>
+                  <button
+                    className='mt-3 flex w-full items-center justify-center rounded-xl border border-indigo-600 bg-white px-5 py-3 text-sm font-semibold text-indigo-600 transition-colors hover:bg-indigo-50'
+                    onClick={() => navigate('/dashboard/registrations')}
+                  >
+                    View My Tickets
+                  </button>
                 </div>
               ) : event.availableSeats === 0 ? (
-                <div className='mt-5 rounded-xl bg-slate-100 px-4 py-3 text-center text-sm font-semibold text-slate-500'>
-                  Sold Out
+                <div className='rounded-2xl bg-slate-50 p-4 text-center text-sm font-semibold text-slate-600 border border-slate-200'>
+                  Tickets Sold Out
                 </div>
               ) : (
-                <Link
-                  to='/register'
-                  state={{ eventId: event.id, eventTitle: event.title }}
-                  className='mt-5 inline-flex w-full items-center justify-center rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-700'
+                <button
+                  onClick={handleRegister}
+                  disabled={registering}
+                  className='mt-5 flex w-full items-center justify-center rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-70 disabled:cursor-not-allowed'
                 >
-                  Register for this Event
-                </Link>
+                  {registering ? 'Registering...' : 'Register for this Event'}
+                </button>
               )}
 
               <p className='mt-3 text-center text-xs text-slate-500'>

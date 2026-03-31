@@ -5,5 +5,6 @@ import com.ers.registration.registration_service.dto.RegistrationResponse;
 
 public interface RegistrationService {
     RegistrationResponse register(RegistrationRequest request, Long userId);
+    java.util.List<RegistrationResponse> getUserRegistrations(Long userId);
     RegistrationResponse cancelRegistration(Long registrationId);
 }

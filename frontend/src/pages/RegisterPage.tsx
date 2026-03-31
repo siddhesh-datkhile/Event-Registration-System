@@ -1,6 +1,7 @@
-import { useState } from 'react'
-import type { FormEvent } from 'react'
+import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import { register } from '../api/auth'
 
 function RegisterPage() {
   const navigate = useNavigate()
@@ -11,12 +12,12 @@ function RegisterPage() {
   const [phone, setPhone] = useState('')
   const [address, setAddress] = useState('')
   const [dob, setDob] = useState('')
-  const [role, setRole] = useState<'ORGANIZER' | 'REGISTRANT'>('ORGANIZER')
+  const [role, setRole] = useState<'ORGANIZER' | 'REGISTRANT'>('REGISTRANT')
 
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const onSubmit = async (e: FormEvent) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError(null)
 
@@ -27,32 +28,17 @@ function RegisterPage() {
     if (!address.trim()) return setError('Address is required')
     if (!dob.trim()) return setError('DOB is required')
 
-    const payload = {
-      name: name.trim(),
-      email: email.trim(),
-      password,
-      phone: phone.trim(),
-      address: address.trim(),
-      dob,
-      role
-    }
-
     setIsSubmitting(true)
     try {
-      const res = await fetch('http://localhost:8081/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      })
-
-      if (!res.ok) {
-        const text = await res.text().catch(() => '')
-        throw new Error(text || `Registration failed (${res.status})`)
-      }
-
+      await register({ name: name.trim(), email: email.trim(), password, phone: phone.trim(), address: address.trim(), dob, role })
+      toast.success('Account created! Please sign in.')
       navigate('/login')
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Registration failed')
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        'Registration failed. Please try again.'
+      setError(msg)
     } finally {
       setIsSubmitting(false)
     }

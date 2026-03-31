@@ -1,38 +1,12 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { getAllEvents, type Event, type EventStatus } from '../api/events'
+import { EventCard } from '../Components/EventCard'
+
+const ALL_STATUSES: EventStatus[] = ['OPEN', 'CLOSED']
 
 const STATUS_LABELS: Record<EventStatus, string> = {
-  UPCOMING: 'Upcoming',
-  ONGOING: 'Ongoing',
-  COMPLETED: 'Completed',
-  CANCELLED: 'Cancelled',
-}
-
-const STATUS_COLORS: Record<EventStatus, string> = {
-  UPCOMING: 'bg-indigo-100 text-indigo-700',
-  ONGOING: 'bg-emerald-100 text-emerald-700',
-  COMPLETED: 'bg-slate-100 text-slate-600',
-  CANCELLED: 'bg-red-100 text-red-600',
-}
-
-const SEAT_BADGE = (available: number, capacity: number) => {
-  const pct = available / capacity
-  if (pct > 0.5) return 'bg-emerald-100 text-emerald-700'
-  if (pct > 0.2) return 'bg-amber-100 text-amber-700'
-  return 'bg-red-100 text-red-600'
-}
-
-const ALL_STATUSES: EventStatus[] = ['UPCOMING', 'ONGOING', 'COMPLETED', 'CANCELLED']
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('en-IN', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+  OPEN: 'Open',
+  CLOSED: 'Closed',
 }
 
 // ---- Skeleton card ----
@@ -146,50 +120,7 @@ function EventsPage() {
       ) : (
         <div className='grid gap-5 md:grid-cols-2 lg:grid-cols-3'>
           {filtered.map((event) => (
-            <div
-              key={event.id}
-              className='flex flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md'
-            >
-              {/* Status + Seats */}
-              <div className='flex items-center justify-between'>
-                <span
-                  className={`rounded-full px-3 py-1 text-xs font-semibold ${STATUS_COLORS[event.status]}`}
-                >
-                  {STATUS_LABELS[event.status]}
-                </span>
-                <span
-                  className={`rounded-full px-3 py-1 text-xs font-semibold ${SEAT_BADGE(event.availableSeats, event.capacity)}`}
-                >
-                  {event.availableSeats} / {event.capacity} seats
-                </span>
-              </div>
-
-              {/* Title + Description */}
-              <h2 className='mt-4 text-xl font-bold text-slate-900'>{event.title}</h2>
-              <p className='mt-2 flex-1 text-sm leading-relaxed text-slate-600 line-clamp-3'>
-                {event.description}
-              </p>
-
-              {/* Meta */}
-              <div className='mt-5 space-y-1.5 text-sm text-slate-600'>
-                <div className='flex items-center gap-2'>
-                  <span>📅</span>
-                  <span>{formatDate(event.eventDate)}</span>
-                </div>
-                <div className='flex items-center gap-2'>
-                  <span>💰</span>
-                  <span>{event.entryFee === 0 ? 'Free' : `₹${event.entryFee}`}</span>
-                </div>
-              </div>
-
-              {/* CTA */}
-              <Link
-                to={`/events/${event.id}`}
-                className='mt-6 inline-flex w-full items-center justify-center rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-50'
-              >
-                View Details →
-              </Link>
-            </div>
+            <EventCard key={event.id} event={event} />
           ))}
         </div>
       )}

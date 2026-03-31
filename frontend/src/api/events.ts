@@ -1,6 +1,6 @@
 import api from './axiosInstance'
 
-export type EventStatus = 'UPCOMING' | 'ONGOING' | 'COMPLETED' | 'CANCELLED'
+export type EventStatus = 'OPEN' | 'CLOSED'
 
 export interface Event {
   id: number

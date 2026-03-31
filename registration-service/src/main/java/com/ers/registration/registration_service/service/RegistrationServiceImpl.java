@@ -165,4 +165,20 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         return response;
     }
+
+    @Override
+    public java.util.List<RegistrationResponse> getUserRegistrations(Long userId) {
+        log.info("Fetching CONFIRMED registrations for user ID: {}", userId);
+        java.util.List<Registration> registrations = registrationRepository.findByUserIdAndStatus(userId, RegistrationStatus.CONFIRMED);
+        
+        return registrations.stream().map(reg -> {
+            RegistrationResponse resp = new RegistrationResponse();
+            resp.setId(reg.getId());
+            resp.setUserId(reg.getUserId());
+            resp.setEventId(reg.getEventId());
+            resp.setRegistrationDate(reg.getCreatedAt());
+            resp.setStatus(reg.getStatus());
+            return resp;
+        }).toList();
+    }
 }

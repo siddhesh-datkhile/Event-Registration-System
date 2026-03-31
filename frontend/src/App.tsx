@@ -7,7 +7,9 @@ import LandingPage from './pages/LandingPage.tsx'
 import HomeLayout from './pages/HomeLayout.tsx'
 import EventsPage from './pages/EventsPage.tsx'
 import EventDetailPage from './pages/EventDetailPage.tsx'
-
+import ProtectedRoute from './Components/ProtectedRoute.tsx'
+import DashboardPage from './pages/registrant/DashboardPage.tsx'
+import MyRegistrationsPage from './pages/registrant/MyRegistrationsPage.tsx'
 function App() {
   return (
     <div>
@@ -24,6 +26,14 @@ function App() {
           <Route path='/register' element={<RegisterPage />} />
           <Route path='/events' element={<EventsPage />} />
           <Route path='/events/:id' element={<EventDetailPage />} />
+
+          {/* Protected Routes for Registrants */}
+          <Route element={<ProtectedRoute allowedRoles={['REGISTRANT']} />}>
+            <Route path='/dashboard' element={<DashboardPage />} />
+            <Route path='/dashboard/registrations' element={<MyRegistrationsPage />} />
+          </Route>
+
+
         </Route>
       </Routes>
 
