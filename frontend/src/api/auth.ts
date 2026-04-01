@@ -10,7 +10,7 @@ interface ApiResponse<T> {
   status: number
 }
 
-// ── API functions ──────────────────────────────────────────────────────────
+// API functions
 
 export async function login(payload: LoginRequest): Promise<LoginResponse> {
   const res = await api.post<ApiResponse<LoginResponse>>(ENDPOINTS.AUTH.LOGIN, payload)
