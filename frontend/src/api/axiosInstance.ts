@@ -26,6 +26,10 @@ api.interceptors.response.use(
 
     // If the error is 401 and we haven't already retried this request
     if (error.response?.status === 401 && !originalRequest._retry) {
+      if (originalRequest.url?.includes('/api/auth/login') || originalRequest.url?.includes('/api/auth/register')) {
+        return Promise.reject(error)
+      }
+
       originalRequest._retry = true
       const refreshToken = localStorage.getItem('refreshToken')
 

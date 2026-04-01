@@ -1,4 +1,4 @@
-import type {  Event  } from '../model'
+import type { Event } from '../model'
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { clearTokens, isLoggedIn, getCurrentUser } from '../api/auth'
@@ -7,7 +7,7 @@ import { UserCircle } from 'lucide-react'
 type NavbarProps = {
   variant?: 'default' | 'sticky'
 }
-
+//take variant from props and if not set default
 function Navbar({ variant = 'default' }: NavbarProps) {
   const navigate = useNavigate()
   const [loggedIn, setLoggedIn] = useState(isLoggedIn())
@@ -30,6 +30,9 @@ function Navbar({ variant = 'default' }: NavbarProps) {
 
   const isOrganizer = user?.roles?.includes('ROLE_ORGANIZER') || user?.roles?.includes('ORGANIZER')
   const isAdmin = user?.roles?.includes('ROLE_ADMIN') || user?.roles?.includes('ADMIN')
+
+  // TODO: Add a check for the user role to determine the dashboard path
+
   const dashboardPath = isAdmin ? '/admin/dashboard' : isOrganizer ? '/organizer/dashboard' : '/dashboard'
 
   return (

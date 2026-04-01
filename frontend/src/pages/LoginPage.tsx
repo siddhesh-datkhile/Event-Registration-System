@@ -16,11 +16,11 @@ function LoginPage() {
       const { token, refreshToken } = await login({ email, password })
       saveTokens(token, refreshToken)
       toast.success('Logged in successfully!')
-      
+
       const user = getCurrentUser()
       const isAdmin = user?.roles?.includes('ROLE_ADMIN') || user?.roles?.includes('ADMIN')
       const isOrganizer = user?.roles?.includes('ROLE_ORGANIZER') || user?.roles?.includes('ORGANIZER')
-      
+
       if (isAdmin) {
         navigate('/admin/dashboard')
       } else if (isOrganizer) {
