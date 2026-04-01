@@ -1,4 +1,6 @@
 import api from './axiosInstance'
+import { ENDPOINTS } from './endpoints'
+
 import type {  LoginRequest, RegisterRequest, UpdateProfileRequest, LoginResponse, TokenRefreshResponse, UserProfileResponse  } from '../model'
 
 /** Generic wrapper returned by every auth endpoint */
@@ -11,27 +13,27 @@ interface ApiResponse<T> {
 // ── API functions ──────────────────────────────────────────────────────────
 
 export async function login(payload: LoginRequest): Promise<LoginResponse> {
-  const res = await api.post<ApiResponse<LoginResponse>>('/api/auth/login', payload)
+  const res = await api.post<ApiResponse<LoginResponse>>(ENDPOINTS.AUTH.LOGIN, payload)
   return res.data.data
 }
 
 export async function register(payload: RegisterRequest): Promise<UserProfileResponse> {
-  const res = await api.post<ApiResponse<UserProfileResponse>>('/api/auth/register', payload)
+  const res = await api.post<ApiResponse<UserProfileResponse>>(ENDPOINTS.AUTH.REGISTER, payload)
   return res.data.data
 }
 
 export async function refreshAccessToken(refreshToken: string): Promise<TokenRefreshResponse> {
-  const res = await api.post<TokenRefreshResponse>('/api/auth/refreshtoken', { refreshToken })
+  const res = await api.post<TokenRefreshResponse>(ENDPOINTS.AUTH.REFRESH_TOKEN, { refreshToken })
   return res.data
 }
 
 export async function fetchUserProfile(id: number): Promise<UserProfileResponse> {
-  const res = await api.get<UserProfileResponse>(`/api/auth/user/${id}`)
+  const res = await api.get<UserProfileResponse>(ENDPOINTS.AUTH.USER_BY_ID(id))
   return res.data
 }
 
 export async function updateProfile(payload: UpdateProfileRequest): Promise<UserProfileResponse> {
-  const res = await api.put<UserProfileResponse>('/api/auth/user/profile', payload)
+  const res = await api.put<UserProfileResponse>(ENDPOINTS.AUTH.USER_PROFILE, payload)
   return res.data
 }
 
@@ -39,17 +41,17 @@ export async function updateProfile(payload: UpdateProfileRequest): Promise<User
 // ── Admin endpoints ────────────────────────────────────────────────────────
 
 export async function getAllUsers(): Promise<UserProfileResponse[]> {
-  const res = await api.get<UserProfileResponse[]>('/api/auth/admin/users')
+  const res = await api.get<UserProfileResponse[]>(ENDPOINTS.AUTH.ADMIN_USERS)
   return res.data
 }
 
 export async function addOrganizer(payload: Partial<RegisterRequest>): Promise<UserProfileResponse> {
-  const res = await api.post<UserProfileResponse>('/api/auth/admin/organizer', payload)
+  const res = await api.post<UserProfileResponse>(ENDPOINTS.AUTH.ADMIN_ORGANIZER, payload)
   return res.data
 }
 
 export async function addRegistrant(payload: Partial<RegisterRequest>): Promise<UserProfileResponse> {
-  const res = await api.post<UserProfileResponse>('/api/auth/admin/registrants', payload)
+  const res = await api.post<UserProfileResponse>(ENDPOINTS.AUTH.ADMIN_REGISTRANTS, payload)
   return res.data
 }
 
