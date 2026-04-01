@@ -1,10 +1,12 @@
 import type {  UpdateProfileRequest, UserProfileResponse  } from '../model'
 import { useEffect, useState } from 'react'
-import { fetchUserProfile, getCurrentUser, updateProfile } from '../api/auth'
+import { fetchUserProfile, updateProfile } from '../api/auth'
+import { useAuth } from '../contexts/AuthContext'
 import { UserCircle, Mail, Phone, MapPin, Calendar, Shield } from 'lucide-react'
 import { toast } from 'react-toastify'
 
 export default function UserProfilePage() {
+  const { user } = useAuth()
   const [profile, setProfile] = useState<UserProfileResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -18,7 +20,6 @@ export default function UserProfilePage() {
   })
 
   useEffect(() => {
-    const user = getCurrentUser()
     if (user && user.id) {
       fetchUserProfile(user.id)
         .then((data) => {

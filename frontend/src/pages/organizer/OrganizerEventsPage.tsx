@@ -2,13 +2,13 @@ import type {  Event  } from '../../model'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getAllEvents } from '../../api/events'
-import { getCurrentUser } from '../../api/auth'
 import { EventCard } from '../../Components/EventCard'
+import { useAuth } from '../../contexts/AuthContext'
 
 export default function OrganizerEventsPage() {
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
-  const user = getCurrentUser()
+  const { user } = useAuth()
 
   useEffect(() => {
     if (!user) return

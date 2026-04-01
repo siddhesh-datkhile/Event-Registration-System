@@ -1,20 +1,22 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { login, saveTokens, getCurrentUser } from '../api/auth'
+import { login as apiLogin, getCurrentUser } from '../api/auth'
+import { useAuth } from '../contexts/AuthContext'
 
 function LoginPage() {
+  const { login } = useAuth()
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false) // Add a loading spinner to the submit button
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
     try {
-      const { token, refreshToken } = await login({ email, password })
-      saveTokens(token, refreshToken)
+      const { token, refreshToken } = await apiLogin({ email, password })
+      login(token, refreshToken)
       toast.success('Logged in successfully!')
 
       const user = getCurrentUser()

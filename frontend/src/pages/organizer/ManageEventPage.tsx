@@ -1,17 +1,17 @@
-import type {  Venue, EventStatus, Event  } from '../../model'
+import type {  Venue, EventStatus  } from '../../model'
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { getEventById, createEvent, updateEvent, deleteEvent } from '../../api/events'
 import { getAllVenues } from '../../api/venues'
-import { getCurrentUser } from '../../api/auth'
+import { useAuth } from '../../contexts/AuthContext'
 
 export default function ManageEventPage() {
   const { id } = useParams<{ id: string }>()
   const isEditing = Boolean(id)
   const navigate = useNavigate()
 
-  const user = getCurrentUser()
+  const { user } = useAuth()
 
   const [loading, setLoading] = useState(isEditing)
   const [saving, setSaving] = useState(false)

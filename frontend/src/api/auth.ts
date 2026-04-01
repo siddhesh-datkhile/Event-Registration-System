@@ -58,19 +58,19 @@ export async function addRegistrant(payload: Partial<RegisterRequest>): Promise<
 // ── Token helpers (localStorage) ───────────────────────────────────────────
 
 export function saveTokens(token: string, refreshToken: string) {
-  localStorage.setItem('token', token)
-  localStorage.setItem('refreshToken', refreshToken)
+  sessionStorage.setItem('token', token)
+  sessionStorage.setItem('refreshToken', refreshToken)
   window.dispatchEvent(new Event('auth-change'))
 }
 
 export function clearTokens() {
-  localStorage.removeItem('token')
-  localStorage.removeItem('refreshToken')
+  sessionStorage.removeItem('token')
+  sessionStorage.removeItem('refreshToken')
   window.dispatchEvent(new Event('auth-change'))
 }
 
 export function getToken(): string | null {
-  return localStorage.getItem('token')
+  return sessionStorage.getItem('token')
 }
 
 export function isLoggedIn(): boolean {
@@ -99,3 +99,4 @@ export function getCurrentUser() {
   const decoded = decodeToken(token)
   return decoded ? { id: decoded.userId, roles: decoded.roles, email: decoded.sub } : null
 }
+

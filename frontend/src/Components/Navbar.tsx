@@ -1,8 +1,7 @@
 import type { Event } from '../model'
-import { useEffect, useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { clearTokens, isLoggedIn, getCurrentUser } from '../api/auth'
 import { UserCircle } from 'lucide-react'
+import { useAuth } from '../contexts/AuthContext'
 
 type NavbarProps = {
   variant?: 'default' | 'sticky'
@@ -10,21 +9,10 @@ type NavbarProps = {
 //take variant from props and if not set default
 function Navbar({ variant = 'default' }: NavbarProps) {
   const navigate = useNavigate()
-  const [loggedIn, setLoggedIn] = useState(isLoggedIn())
-  const [user, setUser] = useState(getCurrentUser())
-
-  useEffect(() => {
-    const handleAuthChange = () => {
-      setLoggedIn(isLoggedIn())
-      setUser(getCurrentUser())
-    }
-    window.addEventListener('auth-change', handleAuthChange)
-    return () => window.removeEventListener('auth-change', handleAuthChange)
-  }, [])
+  const { isAuthenticated: loggedIn, user, logout } = useAuth()
 
   const handleLogout = () => {
-    clearTokens()
-    setUser(null)
+    logout()
     navigate('/login')
   }
 

@@ -1,9 +1,9 @@
-import type {  EventStatus, Event  } from '../model'
+import type { Event } from '../model'
 import { useEffect, useState } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { getEventById } from '../api/events'
 import { createRegistration, getMyRegistrations } from '../api/registrations'
-import { isLoggedIn } from '../api/auth'
+import { useAuth } from '../contexts/AuthContext'
 import { createPaymentOrder } from '../api/payments'
 import { toast } from 'react-toastify'
 
@@ -45,6 +45,7 @@ function SkeletonDetail() {
 }
 
 function EventDetailPage() {
+  const { isAuthenticated } = useAuth()
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [event, setEvent] = useState<Event | null>(null)
@@ -56,7 +57,7 @@ function EventDetailPage() {
   const handleRegister = async () => {
     if (!event) return
 
-    if (!isLoggedIn()) {
+    if (!isAuthenticated) {
       toast.info('Please log in to register for this event.')
       navigate('/login')
       return
@@ -119,7 +120,7 @@ function EventDetailPage() {
         const ev = await getEventById(id)
         setEvent(ev)
 
-        if (isLoggedIn()) {
+        if (isAuthenticated) {
           const regs = await getMyRegistrations()
           const alreadyReg = regs.find(
             (r) => r.eventId === ev.id && (r.status === 'CONFIRMED' || r.status === 'PENDING')

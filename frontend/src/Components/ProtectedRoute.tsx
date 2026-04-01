@@ -1,54 +1,36 @@
 import { Navigate, Outlet } from 'react-router-dom'
-import { jwtDecode } from 'jwt-decode'
-
-interface JwtPayload {
-  sub: string
-  roles: string[]
-  iat: number
-  exp: number
-  userId: number
-}
+import { useAuth } from '../contexts/AuthContext'
 
 interface ProtectedRouteProps {
   allowedRoles?: ('ADMIN' | 'ORGANIZER' | 'REGISTRANT')[]
 }
 
 const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
-  const token = localStorage.getItem('token')
+  const { isAuthenticated, user } = useAuth()
 
-  if (!token) {
+  if (!isAuthenticated) {
     // Not logged in -> redirect to login
     return <Navigate to='/login' replace />
   }
 
-  try {
-    const decoded = jwtDecode<JwtPayload>(token)
+  // Check role if allowedRoles is provided
+  if (allowedRoles && allowedRoles.length > 0) {
+    // The backend puts roles in an array, e.g., ["ROLE_REGISTRANT"]
+    // We strip the "ROLE_" prefix for easier checking
+    const userRoles = user?.roles?.map((r: string) => r.replace('ROLE_', '')) || []
 
-    // Check role if allowedRoles is provided
-    if (allowedRoles && allowedRoles.length > 0) {
-      // The backend puts roles in an array, e.g., ["ROLE_REGISTRANT"]
-      // We strip the "ROLE_" prefix for easier checking
-      const userRoles = decoded.roles.map((r) => r.replace('ROLE_', ''))
+    const hasAccess = userRoles.some((role: string) =>
+      allowedRoles.includes(role as any)
+    )
 
-      const hasAccess = userRoles.some((role) =>
-        allowedRoles.includes(role as any)
-      )
-
-      if (!hasAccess) {
-        // Logged in but wrong role
-        return <Navigate to='/unauthorized' replace />
-      }
-
+    if (!hasAccess) {
+      // Logged in but wrong role
+      return <Navigate to='/unauthorized' replace />
     }
-
-    // All checks passed, render the nested routes
-    return <Outlet />
-
-  } catch (error) {
-    // Invalid token format
-    localStorage.removeItem('token')
-    return <Navigate to='/login' replace />
   }
+
+  // All checks passed, render the nested routes
+  return <Outlet />
 }
 
 export default ProtectedRoute

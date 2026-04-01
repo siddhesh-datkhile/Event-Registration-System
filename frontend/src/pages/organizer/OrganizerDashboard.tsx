@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getAllEvents } from '../../api/events'
-import { getCurrentUser } from '../../api/auth'
+
+import { useAuth } from '../../contexts/AuthContext'
 
 export default function OrganizerDashboard() {
   const [stats, setStats] = useState({ totalEvents: 0, openEvents: 0 })
-  const user = getCurrentUser()
+  const { user } = useAuth()
 
   useEffect(() => {
     if (!user) return
