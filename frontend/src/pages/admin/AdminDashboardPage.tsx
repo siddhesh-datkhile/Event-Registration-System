@@ -1,41 +1,27 @@
-import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Users, UserCheck, UserPlus, CalendarDays, MapPin, ClipboardList } from 'lucide-react'
 import { getAllEvents } from '../../api/events'
 import { getAllUsers } from '../../api/auth'
 import { getAllRegistrations } from '../../api/registrations'
 import { getAllVenues } from '../../api/venues'
+import { useQuery } from '@tanstack/react-query'
 
 export default function AdminDashboardPage() {
-  const [stats, setStats] = useState({
-    totalUsers: 0,
-    organizers: 0,
-    registrants: 0,
-    events: 0,
-    registrations: 0,
-    venues: 0,
-  })
-  const [loading, setLoading] = useState(true)
+  const { data: users = [], isLoading: loadingUsers } = useQuery({ queryKey: ['admin', 'users'], queryFn: getAllUsers })
+  const { data: events = [], isLoading: loadingEvents } = useQuery({ queryKey: ['admin', 'events'], queryFn: getAllEvents })
+  const { data: regs = [], isLoading: loadingRegs } = useQuery({ queryKey: ['admin', 'registrations'], queryFn: getAllRegistrations })
+  const { data: venuesList = [], isLoading: loadingVenues } = useQuery({ queryKey: ['admin', 'venues'], queryFn: getAllVenues })
 
-  useEffect(() => {
-    Promise.all([
-      getAllUsers().catch(() => []), 
-      getAllEvents().catch(() => []), 
-      getAllRegistrations().catch(() => []),
-      getAllVenues().catch(() => [])
-    ])
-      .then(([users, events, regs, venuesList]) => {
-        setStats({
-          totalUsers: users.length,
-          organizers: users.filter((u) => u.role === 'ORGANIZER').length,
-          registrants: users.filter((u) => u.role === 'REGISTRANT').length,
-          events: events.length,
-          registrations: regs.length,
-          venues: venuesList.length,
-        })
-      })
-      .finally(() => setLoading(false))
-  }, [])
+  const loading = loadingUsers || loadingEvents || loadingRegs || loadingVenues
+
+  const stats = {
+    totalUsers: users.length,
+    organizers: users.filter((u) => u.role === 'ORGANIZER').length,
+    registrants: users.filter((u) => u.role === 'REGISTRANT').length,
+    events: events.length,
+    registrations: regs.length,
+    venues: venuesList.length,
+  }
 
   if (loading) {
     return (

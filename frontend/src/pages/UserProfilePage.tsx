@@ -1,17 +1,15 @@
-import type {  UpdateProfileRequest, UserProfileResponse  } from '../model'
-import { useEffect, useState } from 'react'
+import type {  UpdateProfileRequest  } from '../model'
+import { useState } from 'react'
 import { fetchUserProfile, updateProfile } from '../api/auth'
 import { useAuth } from '../contexts/AuthContext'
 import { UserCircle, Mail, Phone, MapPin, Calendar, Shield } from 'lucide-react'
 import { toast } from 'react-toastify'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 export default function UserProfilePage() {
   const { user } = useAuth()
-  const [profile, setProfile] = useState<UserProfileResponse | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const queryClient = useQueryClient()
   const [isEditing, setIsEditing] = useState(false)
-  const [saving, setSaving] = useState(false)
   const [formData, setFormData] = useState<UpdateProfileRequest>({
     name: '',
     phone: '',
@@ -19,44 +17,32 @@ export default function UserProfilePage() {
     dob: ''
   })
 
-  useEffect(() => {
-    if (user && user.id) {
-      fetchUserProfile(user.id)
-        .then((data) => {
-          setProfile(data)
-          setFormData({
-            name: data.name || '',
-            phone: data.phone || '',
-            address: data.address || '',
-            dob: data.dob || ''
-          })
-        })
-        .catch(() => {
-          setError('Failed to load profile information.')
-        })
-        .finally(() => {
-          setLoading(false)
-        })
-    } else {
-      setLoading(false)
-      setError('User not authenticated.')
-    }
-  }, [])
+  const { data: profile, isLoading, error: queryError } = useQuery({
+    queryKey: ['profile', user?.id],
+    queryFn: () => fetchUserProfile(user!.id),
+    enabled: !!user?.id,
+  })
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setSaving(true)
-    try {
-      const updated = await updateProfile(formData)
-      setProfile(updated)
+  const updateMutation = useMutation({
+    mutationFn: (data: UpdateProfileRequest) => updateProfile(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['profile', user?.id] })
       setIsEditing(false)
       toast.success('Profile updated successfully!')
-    } catch (err: any) {
+    },
+    onError: (err: any) => {
       toast.error(err.response?.data?.message || 'Failed to update profile. Please check the required fields.')
-    } finally {
-      setSaving(false)
     }
+  })
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    updateMutation.mutate(formData)
   }
+
+  const loading = isLoading
+  const saving = updateMutation.isPending
+  const error = !user ? 'User not authenticated.' : (queryError ? 'Failed to load profile information.' : null)
 
   if (loading) {
     return (

@@ -1,4 +1,4 @@
-import type {  EventStatus, Event  } from '../model'
+import type {  Event  } from '../model'
 import { Link } from 'react-router-dom'
 import type {} from '../api/events'
 import React from 'react'

@@ -1,14 +1,16 @@
-import type {  RegistrationResponse  } from '../../model'
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
 import { getMyRegistrations } from '../../api/registrations'
-import { toast } from 'react-toastify'
+import { useQuery } from '@tanstack/react-query'
 
 function DashboardPage() {
-  const [registrations, setRegistrations] = useState<RegistrationResponse[]>([])
-  const [loading, setLoading] = useState(true)
   const [userName, setUserName] = useState('User')
+
+  const { data: registrations = [], isLoading: loading } = useQuery({
+    queryKey: ['registrations', 'me'],
+    queryFn: getMyRegistrations,
+  })
 
   useEffect(() => {
     // Try to extract name from token if available, otherwise fallback
@@ -25,19 +27,6 @@ function DashboardPage() {
         /* ignore */
       }
     }
-
-    async function fetchData() {
-      try {
-        const data = await getMyRegistrations()
-        setRegistrations(data)
-      } catch (err) {
-        toast.error('Failed to load your dashboard data.')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
   }, [])
 
   const confirmedCount = registrations.filter((r) => r.status === 'CONFIRMED').length

@@ -1,11 +1,11 @@
-import type { Event } from '../model'
-import { useEffect, useState } from 'react'
+
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { getEventById } from '../api/events'
 import { createRegistration, getMyRegistrations } from '../api/registrations'
 import { useAuth } from '../contexts/AuthContext'
 import { createPaymentOrder } from '../api/payments'
 import { toast } from 'react-toastify'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 const STATUS_LABELS: Record<string, string> = {
   OPEN: 'Open',
@@ -48,96 +48,100 @@ function EventDetailPage() {
   const { isAuthenticated } = useAuth()
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const [event, setEvent] = useState<Event | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [registering, setRegistering] = useState(false)
-  const [hasRegistered, setHasRegistered] = useState(false)
+  const queryClient = useQueryClient()
 
-  const handleRegister = async () => {
-    if (!event) return
+  const { data: event, isLoading: loadingEvent, error: eventError } = useQuery({
+    queryKey: ['events', id],
+    queryFn: () => getEventById(id!),
+    enabled: !!id,
+  })
 
-    if (!isAuthenticated) {
-      toast.info('Please log in to register for this event.')
-      navigate('/login')
-      return
-    }
+  // We only fetch my registrations if authenticated
+  const { data: myRegs, isLoading: loadingRegs } = useQuery({
+    queryKey: ['registrations', 'me'],
+    queryFn: getMyRegistrations,
+    enabled: isAuthenticated,
+  })
 
-    setRegistering(true)
-    try {
+  const loading = loadingEvent || loadingRegs
+  const error = eventError ? (eventError as Error).message : null
+
+  const hasRegistered = !!event && !!myRegs?.find(
+    (r) => r.eventId === event.id && (r.status === 'CONFIRMED' || r.status === 'PENDING')
+  )
+
+  const registerMutation = useMutation({
+    mutationFn: async () => {
+      if (!event) throw new Error('Event not loaded')
       const reg = await createRegistration(event.id)
       
       if (event.entryFee > 0) {
         toast.info('Initializing payment...')
         const paymentOrder = await createPaymentOrder(reg.id)
         
-        const options = {
-            key: "rzp_test_SUah4LvPVpASiA",
-            amount: paymentOrder.amount * 100, // Razorpay expects amount in paise
-            currency: paymentOrder.currency,
-            name: "Event Registration System",
-            description: `Registration for ${event.title}`,
-            order_id: paymentOrder.razorpayOrderId,
-            handler: function () {
-                toast.success('Payment successful! Registration confirmed.')
-                navigate('/dashboard/registrations')
-            },
-            prefill: {
-                name: "User",
-                email: "user@example.com",
-                contact: "9999999999"
-            },
-            theme: {
-                color: "#4f46e5"
-            }
-        };
-        
-        const rzp = new (window as any).Razorpay(options);
-        rzp.on('payment.failed', function (response: any){
-            toast.error(`Payment failed: ${response.error.description}`);
-            navigate('/dashboard/registrations')
-        });
-        rzp.open();
+        return new Promise((resolve, reject) => {
+            const options = {
+                key: "rzp_test_SUah4LvPVpASiA",
+                amount: paymentOrder.amount * 100, 
+                currency: paymentOrder.currency,
+                name: "Event Registration System",
+                description: `Registration for ${event.title}`,
+                order_id: paymentOrder.razorpayOrderId,
+                handler: function () {
+                    resolve(true)
+                },
+                prefill: {
+                    name: "User",
+                    email: "user@example.com",
+                    contact: "9999999999"
+                },
+                theme: {
+                    color: "#4f46e5"
+                }
+            };
+            
+            const rzp = new (window as any).Razorpay(options);
+            rzp.on('payment.failed', function (response: any){
+                reject(new Error(`Payment failed: ${response.error.description}`));
+            });
+            rzp.open();
+        })
+      }
+      return false // free event
+    },
+    onSuccess: (wasPaid) => {
+      queryClient.invalidateQueries({ queryKey: ['events', id] })
+      queryClient.invalidateQueries({ queryKey: ['registrations', 'me'] })
+      queryClient.invalidateQueries({ queryKey: ['events'] })
+      
+      if (wasPaid) {
+        toast.success('Payment successful! Registration confirmed.')
       } else {
         toast.success('Successfully registered for the free event!')
-        navigate('/dashboard/registrations')
       }
-    } catch (err: any) {
-      if (err.response?.status === 409 || err.response?.data?.message?.includes('already')) {
+      navigate('/dashboard/registrations')
+    },
+    onError: (err: any) => {
+      const respErr = err.response?.status === 409 || err.response?.data?.message?.includes('already')
+      if (respErr) {
         toast.error('You are already registered for this event.')
       } else {
-        toast.error('Failed to register. The event might be full or closed.')
+        toast.error(err.message || 'Failed to register. The event might be full or closed.')
+        navigate('/dashboard/registrations') // In case user cancelled payment they can see status
       }
-    } finally {
-      setRegistering(false)
     }
+  })
+
+  const handleRegister = () => {
+    if (!isAuthenticated) {
+      toast.info('Please log in to register for this event.')
+      navigate('/login')
+      return
+    }
+    registerMutation.mutate()
   }
 
-  useEffect(() => {
-    if (!id) return
-    const fetchData = async () => {
-      try {
-        const ev = await getEventById(id)
-        setEvent(ev)
-
-        if (isAuthenticated) {
-          const regs = await getMyRegistrations()
-          const alreadyReg = regs.find(
-            (r) => r.eventId === ev.id && (r.status === 'CONFIRMED' || r.status === 'PENDING')
-          )
-          if (alreadyReg) {
-            setHasRegistered(true)
-          }
-        }
-      } catch (err: any) {
-        setError(err.message)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchData()
-  }, [id])
-
+  const registering = registerMutation.isPending
   const seatPct = event ? Math.round((event.availableSeats / event.capacity) * 100) : 0
 
   return (

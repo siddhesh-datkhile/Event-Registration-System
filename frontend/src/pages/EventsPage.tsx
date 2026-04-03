@@ -1,7 +1,8 @@
-import type {  EventStatus, Event  } from '../model'
-import { useEffect, useState } from 'react'
+import type {  EventStatus  } from '../model'
+import { useState } from 'react'
 import { getAllEvents } from '../api/events'
 import { EventCard } from '../Components/EventCard'
+import { useQuery } from '@tanstack/react-query'
 
 const ALL_STATUSES: EventStatus[] = ['OPEN', 'CLOSED']
 
@@ -31,18 +32,15 @@ function SkeletonCard() {
 }
 
 function EventsPage() {
-  const [events, setEvents] = useState<Event[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const [search, setSearch] = useState('')
   const [activeStatus, setActiveStatus] = useState<EventStatus | 'ALL'>('ALL')
 
-  useEffect(() => {
-    getAllEvents()
-      .then(setEvents)
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false))
-  }, [])
+  const { data: events = [], isLoading: loading, error: queryError } = useQuery({
+    queryKey: ['events'],
+    queryFn: getAllEvents,
+  })
+
+  const error = queryError ? (queryError as Error).message : null
 
   const filtered = events.filter((e) => {
     const matchSearch = e.title.toLowerCase().includes(search.toLowerCase())

@@ -1,21 +1,10 @@
-import type {  Event  } from '../../model'
-import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getAllEvents } from '../../api/events'
 import { EventCard } from '../../Components/EventCard'
+import { useQuery } from '@tanstack/react-query'
 
 export default function AdminEventsPage() {
-  const [events, setEvents] = useState<Event[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    getAllEvents()
-      .then((data) => {
-        setEvents(data)
-      })
-      .catch((e) => console.error(e))
-      .finally(() => setLoading(false))
-  }, [])
+  const { data: events = [], isLoading: loading } = useQuery({ queryKey: ['admin', 'events'], queryFn: getAllEvents })
 
   if (loading) {
     return (

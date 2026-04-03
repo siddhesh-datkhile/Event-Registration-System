@@ -1,4 +1,4 @@
-import type { Event } from '../model'
+
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { UserCircle } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'

@@ -1,24 +1,20 @@
-import type {  Event  } from '../../model'
-import { useEffect, useState } from 'react'
+
 import { Link } from 'react-router-dom'
 import { getAllEvents } from '../../api/events'
 import { EventCard } from '../../Components/EventCard'
 import { useAuth } from '../../contexts/AuthContext'
+import { useQuery } from '@tanstack/react-query'
 
 export default function OrganizerEventsPage() {
-  const [events, setEvents] = useState<Event[]>([])
-  const [loading, setLoading] = useState(true)
   const { user } = useAuth()
 
-  useEffect(() => {
-    if (!user) return
-    getAllEvents()
-      .then((data) => {
-        // Filter out only events belonging to the current organizer
-        setEvents(data.filter((e) => e.organizerId === user.id))
-      })
-      .finally(() => setLoading(false))
-  }, [user?.id])
+  const { data: allEvents = [], isLoading: loading } = useQuery({
+    queryKey: ['events'],
+    queryFn: getAllEvents,
+    enabled: !!user
+  })
+
+  const events = allEvents.filter((e) => e.organizerId === user?.id)
 
   if (loading) {
     return (

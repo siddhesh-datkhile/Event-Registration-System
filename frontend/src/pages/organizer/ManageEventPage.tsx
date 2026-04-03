@@ -1,21 +1,32 @@
-import type {  Venue, EventStatus  } from '../../model'
+import type {  EventStatus  } from '../../model'
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { getEventById, createEvent, updateEvent, deleteEvent } from '../../api/events'
 import { getAllVenues } from '../../api/venues'
 import { useAuth } from '../../contexts/AuthContext'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 export default function ManageEventPage() {
   const { id } = useParams<{ id: string }>()
   const isEditing = Boolean(id)
   const navigate = useNavigate()
 
+  const queryClient = useQueryClient()
   const { user } = useAuth()
 
-  const [loading, setLoading] = useState(isEditing)
-  const [saving, setSaving] = useState(false)
-  const [venues, setVenues] = useState<Venue[]>([])
+  const { data: eventData, isLoading: loadingEvent } = useQuery({
+    queryKey: ['events', id],
+    queryFn: () => getEventById(id!),
+    enabled: isEditing && !!id
+  })
+
+  const { data: venues = [], isLoading: loadingVenues } = useQuery({
+    queryKey: ['venues'],
+    queryFn: getAllVenues
+  })
+
+  const loading = loadingEvent || loadingVenues
 
   const [formData, setFormData] = useState({
     title: '',
@@ -29,37 +40,50 @@ export default function ManageEventPage() {
   })
 
   useEffect(() => {
-    Promise.all([
-      isEditing && id ? getEventById(id) : Promise.resolve(null),
-      getAllVenues()
-    ])
-      .then(([eventData, venuesData]) => {
-        setVenues(venuesData)
-        
-        // If we have venues, default to the first one if creating a new event
-        if (!isEditing && venuesData.length > 0) {
-          setFormData((prev) => ({ ...prev, venueId: venuesData[0].id }))
-        }
+    if (venues.length > 0 && !formData.venueId && !isEditing) {
+      setFormData(prev => ({ ...prev, venueId: venues[0].id }))
+    }
+  }, [venues, isEditing])
 
-        if (eventData) {
-          setFormData({
-            title: eventData.title,
-            description: eventData.description,
-            eventDate: eventData.eventDate ? eventData.eventDate.slice(0, 16) : '',
-            entryFee: eventData.entryFee,
-            capacity: eventData.capacity,
-            status: eventData.status,
-            organizerId: eventData.organizerId,
-            venueId: eventData.venueId || (venuesData.length > 0 ? venuesData[0].id : 0),
-          })
-        }
-      })
-      .catch((err) => {
-        console.error(err)
-        toast.error('Failed to load form data')
-      })
-      .finally(() => setLoading(false))
-  }, [id, isEditing])
+  useEffect(() => {
+    if (eventData) {
+      setFormData(prev => ({
+        ...prev,
+        title: eventData.title,
+        description: eventData.description,
+        eventDate: eventData.eventDate ? eventData.eventDate.slice(0, 16) : '',
+        entryFee: eventData.entryFee,
+        capacity: eventData.capacity,
+        status: eventData.status,
+        organizerId: eventData.organizerId,
+        venueId: eventData.venueId,
+      }))
+    }
+  }, [eventData])
+
+  const mutation = useMutation({
+    mutationFn: (data: typeof formData) => isEditing && id ? updateEvent(id, data) : createEvent(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['events'] })
+      toast.success(isEditing ? 'Event updated successfully!' : 'Event created successfully!')
+      navigate('/organizer/events')
+    },
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || 'Failed to save event')
+    }
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: () => deleteEvent(id!),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['events'] })
+      toast.success('Event deleted')
+      navigate('/organizer/events')
+    },
+    onError: () => {
+      toast.error('Could not delete event. It may have existing registrations.')
+    }
+  })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -69,37 +93,19 @@ export default function ManageEventPage() {
     }))
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    setSaving(true)
-    try {
-      if (isEditing && id) {
-        await updateEvent(id, formData)
-        toast.success('Event updated successfully!')
-      } else {
-        await createEvent(formData)
-        toast.success('Event created successfully!')
-      }
-      navigate('/organizer/events')
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to save event')
-    } finally {
-      setSaving(false)
-    }
+    mutation.mutate(formData)
   }
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!window.confirm('Are you sure you want to delete this event? This assumes there are no registrations.')) {
       return
     }
-    try {
-      await deleteEvent(id!)
-      toast.success('Event deleted')
-      navigate('/organizer/events')
-    } catch (err: any) {
-      toast.error('Could not delete event. It may have existing registrations.')
-    }
+    deleteMutation.mutate()
   }
+
+  const saving = mutation.isPending
 
   if (loading) {
     return <div className="p-8 text-center text-slate-500">Loading...</div>

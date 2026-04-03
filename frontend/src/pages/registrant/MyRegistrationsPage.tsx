@@ -1,5 +1,5 @@
-import type {  RegistrationResponse, Event  } from '../../model'
-import { useEffect, useState } from 'react'
+import type {  Event  } from '../../model'
+import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { getMyRegistrations, cancelRegistration } from '../../api/registrations'
 import { getAllEvents } from '../../api/events'
@@ -7,61 +7,48 @@ import { EventCard } from '../../Components/EventCard'
 import { toast } from 'react-toastify'
 import { getReceiptHtml } from '../../api/receipts'
 import { createPaymentOrder } from '../../api/payments'
-
-interface RegistrationRow extends RegistrationResponse {
-  event?: Event
-}
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 function MyRegistrationsPage() {
-  const [registrations, setRegistrations] = useState<RegistrationRow[]>([])
-  const [loading, setLoading] = useState(true)
+  const queryClient = useQueryClient()
+  const [receiptHtml, setReceiptHtml] = useState<string | null>(null)
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const [regs, events] = await Promise.all([
-          getMyRegistrations(),
-          getAllEvents()
-        ])
+  const { data: events = [], isLoading: loadingEvents } = useQuery({
+    queryKey: ['events'],
+    queryFn: getAllEvents,
+  })
 
-        // Map events to registrations for display
-        //used hashmap for O(1) lookup
+  const { data: regs = [], isLoading: loadingRegs } = useQuery({
+    queryKey: ['registrations', 'me'],
+    queryFn: getMyRegistrations,
+  })
 
-        const eventMap = new Map(events.map(e => [e.id, e]))
+  const loading = loadingEvents || loadingRegs
 
-        const mapped = regs.map(reg => ({
-          ...reg,
-          event: eventMap.get(reg.eventId)
-        }))
+  const registrations = useMemo(() => {
+    if (!regs || !events) return []
+    const eventMap = new Map(events.map(e => [e.id, e]))
+    const mapped = regs.map(reg => ({
+      ...reg,
+      event: eventMap.get(reg.eventId)
+    }))
+    return mapped.sort((a, b) => new Date(b.registrationDate).getTime() - new Date(a.registrationDate).getTime())
+  }, [regs, events])
 
-        // Sort by youngest registration first
-        //Descending sort (b-a)
-        mapped.sort((a, b) => new Date(b.registrationDate).getTime() - new Date(a.registrationDate).getTime())
-
-        setRegistrations(mapped)
-      } catch (error) {
-        toast.error('Failed to load registrations.')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [])
-
-  const handleCancel = async (id: number) => {
-    if (!window.confirm('Are you sure you want to cancel this registration?')) return
-
-    try {
-      await cancelRegistration(id)
+  const cancelMutation = useMutation({
+    mutationFn: (id: number) => cancelRegistration(id),
+    onSuccess: () => {
       toast.success('Registration cancelled successfully.')
-      // Update local state
-      setRegistrations((prev) =>
-        prev.map((r) => (r.id === id ? { ...r, status: 'CANCELLED' } : r))
-      )
-    } catch (error) {
+      queryClient.invalidateQueries({ queryKey: ['registrations', 'me'] })
+    },
+    onError: () => {
       toast.error('Failed to cancel registration.')
     }
+  })
+
+  const handleCancel = (id: number) => {
+    if (!window.confirm('Are you sure you want to cancel this registration?')) return
+    cancelMutation.mutate(id)
   }
 
   const handlePayNow = async (regId: number, event: Event) => {
@@ -78,9 +65,7 @@ function MyRegistrationsPage() {
           order_id: paymentOrder.razorpayOrderId,
           handler: function () {
               toast.success('Payment successful!')
-              setRegistrations((prev) =>
-                  prev.map((r) => (r.id === regId ? { ...r, status: 'CONFIRMED' } : r))
-              )
+              queryClient.invalidateQueries({ queryKey: ['registrations', 'me'] })
           },
           theme: { color: "#4f46e5" }
       };
@@ -95,7 +80,6 @@ function MyRegistrationsPage() {
     }
   }
 
-  const [receiptHtml, setReceiptHtml] = useState<string | null>(null)
 
   const handleViewReceipt = async (regId: number) => {
     try {

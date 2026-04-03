@@ -1,7 +1,7 @@
 import api from './axiosInstance'
 import { ENDPOINTS } from './endpoints'
 
-import type {  EventStatus, Event  } from '../model'
+import type {  Event  } from '../model'
 
 export async function getAllEvents(): Promise<Event[]> {
   const res = await api.get<Event[]>(ENDPOINTS.EVENTS.BASE)

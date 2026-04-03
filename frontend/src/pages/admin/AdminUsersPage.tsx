@@ -1,47 +1,35 @@
-import type {  UserProfileResponse  } from '../../model'
-import { useEffect, useState } from 'react'
+
+import { useState } from 'react'
 import { getAllUsers, addOrganizer, addRegistrant } from '../../api/auth'
 import { toast } from 'react-toastify'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 export default function AdminUsersPage() {
-  const [users, setUsers] = useState<UserProfileResponse[]>([])
-  const [loading, setLoading] = useState(true)
+  const queryClient = useQueryClient()
+  const { data: users = [], isLoading: loading } = useQuery({ queryKey: ['admin', 'users'], queryFn: getAllUsers })
 
   const [showAddForm, setShowAddForm] = useState(false)
   const [newRole, setNewRole] = useState<'ORGANIZER' | 'REGISTRANT'>('REGISTRANT')
   const [formData, setFormData] = useState({ name: '', email: '' })
-  const [submitting, setSubmitting] = useState(false)
-
-  const loadUsers = () => {
-    setLoading(true)
-    getAllUsers()
-      .then((data) => setUsers(data))
-      .catch((err) => console.error(err))
-      .finally(() => setLoading(false))
-  }
-
-  useEffect(() => {
-    loadUsers()
-  }, [])
-
-  const handleAddUser = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setSubmitting(true)
-    try {
-      if (newRole === 'ORGANIZER') {
-        await addOrganizer(formData)
-      } else {
-        await addRegistrant(formData)
-      }
+  
+  const userMutation = useMutation({
+    mutationFn: (data: typeof formData) => newRole === 'ORGANIZER' ? addOrganizer(data) : addRegistrant(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'users'] })
       toast.success(`${newRole} account created successfully!`)
       setShowAddForm(false)
       setFormData({ name: '', email: '' })
-      loadUsers()
-    } catch (err) {
+    },
+    onError: () => {
       toast.error('Failed to create account. Email might already be in use.')
-    } finally {
-      setSubmitting(false)
     }
+  })
+
+  const submitting = userMutation.isPending
+
+  const handleAddUser = (e: React.FormEvent) => {
+    e.preventDefault()
+    userMutation.mutate(formData)
   }
 
   return (

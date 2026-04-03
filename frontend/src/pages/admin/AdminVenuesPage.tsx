@@ -1,42 +1,35 @@
-import type {  Venue  } from '../../model'
-import { useEffect, useState } from 'react'
+
+import { useState } from 'react'
 import { getAllVenues, addVenue } from '../../api/venues'
 import { toast } from 'react-toastify'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 export default function AdminVenuesPage() {
-  const [venues, setVenues] = useState<Venue[]>([])
-  const [loading, setLoading] = useState(true)
+  const queryClient = useQueryClient()
+  const { data: venues = [], isLoading: loading } = useQuery({ queryKey: ['admin', 'venues'], queryFn: getAllVenues })
 
   const [showAddForm, setShowAddForm] = useState(false)
   const [formData, setFormData] = useState({ name: '', address: '', city: '' })
-  const [submitting, setSubmitting] = useState(false)
 
-  const loadVenues = () => {
-    setLoading(true)
-    getAllVenues()
-      .then((data) => setVenues(data))
-      .catch((err) => console.error(err))
-      .finally(() => setLoading(false))
-  }
-
-  useEffect(() => {
-    loadVenues()
-  }, [])
-
-  const handleAddVenue = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setSubmitting(true)
-    try {
-      await addVenue(formData)
+  const venueMutation = useMutation({
+    mutationFn: addVenue,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'venues'] })
+      queryClient.invalidateQueries({ queryKey: ['venues'] })
       toast.success('Venue added successfully!')
       setShowAddForm(false)
       setFormData({ name: '', address: '', city: '' })
-      loadVenues()
-    } catch (err) {
+    },
+    onError: () => {
       toast.error('Failed to add venue. Please check your inputs.')
-    } finally {
-      setSubmitting(false)
     }
+  })
+
+  const submitting = venueMutation.isPending
+
+  const handleAddVenue = (e: React.FormEvent) => {
+    e.preventDefault()
+    venueMutation.mutate(formData)
   }
 
   return (

@@ -1,23 +1,22 @@
-import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getAllEvents } from '../../api/events'
-
 import { useAuth } from '../../contexts/AuthContext'
+import { useQuery } from '@tanstack/react-query'
 
 export default function OrganizerDashboard() {
-  const [stats, setStats] = useState({ totalEvents: 0, openEvents: 0 })
   const { user } = useAuth()
 
-  useEffect(() => {
-    if (!user) return
-    getAllEvents().then((events) => {
-      const myEvents = events.filter((e) => e.organizerId === user.id)
-      setStats({
-        totalEvents: myEvents.length,
-        openEvents: myEvents.filter((e) => e.status === 'OPEN').length,
-      })
-    })
-  }, [user?.id])
+  const { data: allEvents = [] } = useQuery({
+    queryKey: ['events'],
+    queryFn: getAllEvents,
+    enabled: !!user
+  })
+
+  const myEvents = allEvents.filter((e) => e.organizerId === user?.id)
+  const stats = {
+    totalEvents: myEvents.length,
+    openEvents: myEvents.filter((e) => e.status === 'OPEN').length,
+  }
 
   return (
     <div className='mx-auto max-w-6xl px-4 py-8'>

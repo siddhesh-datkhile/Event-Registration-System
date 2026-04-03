@@ -1,8 +1,8 @@
 import type {  RegistrationResponse, UserProfileResponse, Event  } from '../../model'
-import { useEffect, useState } from 'react'
 import { getAllRegistrations } from '../../api/registrations'
 import { fetchUserProfile } from '../../api/auth'
 import { getAllEvents } from '../../api/events'
+import { useQuery } from '@tanstack/react-query'
 
 type EnhancedRegistration = RegistrationResponse & {
   userProfile?: UserProfileResponse
@@ -10,44 +10,35 @@ type EnhancedRegistration = RegistrationResponse & {
 }
 
 export default function AdminRegistrationsPage() {
-  const [registrations, setRegistrations] = useState<EnhancedRegistration[]>([])
-  const [loading, setLoading] = useState(true)
+  const { data: registrations = [], isLoading: loading } = useQuery({
+    queryKey: ['admin', 'registrations', 'enriched'],
+    queryFn: async () => {
+      const [allRegs, allEvents] = await Promise.all([
+        getAllRegistrations(),
+        getAllEvents()
+      ])
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [allRegs, allEvents] = await Promise.all([
-          getAllRegistrations(),
-          getAllEvents()
-        ])
-
-        const eventMap = new Map(allEvents.map(e => [e.id, e]))
-        const enhanced = await Promise.all(
-          allRegs.map(async (reg) => {
-            let profile;
-            try {
-              profile = await fetchUserProfile(reg.userId)
-            } catch (e) {
-              console.error(`Failed to load profile for ${reg.userId}`)
-            }
-            return {
-              ...reg,
-              userProfile: profile,
-              event: eventMap.get(reg.eventId)
-            }
-          })
-        )
-        // Sort newest first
-        enhanced.sort((a, b) => new Date(b.registrationDate).getTime() - new Date(a.registrationDate).getTime())
-        setRegistrations(enhanced)
-      } catch (err) {
-        console.error(err)
-      } finally {
-        setLoading(false)
-      }
+      const eventMap = new Map(allEvents.map(e => [e.id, e]))
+      const enhanced = await Promise.all(
+        allRegs.map(async (reg) => {
+          let profile;
+          try {
+            profile = await fetchUserProfile(reg.userId)
+          } catch (e) {
+            console.error(`Failed to load profile for ${reg.userId}`)
+          }
+          return {
+            ...reg,
+            userProfile: profile,
+            event: eventMap.get(reg.eventId)
+          } as EnhancedRegistration
+        })
+      )
+      // Sort newest first
+      enhanced.sort((a, b) => new Date(b.registrationDate).getTime() - new Date(a.registrationDate).getTime())
+      return enhanced
     }
-    fetchData()
-  }, [])
+  })
 
   if (loading) {
     return (

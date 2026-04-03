@@ -1,9 +1,9 @@
-import type {  RegistrationResponse, UserProfileResponse, Event  } from '../../model'
-import { useEffect, useState } from 'react'
+import type {  RegistrationResponse, UserProfileResponse  } from '../../model'
 import { useParams, Link } from 'react-router-dom'
 import { getEventRegistrations } from '../../api/registrations'
 import { getEventById } from '../../api/events'
 import { fetchUserProfile } from '../../api/auth'
+import { useQuery } from '@tanstack/react-query'
 
 type AttendeeRecord = RegistrationResponse & {
   userProfile?: UserProfileResponse
@@ -11,32 +11,31 @@ type AttendeeRecord = RegistrationResponse & {
 
 export default function EventAttendeesPage() {
   const { id } = useParams<{ id: string }>()
-  const [registrations, setRegistrations] = useState<AttendeeRecord[]>([])
-  const [event, setEvent] = useState<Event | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: event, isLoading: loadingEvent } = useQuery({
+    queryKey: ['events', id],
+    queryFn: () => getEventById(id!),
+    enabled: !!id
+  })
 
-  useEffect(() => {
-    if (!id) return
-    Promise.all([getEventById(id), getEventRegistrations(id)])
-      .then(async ([eventData, regData]) => {
-        setEvent(eventData)
-        
-        const enrichedRegistrations = await Promise.all(
-          regData.map(async (reg) => {
-            try {
-              const profile = await fetchUserProfile(reg.userId)
-              return { ...reg, userProfile: profile }
-            } catch (err) {
-              console.error(`Failed to fetch profile for user ${reg.userId}`, err)
-              return reg
-            }
-          })
-        )
-        
-        setRegistrations(enrichedRegistrations)
-      })
-      .finally(() => setLoading(false))
-  }, [id])
+  const { data: registrations = [], isLoading: loadingRegs } = useQuery({
+    queryKey: ['event-registrations', id],
+    queryFn: async () => {
+      const regData = await getEventRegistrations(id!)
+      return Promise.all(
+        regData.map(async (reg) => {
+          try {
+            const profile = await fetchUserProfile(reg.userId)
+            return { ...reg, userProfile: profile } as AttendeeRecord
+          } catch (err) {
+            return reg as AttendeeRecord
+          }
+        })
+      )
+    },
+    enabled: !!id
+  })
+
+  const loading = loadingEvent || loadingRegs
 
   if (loading) {
     return <div className="p-8 text-center text-slate-500">Loading attendees...</div>
