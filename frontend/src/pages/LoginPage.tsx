@@ -35,7 +35,6 @@ function LoginPage() {
     } catch (err: any) {
       const msg =
         err?.response?.data?.message ||
-        err?.message ||
         'Login failed. Please check your credentials.'
       toast.error(msg)
     }

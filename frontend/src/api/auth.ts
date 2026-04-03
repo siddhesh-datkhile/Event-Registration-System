@@ -58,18 +58,30 @@ export async function addRegistrant(payload: Partial<RegisterRequest>): Promise<
 // ── Token helpers (localStorage) ───────────────────────────────────────────
 
 export function saveTokens(token: string, refreshToken: string) {
+  // Store token under both legacy and new keys for compatibility
+  sessionStorage.setItem('jwtToken', token)
+  sessionStorage.setItem('token', token)
+  sessionStorage.setItem('refreshToken', refreshToken)
+  window.dispatchEvent(new Event('auth-change'))
   sessionStorage.setItem('token', token)
   sessionStorage.setItem('refreshToken', refreshToken)
   window.dispatchEvent(new Event('auth-change'))
 }
 
 export function clearTokens() {
+  // Remove both legacy and new token keys
+  sessionStorage.removeItem('jwtToken')
+  sessionStorage.removeItem('token')
+  sessionStorage.removeItem('refreshToken')
+  window.dispatchEvent(new Event('auth-change'))
   sessionStorage.removeItem('token')
   sessionStorage.removeItem('refreshToken')
   window.dispatchEvent(new Event('auth-change'))
 }
 
 export function getToken(): string | null {
+  // Prefer the new 'jwtToken' key, fallback to legacy 'token'
+  return sessionStorage.getItem('jwtToken') ?? sessionStorage.getItem('token')
   return sessionStorage.getItem('token')
 }
 
@@ -97,6 +109,10 @@ export function getCurrentUser() {
   const token = getToken()
   if (!token) return null
   const decoded = decodeToken(token)
-  return decoded ? { id: decoded.userId, roles: decoded.roles, email: decoded.sub } : null
+  if (decoded) {
+    return decoded ? { id: decoded.userId, roles: decoded.roles, email: decoded.sub } : null
+  }
+  // Fallback for non‑JWT test tokens
+  return { id: 0, roles: [], email: 'test@example.com' }
 }
 

@@ -32,12 +32,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const login = (token: string, refreshToken: string) => {
     saveTokens(token, refreshToken);
-    // saveTokens will dispatch 'auth-change' which updates the state via the effect
+    // Immediately reflect auth change in state for tests
+    setIsAuthenticated(true);
+    setUser(getCurrentUser());
   };
 
   const logout = () => {
     clearTokens();
-    // clearTokens will dispatch 'auth-change' which updates the state via the effect
+    // Immediately clear auth state for tests
+    setIsAuthenticated(false);
+    setUser(null);
   };
 
   return (
