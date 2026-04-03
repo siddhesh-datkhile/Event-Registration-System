@@ -1,15 +1,20 @@
-
 import { useState } from 'react'
 import { getAllVenues, addVenue } from '../../api/venues'
 import { toast } from 'react-toastify'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useForm } from 'react-hook-form'
+
+type AddVenueForm = { name: string; address: string; city: string }
 
 export default function AdminVenuesPage() {
   const queryClient = useQueryClient()
   const { data: venues = [], isLoading: loading } = useQuery({ queryKey: ['admin', 'venues'], queryFn: getAllVenues })
 
   const [showAddForm, setShowAddForm] = useState(false)
-  const [formData, setFormData] = useState({ name: '', address: '', city: '' })
+
+  const { register, handleSubmit, reset, formState: { errors, isSubmitting: submitting } } = useForm<AddVenueForm>({
+    defaultValues: { name: '', address: '', city: '' }
+  })
 
   const venueMutation = useMutation({
     mutationFn: addVenue,
@@ -18,19 +23,14 @@ export default function AdminVenuesPage() {
       queryClient.invalidateQueries({ queryKey: ['venues'] })
       toast.success('Venue added successfully!')
       setShowAddForm(false)
-      setFormData({ name: '', address: '', city: '' })
+      reset()
     },
     onError: () => {
       toast.error('Failed to add venue. Please check your inputs.')
     }
   })
 
-  const submitting = venueMutation.isPending
-
-  const handleAddVenue = (e: React.FormEvent) => {
-    e.preventDefault()
-    venueMutation.mutate(formData)
-  }
+  const onSubmit = (data: AddVenueForm) => venueMutation.mutate(data)
 
   return (
     <div className='mx-auto max-w-6xl px-4 py-8'>
@@ -51,39 +51,36 @@ export default function AdminVenuesPage() {
         <div className='mt-6 rounded-2xl border border-violet-100 bg-violet-50/50 p-6'>
           <h2 className='text-lg font-semibold text-slate-900'>Create New Venue</h2>
           <p className='text-sm text-slate-500 mb-6'>Provide details to add a new physical location for events.</p>
-          <form onSubmit={handleAddVenue} className='flex flex-col gap-4 sm:flex-row sm:items-end flex-wrap'>
+          <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4 sm:flex-row sm:items-end flex-wrap'>
             <div className='flex-1 min-w-[200px]'>
               <label className='block text-sm font-medium text-slate-600'>Venue Name</label>
               <input
                 type='text'
-                required
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2 border bg-slate-50'
                 placeholder='e.g. Grand Convention Center'
+                {...register('name', { required: 'Venue name is required' })}
+                className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2 border bg-slate-50'
               />
+              {errors.name && <p className='mt-1 text-xs text-red-500'>{errors.name.message}</p>}
             </div>
             <div className='flex-1 min-w-[200px]'>
               <label className='block text-sm font-medium text-slate-600'>Address</label>
               <input
                 type='text'
-                required
-                value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2 border bg-slate-50'
                 placeholder='e.g. 123 Main St'
+                {...register('address', { required: 'Address is required' })}
+                className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2 border bg-slate-50'
               />
+              {errors.address && <p className='mt-1 text-xs text-red-500'>{errors.address.message}</p>}
             </div>
             <div className='flex-1 min-w-[200px]'>
               <label className='block text-sm font-medium text-slate-600'>City</label>
               <input
                 type='text'
-                required
-                value={formData.city}
-                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2 border bg-slate-50'
                 placeholder='e.g. Metro City'
+                {...register('city', { required: 'City is required' })}
+                className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2 border bg-slate-50'
               />
+              {errors.city && <p className='mt-1 text-xs text-red-500'>{errors.city.message}</p>}
             </div>
             <button
               type='submit'

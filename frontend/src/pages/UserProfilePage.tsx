@@ -1,20 +1,19 @@
 import type {  UpdateProfileRequest  } from '../model'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { fetchUserProfile, updateProfile } from '../api/auth'
 import { useAuth } from '../contexts/AuthContext'
 import { UserCircle, Mail, Phone, MapPin, Calendar, Shield } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useForm } from 'react-hook-form'
 
 export default function UserProfilePage() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
   const [isEditing, setIsEditing] = useState(false)
-  const [formData, setFormData] = useState<UpdateProfileRequest>({
-    name: '',
-    phone: '',
-    address: '',
-    dob: ''
+
+  const { register, handleSubmit, reset, formState: { errors, isSubmitting: saving } } = useForm<UpdateProfileRequest>({
+    defaultValues: { name: '', phone: '', address: '', dob: '' }
   })
 
   const { data: profile, isLoading, error: queryError } = useQuery({
@@ -22,6 +21,18 @@ export default function UserProfilePage() {
     queryFn: () => fetchUserProfile(user!.id),
     enabled: !!user?.id,
   })
+
+  // Pre-fill form when profile data loads
+  useEffect(() => {
+    if (profile) {
+      reset({
+        name: profile.name || '',
+        phone: profile.phone || '',
+        address: profile.address || '',
+        dob: profile.dob || ''
+      })
+    }
+  }, [profile, reset])
 
   const updateMutation = useMutation({
     mutationFn: (data: UpdateProfileRequest) => updateProfile(data),
@@ -35,13 +46,14 @@ export default function UserProfilePage() {
     }
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    updateMutation.mutate(formData)
+  const onSubmit = (data: UpdateProfileRequest) => updateMutation.mutate(data)
+
+  const handleCancel = () => {
+    setIsEditing(false)
+    if (profile) reset({ name: profile.name || '', phone: profile.phone || '', address: profile.address || '', dob: profile.dob || '' })
   }
 
   const loading = isLoading
-  const saving = updateMutation.isPending
   const error = !user ? 'User not authenticated.' : (queryError ? 'Failed to load profile information.' : null)
 
   if (loading) {
@@ -80,19 +92,8 @@ export default function UserProfilePage() {
                 {profile.role.replace('ROLE_', '')}
               </span>
               <button
-                onClick={() => {
-                  if (isEditing) {
-                    setIsEditing(false)
-                    setFormData({
-                      name: profile.name || '',
-                      phone: profile.phone || '',
-                      address: profile.address || '',
-                      dob: profile.dob || ''
-                    })
-                  } else {
-                    setIsEditing(true)
-                  }
-                }}
+                type='button'
+                onClick={isEditing ? handleCancel : () => setIsEditing(true)}
                 className='inline-flex items-center rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-600 shadow-sm hover:bg-white'
               >
                 {isEditing ? 'Cancel' : 'Edit Profile'}
@@ -106,17 +107,16 @@ export default function UserProfilePage() {
           </div>
 
           {isEditing ? (
-            <form onSubmit={handleSubmit} className='mt-8 flex flex-col gap-6'>
+            <form onSubmit={handleSubmit(onSubmit)} className='mt-8 flex flex-col gap-6'>
               <div className='grid gap-6 sm:grid-cols-2'>
                 <div>
                   <label className='block text-sm font-medium text-slate-600'>Full Name</label>
                   <input
                     type='text'
-                    required
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    {...register('name', { required: 'Name is required' })}
                     className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2.5 border'
                   />
+                  {errors.name && <p className='mt-1 text-xs text-red-500'>{errors.name.message}</p>}
                 </div>
 
                 <div>
@@ -133,37 +133,35 @@ export default function UserProfilePage() {
                   <label className='block text-sm font-medium text-slate-600'>Phone Number</label>
                   <input
                     type='text'
-                    required
-                    pattern='^[0-9]{10}$'
-                    title='Must be exactly 10 digits'
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2.5 border'
                     placeholder='1234567890'
+                    {...register('phone', {
+                      required: 'Phone number is required',
+                      pattern: { value: /^[0-9]{10}$/, message: 'Must be exactly 10 digits' }
+                    })}
+                    className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2.5 border'
                   />
+                  {errors.phone && <p className='mt-1 text-xs text-red-500'>{errors.phone.message}</p>}
                 </div>
 
                 <div>
                   <label className='block text-sm font-medium text-slate-600'>Date of Birth</label>
                   <input
                     type='date'
-                    required
-                    value={formData.dob}
-                    onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
                     max={new Date().toISOString().split('T')[0]}
+                    {...register('dob', { required: 'Date of birth is required' })}
                     className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2.5 border'
                   />
+                  {errors.dob && <p className='mt-1 text-xs text-red-500'>{errors.dob.message}</p>}
                 </div>
 
                 <div className='sm:col-span-2'>
                   <label className='block text-sm font-medium text-slate-600'>Address</label>
                   <textarea
-                    required
                     rows={3}
-                    value={formData.address}
-                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    {...register('address', { required: 'Address is required' })}
                     className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2.5 border'
                   />
+                  {errors.address && <p className='mt-1 text-xs text-red-500'>{errors.address.message}</p>}
                 </div>
               </div>
 

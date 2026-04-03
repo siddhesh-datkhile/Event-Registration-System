@@ -1,21 +1,19 @@
-import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { login as apiLogin, getCurrentUser } from '../api/auth'
 import { useAuth } from '../contexts/AuthContext'
+import { useForm } from 'react-hook-form'
+
+type LoginForm = { email: string; password: string }
 
 function LoginPage() {
   const { login } = useAuth()
   const navigate = useNavigate()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false) // Add a loading spinner to the submit button
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginForm>()
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setIsSubmitting(true)
+  const onSubmit = async (data: LoginForm) => {
     try {
-      const { token, refreshToken } = await apiLogin({ email, password })
+      const { token, refreshToken } = await apiLogin(data)
       login(token, refreshToken)
       toast.success('Logged in successfully!')
 
@@ -36,8 +34,6 @@ function LoginPage() {
         err?.message ||
         'Login failed. Please check your credentials.'
       toast.error(msg)
-    } finally {
-      setIsSubmitting(false)
     }
   }
 
@@ -49,22 +45,20 @@ function LoginPage() {
           Sign in to your account to continue.
         </p>
 
-        <form className='mt-8 space-y-4' onSubmit={onSubmit}>
+        <form className='mt-8 space-y-4' onSubmit={handleSubmit(onSubmit)}>
           <div className='space-y-2'>
             <label htmlFor='email' className='text-sm font-medium text-slate-600'>
               Email
             </label>
             <input
               id='email'
-              name='email'
               type='email'
-              required
               autoComplete='email'
               placeholder='you@example.com'
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              {...register('email', { required: 'Email is required' })}
               className='w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-violet-600'
             />
+            {errors.email && <p className='text-xs text-red-500'>{errors.email.message}</p>}
           </div>
 
           <div className='space-y-2'>
@@ -73,15 +67,13 @@ function LoginPage() {
             </label>
             <input
               id='password'
-              name='password'
               type='password'
-              required
               autoComplete='current-password'
               placeholder='••••••••'
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              {...register('password', { required: 'Password is required' })}
               className='w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-violet-600'
             />
+            {errors.password && <p className='text-xs text-red-500'>{errors.password.message}</p>}
           </div>
 
           <button

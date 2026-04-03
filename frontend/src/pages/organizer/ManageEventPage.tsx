@@ -1,11 +1,23 @@
-import type {  EventStatus  } from '../../model'
-import React, { useEffect, useState } from 'react'
+import type { EventStatus } from '../../model'
+import { useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { getEventById, createEvent, updateEvent, deleteEvent } from '../../api/events'
 import { getAllVenues } from '../../api/venues'
 import { useAuth } from '../../contexts/AuthContext'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useForm } from 'react-hook-form'
+
+type EventForm = {
+  title: string
+  description: string
+  eventDate: string
+  entryFee: number
+  capacity: number
+  status: EventStatus
+  organizerId: number
+  venueId: number
+}
 
 export default function ManageEventPage() {
   const { id } = useParams<{ id: string }>()
@@ -14,6 +26,19 @@ export default function ManageEventPage() {
 
   const queryClient = useQueryClient()
   const { user } = useAuth()
+
+  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<EventForm>({
+    defaultValues: {
+      title: '',
+      description: '',
+      eventDate: '',
+      entryFee: 0,
+      capacity: 100,
+      status: 'OPEN',
+      organizerId: user?.id || 0,
+      venueId: 0,
+    }
+  })
 
   const { data: eventData, isLoading: loadingEvent } = useQuery({
     queryKey: ['events', id],
@@ -28,27 +53,10 @@ export default function ManageEventPage() {
 
   const loading = loadingEvent || loadingVenues
 
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    eventDate: '',
-    entryFee: 0,
-    capacity: 100,
-    status: 'OPEN' as EventStatus,
-    organizerId: user?.id || 0,
-    venueId: 0,
-  })
-
-  useEffect(() => {
-    if (venues.length > 0 && !formData.venueId && !isEditing) {
-      setFormData(prev => ({ ...prev, venueId: venues[0].id }))
-    }
-  }, [venues, isEditing])
-
+  // Pre-fill form when editing an existing event
   useEffect(() => {
     if (eventData) {
-      setFormData(prev => ({
-        ...prev,
+      reset({
         title: eventData.title,
         description: eventData.description,
         eventDate: eventData.eventDate ? eventData.eventDate.slice(0, 16) : '',
@@ -57,12 +65,19 @@ export default function ManageEventPage() {
         status: eventData.status,
         organizerId: eventData.organizerId,
         venueId: eventData.venueId,
-      }))
+      })
     }
-  }, [eventData])
+  }, [eventData, reset])
+
+  // Default to first venue when creating a new event
+  useEffect(() => {
+    if (!isEditing && venues.length > 0) {
+      setValue('venueId', venues[0].id)
+    }
+  }, [venues, isEditing, setValue])
 
   const mutation = useMutation({
-    mutationFn: (data: typeof formData) => isEditing && id ? updateEvent(id, data) : createEvent(data),
+    mutationFn: (data: EventForm) => isEditing && id ? updateEvent(id, data) : createEvent(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['events'] })
       toast.success(isEditing ? 'Event updated successfully!' : 'Event created successfully!')
@@ -85,23 +100,10 @@ export default function ManageEventPage() {
     }
   })
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: (name === 'entryFee' || name === 'capacity' || name === 'venueId') ? Number(value) : value,
-    }))
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    mutation.mutate(formData)
-  }
+  const onSubmit = (data: EventForm) => mutation.mutate(data)
 
   const handleDelete = () => {
-    if (!window.confirm('Are you sure you want to delete this event? This assumes there are no registrations.')) {
-      return
-    }
+    if (!window.confirm('Are you sure you want to delete this event? This assumes there are no registrations.')) return
     deleteMutation.mutate()
   }
 
@@ -135,51 +137,43 @@ export default function ManageEventPage() {
           )}
         </div>
 
-        <form onSubmit={handleSubmit} className='mt-8 space-y-6'>
+        <form onSubmit={handleSubmit(onSubmit)} className='mt-8 space-y-6'>
           <div>
             <label className='mb-1 block text-sm font-medium text-slate-600'>Event Title</label>
             <input
-              required
               type='text'
-              name='title'
-              value={formData.title}
-              onChange={handleChange}
-              className='w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-violet-600 focus:outline-none focus:ring-1 focus:ring-violet-600'
               placeholder='e.g. Annual Tech Conference'
+              {...register('title', { required: 'Title is required' })}
+              className='w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-violet-600 focus:outline-none focus:ring-1 focus:ring-violet-600'
             />
+            {errors.title && <p className='mt-1 text-xs text-red-500'>{errors.title.message}</p>}
           </div>
 
           <div>
             <label className='mb-1 block text-sm font-medium text-slate-600'>Description</label>
             <textarea
-              required
-              name='description'
-              value={formData.description}
-              onChange={handleChange}
               rows={4}
-              className='w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-violet-600 focus:outline-none focus:ring-1 focus:ring-violet-600'
               placeholder='Describe the event details...'
+              {...register('description', { required: 'Description is required' })}
+              className='w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-violet-600 focus:outline-none focus:ring-1 focus:ring-violet-600'
             />
+            {errors.description && <p className='mt-1 text-xs text-red-500'>{errors.description.message}</p>}
           </div>
 
           <div className='grid gap-6 sm:grid-cols-2'>
             <div>
-              <label className='mb-1 block text-sm font-medium text-slate-600'>Date & Time</label>
+              <label className='mb-1 block text-sm font-medium text-slate-600'>Date &amp; Time</label>
               <input
-                required
                 type='datetime-local'
-                name='eventDate'
-                value={formData.eventDate}
-                onChange={handleChange}
+                {...register('eventDate', { required: 'Date & time is required' })}
                 className='w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-violet-600 focus:outline-none focus:ring-1 focus:ring-violet-600'
               />
+              {errors.eventDate && <p className='mt-1 text-xs text-red-500'>{errors.eventDate.message}</p>}
             </div>
             <div>
               <label className='mb-1 block text-sm font-medium text-slate-600'>Status</label>
               <select
-                name='status'
-                value={formData.status}
-                onChange={handleChange}
+                {...register('status')}
                 className='w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-violet-600 focus:outline-none focus:ring-1 focus:ring-violet-600'
               >
                 <option value='OPEN'>Open</option>
@@ -191,10 +185,7 @@ export default function ManageEventPage() {
           <div>
             <label className='mb-1 block text-sm font-medium text-slate-600'>Venue</label>
             <select
-              required
-              name='venueId'
-              value={formData.venueId}
-              onChange={handleChange}
+              {...register('venueId', { required: true, valueAsNumber: true })}
               className='w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-violet-600 focus:outline-none focus:ring-1 focus:ring-violet-600'
             >
               {venues.length === 0 ? (
@@ -211,24 +202,18 @@ export default function ManageEventPage() {
             <div>
               <label className='mb-1 block text-sm font-medium text-slate-600'>Entry Fee (₹)</label>
               <input
-                required
                 type='number'
                 min='0'
-                name='entryFee'
-                value={formData.entryFee}
-                onChange={handleChange}
+                {...register('entryFee', { required: true, valueAsNumber: true, min: 0 })}
                 className='w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-violet-600 focus:outline-none focus:ring-1 focus:ring-violet-600'
               />
             </div>
             <div>
               <label className='mb-1 block text-sm font-medium text-slate-600'>Total Capacity</label>
               <input
-                required
                 type='number'
                 min='1'
-                name='capacity'
-                value={formData.capacity}
-                onChange={handleChange}
+                {...register('capacity', { required: true, valueAsNumber: true, min: 1 })}
                 className='w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-violet-600 focus:outline-none focus:ring-1 focus:ring-violet-600'
               />
             </div>

@@ -1,36 +1,37 @@
-import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { register } from '../api/auth'
+import { register as apiRegister } from '../api/auth'
+import { useForm } from 'react-hook-form'
+
+type RegisterForm = {
+  name: string
+  email: string
+  password: string
+  phone: string
+  address: string
+  dob: string
+  role: 'ORGANIZER' | 'REGISTRANT'
+}
 
 function RegisterPage() {
   const navigate = useNavigate()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting }
+  } = useForm<RegisterForm>({ defaultValues: { role: 'REGISTRANT' } })
 
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [phone, setPhone] = useState('')
-  const [address, setAddress] = useState('')
-  const [dob, setDob] = useState('')
-  const [role, setRole] = useState<'ORGANIZER' | 'REGISTRANT'>('REGISTRANT')
-
-  const [error, setError] = useState<string | null>(null)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setError(null)
-
-    if (!name.trim()) return setError('Name is required')
-    if (!email.trim()) return setError('Email is required')
-    if (!password.trim()) return setError('Password is required')
-    if (!phone.trim()) return setError('Phone number is required')
-    if (!address.trim()) return setError('Address is required')
-    if (!dob.trim()) return setError('DOB is required')
-
-    setIsSubmitting(true)
+  const onSubmit = async (data: RegisterForm) => {
     try {
-      await register({ name: name.trim(), email: email.trim(), password, phone: phone.trim(), address: address.trim(), dob, role })
+      await apiRegister({
+        name: data.name.trim(),
+        email: data.email.trim(),
+        password: data.password,
+        phone: data.phone.trim(),
+        address: data.address.trim(),
+        dob: data.dob,
+        role: data.role
+      })
       toast.success('Account created! Please sign in.')
       navigate('/login')
     } catch (err: any) {
@@ -38,9 +39,7 @@ function RegisterPage() {
         err?.response?.data?.message ||
         err?.message ||
         'Registration failed. Please try again.'
-      setError(msg)
-    } finally {
-      setIsSubmitting(false)
+      toast.error(msg)
     }
   }
 
@@ -52,30 +51,19 @@ function RegisterPage() {
           Create an account as an Organizer or Registrant.
         </p>
 
-        {error ? (
-          <div
-            className='mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700'
-            role='alert'
-          >
-            {error}
-          </div>
-        ) : null}
-
-        <form className='mt-8 space-y-4' onSubmit={onSubmit}>
+        <form className='mt-8 space-y-4' onSubmit={handleSubmit(onSubmit)}>
           <div className='space-y-2'>
             <label htmlFor='name' className='text-sm font-medium text-slate-600'>
               Full name
             </label>
             <input
               id='name'
-              name='name'
               type='text'
-              required
               placeholder='Your full name'
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              {...register('name', { required: 'Name is required' })}
               className='w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-violet-600'
             />
+            {errors.name && <p className='text-xs text-red-500'>{errors.name.message}</p>}
           </div>
 
           <div className='space-y-2'>
@@ -84,14 +72,12 @@ function RegisterPage() {
             </label>
             <input
               id='email'
-              name='email'
               type='email'
-              required
               placeholder='you@example.com'
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              {...register('email', { required: 'Email is required' })}
               className='w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-violet-600'
             />
+            {errors.email && <p className='text-xs text-red-500'>{errors.email.message}</p>}
           </div>
 
           <div className='space-y-2'>
@@ -100,14 +86,15 @@ function RegisterPage() {
             </label>
             <input
               id='password'
-              name='password'
               type='password'
-              required
               placeholder='••••••••'
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              {...register('password', {
+                required: 'Password is required',
+                minLength: { value: 6, message: 'Password must be at least 6 characters' }
+              })}
               className='w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-violet-600'
             />
+            {errors.password && <p className='text-xs text-red-500'>{errors.password.message}</p>}
           </div>
 
           <div className='space-y-2'>
@@ -116,17 +103,17 @@ function RegisterPage() {
             </label>
             <input
               id='phone'
-              name='phone'
               type='tel'
-              required
               inputMode='numeric'
-              pattern='^[0-9]{10}$'
               maxLength={10}
               placeholder='10-digit phone'
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              {...register('phone', {
+                required: 'Phone number is required',
+                pattern: { value: /^[0-9]{10}$/, message: 'Enter a valid 10-digit phone number' }
+              })}
               className='w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-violet-600'
             />
+            {errors.phone && <p className='text-xs text-red-500'>{errors.phone.message}</p>}
           </div>
 
           <div className='space-y-2'>
@@ -135,14 +122,12 @@ function RegisterPage() {
             </label>
             <textarea
               id='address'
-              name='address'
-              required
               placeholder='Your address'
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
               rows={3}
+              {...register('address', { required: 'Address is required' })}
               className='w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-violet-600'
             />
+            {errors.address && <p className='text-xs text-red-500'>{errors.address.message}</p>}
           </div>
 
           <div className='space-y-2'>
@@ -151,13 +136,11 @@ function RegisterPage() {
             </label>
             <input
               id='dob'
-              name='dob'
               type='date'
-              required
-              value={dob}
-              onChange={(e) => setDob(e.target.value)}
+              {...register('dob', { required: 'Date of birth is required' })}
               className='w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-violet-600'
             />
+            {errors.dob && <p className='text-xs text-red-500'>{errors.dob.message}</p>}
           </div>
 
           <div className='space-y-2'>
@@ -166,10 +149,7 @@ function RegisterPage() {
             </label>
             <select
               id='role'
-              name='role'
-              required
-              value={role}
-              onChange={(e) => setRole(e.target.value as 'ORGANIZER' | 'REGISTRANT')}
+              {...register('role', { required: true })}
               className='w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-violet-600'
             >
               <option value='ORGANIZER'>Organizer</option>
@@ -198,4 +178,3 @@ function RegisterPage() {
 }
 
 export default RegisterPage
-

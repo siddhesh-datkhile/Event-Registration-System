@@ -1,36 +1,35 @@
-
 import { useState } from 'react'
 import { getAllUsers, addOrganizer, addRegistrant } from '../../api/auth'
 import { toast } from 'react-toastify'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useForm } from 'react-hook-form'
+
+type AddUserForm = { name: string; email: string; role: 'ORGANIZER' | 'REGISTRANT' }
 
 export default function AdminUsersPage() {
   const queryClient = useQueryClient()
   const { data: users = [], isLoading: loading } = useQuery({ queryKey: ['admin', 'users'], queryFn: getAllUsers })
 
   const [showAddForm, setShowAddForm] = useState(false)
-  const [newRole, setNewRole] = useState<'ORGANIZER' | 'REGISTRANT'>('REGISTRANT')
-  const [formData, setFormData] = useState({ name: '', email: '' })
   
+  const { register, handleSubmit, reset, formState: { errors, isSubmitting: submitting } } = useForm<AddUserForm>({
+    defaultValues: { name: '', email: '', role: 'REGISTRANT' }
+  })
+
   const userMutation = useMutation({
-    mutationFn: (data: typeof formData) => newRole === 'ORGANIZER' ? addOrganizer(data) : addRegistrant(data),
-    onSuccess: () => {
+    mutationFn: (data: AddUserForm) => data.role === 'ORGANIZER' ? addOrganizer(data) : addRegistrant(data),
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'users'] })
-      toast.success(`${newRole} account created successfully!`)
+      toast.success(`${variables.role} account created successfully!`)
       setShowAddForm(false)
-      setFormData({ name: '', email: '' })
+      reset()
     },
     onError: () => {
       toast.error('Failed to create account. Email might already be in use.')
     }
   })
 
-  const submitting = userMutation.isPending
-
-  const handleAddUser = (e: React.FormEvent) => {
-    e.preventDefault()
-    userMutation.mutate(formData)
-  }
+  const onSubmit = (data: AddUserForm) => userMutation.mutate(data)
 
   return (
     <div className='mx-auto max-w-6xl px-4 py-8'>
@@ -51,34 +50,31 @@ export default function AdminUsersPage() {
         <div className='mt-6 rounded-2xl border border-violet-100 bg-violet-50/50 p-6'>
           <h2 className='text-lg font-semibold text-slate-900'>Create Pre-Authorized Account</h2>
           <p className='text-sm text-slate-500 mb-6'>Users will be created instantly with default privileges.</p>
-          <form onSubmit={handleAddUser} className='flex flex-col gap-4 sm:flex-row sm:items-end'>
+          <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4 sm:flex-row sm:items-end'>
             <div className='flex-1'>
               <label className='block text-sm font-medium text-slate-600'>Full Name</label>
               <input
                 type='text'
-                required
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2 border'
                 placeholder='Jane Doe'
+                {...register('name', { required: 'Name is required' })}
+                className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2 border'
               />
+              {errors.name && <p className='mt-1 text-xs text-red-500'>{errors.name.message}</p>}
             </div>
             <div className='flex-1'>
               <label className='block text-sm font-medium text-slate-600'>Email Address</label>
               <input
                 type='email'
-                required
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2 border'
                 placeholder='jane@example.com'
+                {...register('email', { required: 'Email is required' })}
+                className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2 border'
               />
+              {errors.email && <p className='mt-1 text-xs text-red-500'>{errors.email.message}</p>}
             </div>
             <div className='flex-1'>
               <label className='block text-sm font-medium text-slate-600'>Initial Role</label>
               <select
-                value={newRole}
-                onChange={(e) => setNewRole(e.target.value as 'ORGANIZER' | 'REGISTRANT')}
+                {...register('role')}
                 className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2 border bg-slate-50'
               >
                 <option value='REGISTRANT'>Registrant</option>
