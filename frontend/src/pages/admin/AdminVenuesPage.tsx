@@ -3,6 +3,8 @@ import { getAllVenues, addVenue } from '../../api/venues'
 import { toast } from 'react-toastify'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { venueSchema } from '../../lib/schemas'
 
 type AddVenueForm = { name: string; address: string; city: string }
 
@@ -13,6 +15,7 @@ export default function AdminVenuesPage() {
   const [showAddForm, setShowAddForm] = useState(false)
 
   const { register, handleSubmit, reset, formState: { errors, isSubmitting: submitting } } = useForm<AddVenueForm>({
+    resolver: zodResolver(venueSchema),
     defaultValues: { name: '', address: '', city: '' }
   })
 
@@ -51,13 +54,13 @@ export default function AdminVenuesPage() {
         <div className='mt-6 rounded-2xl border border-violet-100 bg-violet-50/50 p-6'>
           <h2 className='text-lg font-semibold text-slate-900'>Create New Venue</h2>
           <p className='text-sm text-slate-500 mb-6'>Provide details to add a new physical location for events.</p>
-          <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4 sm:flex-row sm:items-end flex-wrap'>
+          <form noValidate onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4 sm:flex-row sm:items-end flex-wrap'>
             <div className='flex-1 min-w-[200px]'>
               <label className='block text-sm font-medium text-slate-600'>Venue Name</label>
               <input
                 type='text'
                 placeholder='e.g. Grand Convention Center'
-                {...register('name', { required: 'Venue name is required' })}
+                {...register('name')}
                 className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2 border bg-slate-50'
               />
               {errors.name && <p className='mt-1 text-xs text-red-500'>{errors.name.message}</p>}
@@ -67,7 +70,7 @@ export default function AdminVenuesPage() {
               <input
                 type='text'
                 placeholder='e.g. 123 Main St'
-                {...register('address', { required: 'Address is required' })}
+                {...register('address')}
                 className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2 border bg-slate-50'
               />
               {errors.address && <p className='mt-1 text-xs text-red-500'>{errors.address.message}</p>}
@@ -77,7 +80,7 @@ export default function AdminVenuesPage() {
               <input
                 type='text'
                 placeholder='e.g. Metro City'
-                {...register('city', { required: 'City is required' })}
+                {...register('city')}
                 className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2 border bg-slate-50'
               />
               {errors.city && <p className='mt-1 text-xs text-red-500'>{errors.city.message}</p>}

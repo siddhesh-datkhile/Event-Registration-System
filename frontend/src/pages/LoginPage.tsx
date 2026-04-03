@@ -3,13 +3,17 @@ import { toast } from 'react-toastify'
 import { login as apiLogin, getCurrentUser } from '../api/auth'
 import { useAuth } from '../contexts/AuthContext'
 import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { loginSchema } from '../lib/schemas'
 
 type LoginForm = { email: string; password: string }
 
 function LoginPage() {
   const { login } = useAuth()
   const navigate = useNavigate()
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginForm>()
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginForm>({
+    resolver: zodResolver(loginSchema)
+  })
 
   const onSubmit = async (data: LoginForm) => {
     try {
@@ -45,7 +49,7 @@ function LoginPage() {
           Sign in to your account to continue.
         </p>
 
-        <form className='mt-8 space-y-4' onSubmit={handleSubmit(onSubmit)}>
+        <form noValidate className='mt-8 space-y-4' onSubmit={handleSubmit(onSubmit)}>
           <div className='space-y-2'>
             <label htmlFor='email' className='text-sm font-medium text-slate-600'>
               Email
@@ -55,7 +59,7 @@ function LoginPage() {
               type='email'
               autoComplete='email'
               placeholder='you@example.com'
-              {...register('email', { required: 'Email is required' })}
+              {...register('email')}
               className='w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-violet-600'
             />
             {errors.email && <p className='text-xs text-red-500'>{errors.email.message}</p>}
@@ -70,7 +74,7 @@ function LoginPage() {
               type='password'
               autoComplete='current-password'
               placeholder='••••••••'
-              {...register('password', { required: 'Password is required' })}
+              {...register('password')}
               className='w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-violet-600'
             />
             {errors.password && <p className='text-xs text-red-500'>{errors.password.message}</p>}

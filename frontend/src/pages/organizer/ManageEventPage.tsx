@@ -7,6 +7,8 @@ import { getAllVenues } from '../../api/venues'
 import { useAuth } from '../../contexts/AuthContext'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { eventSchema } from '../../lib/schemas'
 
 type EventForm = {
   title: string
@@ -28,6 +30,7 @@ export default function ManageEventPage() {
   const { user } = useAuth()
 
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<EventForm>({
+    resolver: zodResolver(eventSchema),
     defaultValues: {
       title: '',
       description: '',
@@ -137,13 +140,13 @@ export default function ManageEventPage() {
           )}
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className='mt-8 space-y-6'>
+        <form noValidate onSubmit={handleSubmit(onSubmit)} className='mt-8 space-y-6'>
           <div>
             <label className='mb-1 block text-sm font-medium text-slate-600'>Event Title</label>
             <input
               type='text'
               placeholder='e.g. Annual Tech Conference'
-              {...register('title', { required: 'Title is required' })}
+              {...register('title')}
               className='w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-violet-600 focus:outline-none focus:ring-1 focus:ring-violet-600'
             />
             {errors.title && <p className='mt-1 text-xs text-red-500'>{errors.title.message}</p>}
@@ -154,7 +157,7 @@ export default function ManageEventPage() {
             <textarea
               rows={4}
               placeholder='Describe the event details...'
-              {...register('description', { required: 'Description is required' })}
+              {...register('description')}
               className='w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-violet-600 focus:outline-none focus:ring-1 focus:ring-violet-600'
             />
             {errors.description && <p className='mt-1 text-xs text-red-500'>{errors.description.message}</p>}
@@ -165,7 +168,7 @@ export default function ManageEventPage() {
               <label className='mb-1 block text-sm font-medium text-slate-600'>Date &amp; Time</label>
               <input
                 type='datetime-local'
-                {...register('eventDate', { required: 'Date & time is required' })}
+                {...register('eventDate')}
                 className='w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-violet-600 focus:outline-none focus:ring-1 focus:ring-violet-600'
               />
               {errors.eventDate && <p className='mt-1 text-xs text-red-500'>{errors.eventDate.message}</p>}
@@ -185,7 +188,7 @@ export default function ManageEventPage() {
           <div>
             <label className='mb-1 block text-sm font-medium text-slate-600'>Venue</label>
             <select
-              {...register('venueId', { required: true, valueAsNumber: true })}
+              {...register('venueId', { valueAsNumber: true })}
               className='w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-violet-600 focus:outline-none focus:ring-1 focus:ring-violet-600'
             >
               {venues.length === 0 ? (
@@ -204,7 +207,7 @@ export default function ManageEventPage() {
               <input
                 type='number'
                 min='0'
-                {...register('entryFee', { required: true, valueAsNumber: true, min: 0 })}
+                {...register('entryFee', { valueAsNumber: true })}
                 className='w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-violet-600 focus:outline-none focus:ring-1 focus:ring-violet-600'
               />
             </div>
@@ -213,7 +216,7 @@ export default function ManageEventPage() {
               <input
                 type='number'
                 min='1'
-                {...register('capacity', { required: true, valueAsNumber: true, min: 1 })}
+                {...register('capacity', { valueAsNumber: true })}
                 className='w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-violet-600 focus:outline-none focus:ring-1 focus:ring-violet-600'
               />
             </div>

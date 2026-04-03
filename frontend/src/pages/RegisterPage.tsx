@@ -2,6 +2,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { register as apiRegister } from '../api/auth'
 import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { registerSchema } from '../lib/schemas'
 
 type RegisterForm = {
   name: string
@@ -19,7 +21,10 @@ function RegisterPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting }
-  } = useForm<RegisterForm>({ defaultValues: { role: 'REGISTRANT' } })
+  } = useForm<RegisterForm>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: { role: 'REGISTRANT' }
+  })
 
   const onSubmit = async (data: RegisterForm) => {
     try {
@@ -51,7 +56,7 @@ function RegisterPage() {
           Create an account as an Organizer or Registrant.
         </p>
 
-        <form className='mt-8 space-y-4' onSubmit={handleSubmit(onSubmit)}>
+        <form noValidate className='mt-8 space-y-4' onSubmit={handleSubmit(onSubmit)}>
           <div className='space-y-2'>
             <label htmlFor='name' className='text-sm font-medium text-slate-600'>
               Full name
@@ -60,7 +65,7 @@ function RegisterPage() {
               id='name'
               type='text'
               placeholder='Your full name'
-              {...register('name', { required: 'Name is required' })}
+              {...register('name')}
               className='w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-violet-600'
             />
             {errors.name && <p className='text-xs text-red-500'>{errors.name.message}</p>}
@@ -74,7 +79,7 @@ function RegisterPage() {
               id='email'
               type='email'
               placeholder='you@example.com'
-              {...register('email', { required: 'Email is required' })}
+              {...register('email')}
               className='w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-violet-600'
             />
             {errors.email && <p className='text-xs text-red-500'>{errors.email.message}</p>}
@@ -88,10 +93,7 @@ function RegisterPage() {
               id='password'
               type='password'
               placeholder='••••••••'
-              {...register('password', {
-                required: 'Password is required',
-                minLength: { value: 6, message: 'Password must be at least 6 characters' }
-              })}
+              {...register('password')}
               className='w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-violet-600'
             />
             {errors.password && <p className='text-xs text-red-500'>{errors.password.message}</p>}
@@ -107,10 +109,7 @@ function RegisterPage() {
               inputMode='numeric'
               maxLength={10}
               placeholder='10-digit phone'
-              {...register('phone', {
-                required: 'Phone number is required',
-                pattern: { value: /^[0-9]{10}$/, message: 'Enter a valid 10-digit phone number' }
-              })}
+              {...register('phone')}
               className='w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-violet-600'
             />
             {errors.phone && <p className='text-xs text-red-500'>{errors.phone.message}</p>}
@@ -124,7 +123,7 @@ function RegisterPage() {
               id='address'
               placeholder='Your address'
               rows={3}
-              {...register('address', { required: 'Address is required' })}
+              {...register('address')}
               className='w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-violet-600'
             />
             {errors.address && <p className='text-xs text-red-500'>{errors.address.message}</p>}
@@ -137,7 +136,7 @@ function RegisterPage() {
             <input
               id='dob'
               type='date'
-              {...register('dob', { required: 'Date of birth is required' })}
+              {...register('dob')}
               className='w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-violet-600'
             />
             {errors.dob && <p className='text-xs text-red-500'>{errors.dob.message}</p>}
@@ -149,7 +148,7 @@ function RegisterPage() {
             </label>
             <select
               id='role'
-              {...register('role', { required: true })}
+              {...register('role')}
               className='w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-violet-600'
             >
               <option value='ORGANIZER'>Organizer</option>

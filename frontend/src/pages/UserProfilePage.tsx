@@ -6,6 +6,8 @@ import { UserCircle, Mail, Phone, MapPin, Calendar, Shield } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { updateProfileSchema } from '../lib/schemas'
 
 export default function UserProfilePage() {
   const { user } = useAuth()
@@ -13,6 +15,7 @@ export default function UserProfilePage() {
   const [isEditing, setIsEditing] = useState(false)
 
   const { register, handleSubmit, reset, formState: { errors, isSubmitting: saving } } = useForm<UpdateProfileRequest>({
+    resolver: zodResolver(updateProfileSchema),
     defaultValues: { name: '', phone: '', address: '', dob: '' }
   })
 
@@ -107,13 +110,13 @@ export default function UserProfilePage() {
           </div>
 
           {isEditing ? (
-            <form onSubmit={handleSubmit(onSubmit)} className='mt-8 flex flex-col gap-6'>
+            <form noValidate onSubmit={handleSubmit(onSubmit)} className='mt-8 flex flex-col gap-6'>
               <div className='grid gap-6 sm:grid-cols-2'>
                 <div>
                   <label className='block text-sm font-medium text-slate-600'>Full Name</label>
                   <input
                     type='text'
-                    {...register('name', { required: 'Name is required' })}
+                    {...register('name')}
                     className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2.5 border'
                   />
                   {errors.name && <p className='mt-1 text-xs text-red-500'>{errors.name.message}</p>}
@@ -134,10 +137,7 @@ export default function UserProfilePage() {
                   <input
                     type='text'
                     placeholder='1234567890'
-                    {...register('phone', {
-                      required: 'Phone number is required',
-                      pattern: { value: /^[0-9]{10}$/, message: 'Must be exactly 10 digits' }
-                    })}
+                    {...register('phone')}
                     className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2.5 border'
                   />
                   {errors.phone && <p className='mt-1 text-xs text-red-500'>{errors.phone.message}</p>}
@@ -148,7 +148,7 @@ export default function UserProfilePage() {
                   <input
                     type='date'
                     max={new Date().toISOString().split('T')[0]}
-                    {...register('dob', { required: 'Date of birth is required' })}
+                    {...register('dob')}
                     className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2.5 border'
                   />
                   {errors.dob && <p className='mt-1 text-xs text-red-500'>{errors.dob.message}</p>}
@@ -158,7 +158,7 @@ export default function UserProfilePage() {
                   <label className='block text-sm font-medium text-slate-600'>Address</label>
                   <textarea
                     rows={3}
-                    {...register('address', { required: 'Address is required' })}
+                    {...register('address')}
                     className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2.5 border'
                   />
                   {errors.address && <p className='mt-1 text-xs text-red-500'>{errors.address.message}</p>}

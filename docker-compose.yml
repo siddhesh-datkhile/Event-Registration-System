@@ -10,6 +10,8 @@ services:
       context: ./service-registry
       dockerfile: Dockerfile
     container_name: service-registry
+    env_file:
+      - .env
     ports:
       - "8761:8761"
     networks:
@@ -21,6 +23,8 @@ services:
       context: ./api-gateway
       dockerfile: Dockerfile
     container_name: api-gateway
+    env_file:
+      - .env
     ports:
       - "8080:8080"
     environment:
@@ -36,6 +40,8 @@ services:
       context: ./auth_service
       dockerfile: Dockerfile
     container_name: auth-service
+    env_file:
+      - .env
     ports:
       - "8081:8081"
     environment:
@@ -51,6 +57,8 @@ services:
       context: ./event-service
       dockerfile: Dockerfile
     container_name: event-service
+    env_file:
+      - .env
     ports:
       - "8082:8082"
     environment:
@@ -66,6 +74,8 @@ services:
       context: ./registration-service
       dockerfile: Dockerfile
     container_name: registration-service
+    env_file:
+      - .env
     ports:
       - "8083:8083"
     environment:

@@ -3,6 +3,8 @@ import { getAllUsers, addOrganizer, addRegistrant } from '../../api/auth'
 import { toast } from 'react-toastify'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { userSchema } from '../../lib/schemas'
 
 type AddUserForm = { name: string; email: string; role: 'ORGANIZER' | 'REGISTRANT' }
 
@@ -13,6 +15,7 @@ export default function AdminUsersPage() {
   const [showAddForm, setShowAddForm] = useState(false)
   
   const { register, handleSubmit, reset, formState: { errors, isSubmitting: submitting } } = useForm<AddUserForm>({
+    resolver: zodResolver(userSchema),
     defaultValues: { name: '', email: '', role: 'REGISTRANT' }
   })
 
@@ -50,13 +53,13 @@ export default function AdminUsersPage() {
         <div className='mt-6 rounded-2xl border border-violet-100 bg-violet-50/50 p-6'>
           <h2 className='text-lg font-semibold text-slate-900'>Create Pre-Authorized Account</h2>
           <p className='text-sm text-slate-500 mb-6'>Users will be created instantly with default privileges.</p>
-          <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4 sm:flex-row sm:items-end'>
+          <form noValidate onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4 sm:flex-row sm:items-end'>
             <div className='flex-1'>
               <label className='block text-sm font-medium text-slate-600'>Full Name</label>
               <input
                 type='text'
                 placeholder='Jane Doe'
-                {...register('name', { required: 'Name is required' })}
+                {...register('name')}
                 className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2 border'
               />
               {errors.name && <p className='mt-1 text-xs text-red-500'>{errors.name.message}</p>}
@@ -66,7 +69,7 @@ export default function AdminUsersPage() {
               <input
                 type='email'
                 placeholder='jane@example.com'
-                {...register('email', { required: 'Email is required' })}
+                {...register('email')}
                 className='mt-1 block w-full rounded-lg border-slate-200 shadow-sm focus:border-violet-600 focus:ring-violet-600 sm:text-sm p-2 border'
               />
               {errors.email && <p className='mt-1 text-xs text-red-500'>{errors.email.message}</p>}
