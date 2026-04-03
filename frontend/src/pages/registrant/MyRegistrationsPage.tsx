@@ -3,7 +3,7 @@ import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { getMyRegistrations, cancelRegistration } from '../../api/registrations'
 import { getAllEvents } from '../../api/events'
-import { EventCard } from '../../Components/EventCard'
+import { RegistrationCard } from '../../Components/RegistrationCard'
 import { toast } from 'react-toastify'
 import { getReceiptHtml } from '../../api/receipts'
 import { createPaymentOrder } from '../../api/payments'
@@ -121,53 +121,12 @@ function MyRegistrationsPage() {
           <div className='grid gap-5 md:grid-cols-2 lg:grid-cols-3'>
             {registrations.map((reg) => (
               reg.event ? (
-                <EventCard
+                <RegistrationCard
                   key={reg.id}
-                  event={reg.event}
-                  actionSlot={
-                    <div className='mt-4 flex flex-col gap-3 rounded-xl bg-white p-4 border border-slate-200'>
-                      <div className='flex items-center justify-between text-sm'>
-                        <span className='text-slate-500'>Registration Status:</span>
-                        <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${reg.status === 'CONFIRMED' ? 'bg-green-50 text-green-700 ring-green-600/20' :
-                          reg.status === 'PENDING' ? 'bg-yellow-50 text-yellow-800 ring-yellow-600/20' :
-                            'bg-red-50 text-red-700 ring-red-600/10'
-                          }`}>
-                          {reg.status}
-                        </span>
-                      </div>
-                      <div className='flex items-center justify-between text-sm'>
-                        <span className='text-slate-500'>Date Registered:</span>
-                        <span className='font-medium text-slate-900'>{new Date(reg.registrationDate).toLocaleDateString()}</span>
-                      </div>
-
-                      <div className='mt-2 flex flex-col gap-2'>
-                        {reg.status === 'PENDING' && (
-                          <button
-                            onClick={() => handlePayNow(reg.id, reg.event!)}
-                            className='inline-flex w-full items-center justify-center rounded-lg bg-violet-600 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-violet-700'
-                          >
-                            Pay Now
-                          </button>
-                        )}
-                        {reg.status === 'CONFIRMED' && (
-                          <button
-                            onClick={() => handleViewReceipt(reg.id)}
-                            className='inline-flex w-full items-center justify-center rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-slate-900 transition-colors hover:bg-emerald-700'
-                          >
-                            View Receipt
-                          </button>
-                        )}
-                        {(reg.status === 'CONFIRMED' || reg.status === 'PENDING') && (
-                          <button
-                            onClick={() => handleCancel(reg.id)}
-                            className='inline-flex w-full items-center justify-center rounded-lg border border-red-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50 hover:text-red-700'
-                          >
-                            Cancel Registration
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  }
+                  registration={reg}
+                  onPayNow={handlePayNow}
+                  onViewReceipt={handleViewReceipt}
+                  onCancel={handleCancel}
                 />
               ) : (
                 <div key={reg.id} className='rounded-2xl border border-slate-200 bg-white p-6 text-center text-slate-500'>
