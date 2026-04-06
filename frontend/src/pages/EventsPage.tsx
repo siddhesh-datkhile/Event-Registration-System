@@ -35,6 +35,7 @@ function EventsPage() {
   const [search, setSearch] = useState('')
   const [activeStatus, setActiveStatus] = useState<EventStatus | 'ALL'>('ALL')
 
+  //tanstack query to fetch events from backend
   const { data: events = [], isLoading: loading, error: queryError } = useQuery({
     queryKey: ['events'],
     queryFn: getAllEvents,
