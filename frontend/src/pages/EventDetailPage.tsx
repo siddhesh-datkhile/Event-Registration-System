@@ -50,6 +50,7 @@ function EventDetailPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
+  // Fetch event details
   const { data: event, isLoading: loadingEvent, error: eventError } = useQuery({
     queryKey: ['events', id],
     queryFn: () => getEventById(id!),
@@ -63,13 +64,16 @@ function EventDetailPage() {
     enabled: isAuthenticated,
   })
 
+  // Overall loading state is true if either event details or my registrations are loading
   const loading = loadingEvent || loadingRegs
   const error = eventError ? (eventError as Error).message : null
 
+  // Check if user has already registered for this event
   const hasRegistered = !!event && !!myRegs?.find(
     (r) => r.eventId === event.id && (r.status === 'CONFIRMED' || r.status === 'PENDING')
   )
 
+  // Mutation for registering to the event (with payment if needed)
   const registerMutation = useMutation({
     mutationFn: async () => {
       if (!event) throw new Error('Event not loaded')
@@ -79,6 +83,7 @@ function EventDetailPage() {
         toast.info('Initializing payment...')
         const paymentOrder = await createPaymentOrder(reg.id)
         
+        // We return a promise that resolves when payment is successful, and rejects if payment fails or is cancelled
         return new Promise((resolve, reject) => {
             const options = {
                 key: "rzp_test_SUah4LvPVpASiA",
@@ -96,24 +101,29 @@ function EventDetailPage() {
                     contact: "9999999999"
                 },
                 theme: {
-                    color: "#4f46e5"
+                    color: "#2aadab"
                 }
             };
             
+            
             const rzp = new (window as any).Razorpay(options);
+            // If the user closes the payment modal without completing payment, we consider it a cancellation
             rzp.on('payment.failed', function (response: any){
                 reject(new Error(`Payment failed: ${response.error.description}`));
             });
-            rzp.open();
+            rzp.open(); // Open the Razorpay payment modal
         })
       }
       return false // free event
     },
+    // On success, we invalidate relevant queries to refresh data and show a success message
     onSuccess: (wasPaid) => {
+      // Invalidate relevant queries to refresh data
       queryClient.invalidateQueries({ queryKey: ['events', id] })
       queryClient.invalidateQueries({ queryKey: ['registrations', 'me'] })
       queryClient.invalidateQueries({ queryKey: ['events'] })
       
+      // Show success message based on whether it was a paid event or free event
       if (wasPaid) {
         toast.success('Payment successful! Registration confirmed.')
       } else {
@@ -121,6 +131,7 @@ function EventDetailPage() {
       }
       navigate('/dashboard/registrations')
     },
+    // On error, we check if it's a 409 conflict (already registered) and show an appropriate message. For other errors, we show a generic failure message.
     onError: (err: any) => {
       const respErr = err.response?.status === 409 || err.response?.data?.message?.includes('already')
       if (respErr) {
@@ -132,6 +143,7 @@ function EventDetailPage() {
     }
   })
 
+  // We disable the register button if we're loading data, or if the event is closed, or if the user has already registered
   const handleRegister = () => {
     if (!isAuthenticated) {
       toast.info('Please log in to register for this event.')

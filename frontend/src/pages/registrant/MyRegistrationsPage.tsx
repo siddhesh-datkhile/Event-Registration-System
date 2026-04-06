@@ -10,9 +10,11 @@ import { createPaymentOrder } from '../../api/payments'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 function MyRegistrationsPage() {
+
   const queryClient = useQueryClient()
   const [receiptHtml, setReceiptHtml] = useState<string | null>(null)
 
+  // Fetch both events and registrations in parallel. We need both to display the list of registrations with their corresponding event details. We use useQuery from react-query to fetch data and manage loading states and caching.
   const { data: events = [], isLoading: loadingEvents } = useQuery({
     queryKey: ['events'],
     queryFn: getAllEvents,
@@ -25,6 +27,7 @@ function MyRegistrationsPage() {
 
   const loading = loadingEvents || loadingRegs
 
+  // We combine registrations with their corresponding event details. We create a map of eventId to event for quick lookup, then map over registrations to attach the event details. Finally, we sort the registrations by registration date, most recent first.
   const registrations = useMemo(() => {
     if (!regs || !events) return []
     const eventMap = new Map(events.map(e => [e.id, e]))
@@ -35,6 +38,7 @@ function MyRegistrationsPage() {
     return mapped.sort((a, b) => new Date(b.registrationDate).getTime() - new Date(a.registrationDate).getTime())
   }, [regs, events])
 
+  // Mutation for cancelling a registration. On success, we show a success toast and invalidate the 'registrations' query to refresh the list. On error, we show an error toast.
   const cancelMutation = useMutation({
     mutationFn: (id: number) => cancelRegistration(id),
     onSuccess: () => {
@@ -46,11 +50,13 @@ function MyRegistrationsPage() {
     }
   })
 
+  // Handler for cancelling a registration. We show a confirmation dialog before proceeding. If the user confirms, we call the cancel mutation.
   const handleCancel = (id: number) => {
     if (!window.confirm('Are you sure you want to cancel this registration?')) return
     cancelMutation.mutate(id)
   }
 
+  // Handler for "Pay Now" button. It initializes the payment process by creating a payment order on the backend, then opens the Razorpay payment modal with the order details. We return a promise that resolves when payment is successful, and rejects if payment fails or is cancelled. On successful payment, we invalidate relevant queries to refresh data and show a success message. On failure, we show an error message.
   const handlePayNow = async (regId: number, event: Event) => {
     try {
       toast.info('Initializing payment...')
@@ -80,7 +86,7 @@ function MyRegistrationsPage() {
     }
   }
 
-
+  // Handler for viewing receipt. It fetches the receipt HTML from the backend and sets it in state to display in a modal. On error, it shows an error toast.
   const handleViewReceipt = async (regId: number) => {
     try {
       toast.info('Fetching receipt...', { autoClose: 1000 })
