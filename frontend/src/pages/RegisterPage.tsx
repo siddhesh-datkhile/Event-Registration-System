@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router'
 import { toast } from 'react-toastify'
 import { register as apiRegister } from '../api/auth'
 import { useForm } from 'react-hook-form'

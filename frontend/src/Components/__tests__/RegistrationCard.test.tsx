@@ -13,13 +13,15 @@ describe('RegistrationCard Component', () => {
   const mockEvent = {
     id: 1, title: 'Test Event', description: 'Tech meetup',
     eventDate: '2023-10-10T10:00:00Z', capacity: 100, entryFee: 50,
-    status: 'OPEN' as any, organizerId: 1, venueId: 1,
+    availableSeats: 42, status: 'OPEN' as any, organizerId: 1, venueId: 1,
     organizerName: 'John Doe',
-    venue: { id: 1, name: 'Center', address: '123 St', city: 'Metro' }
+    venue: { id: 1, name: 'Center', address: '123 St', city: 'Metro' },
+    createdAt: '2023-09-01T10:00:00Z',
+    updatedAt: '2023-09-01T10:00:00Z'
   }
 
   const mockRegistration = {
-    id: 1, eventId: 1, registrantId: 1, paymentId: 'pay_123',
+    id: 1, userId: 1, eventId: 1, registrantId: 1, paymentId: 'pay_123',
     status: 'CONFIRMED' as any, registrationDate: '2023-09-01T10:00:00Z',
     event: mockEvent
   }

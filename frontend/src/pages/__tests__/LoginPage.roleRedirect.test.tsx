@@ -1,13 +1,12 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter } from 'react-router'
 import { AuthProvider } from '../../contexts/AuthContext'
 import LoginPage from '../LoginPage'
 import * as authApi from '../../api/auth'
-import { toast } from 'react-toastify'
 
-// Mock react-router-dom's useNavigate
-jest.mock('react-router-dom', () => {
-  const actual = jest.requireActual('react-router-dom')
+// Mock react-router's useNavigate
+jest.mock('react-router', () => {
+  const actual = jest.requireActual('react-router')
   return {
     ...actual,
     useNavigate: jest.fn(() => mockNavigate),

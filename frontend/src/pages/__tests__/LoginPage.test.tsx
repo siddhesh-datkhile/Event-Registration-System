@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter } from 'react-router'
 import { AuthProvider } from '../../contexts/AuthContext'
 import LoginPage from '../LoginPage'
 import * as authApi from '../../api/auth'

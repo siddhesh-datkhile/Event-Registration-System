@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router'
 import { toast } from 'react-toastify'
 import { login as apiLogin, getCurrentUser } from '../api/auth'
 import { useAuth } from '../contexts/AuthContext'

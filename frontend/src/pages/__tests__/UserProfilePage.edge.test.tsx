@@ -1,10 +1,9 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter } from 'react-router'
 import { AuthProvider } from '../../contexts/AuthContext'
 import UserProfilePage from '../UserProfilePage'
 import * as authApi from '../../api/auth'
-import { toast } from 'react-toastify'
 
 jest.mock('../../api/auth', () => ({
   getCurrentUser: jest.fn(),
@@ -17,7 +16,7 @@ jest.mock('react-toastify', () => ({ toast: { success: jest.fn(), error: jest.fn
 
 let queryClient: QueryClient
 
-const renderWithProviders = (ui) => {
+const renderWithProviders = (ui: React.ReactElement) => {
   return render(
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>

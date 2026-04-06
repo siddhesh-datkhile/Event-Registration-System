@@ -1,5 +1,5 @@
 
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { getAllEvents } from '../../api/events'
 import { EventCard } from '../../Components/EventCard'
 import { useAuth } from '../../contexts/AuthContext'

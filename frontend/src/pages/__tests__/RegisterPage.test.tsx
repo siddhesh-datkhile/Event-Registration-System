@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter } from 'react-router'
 import RegisterPage from '../RegisterPage'
 import * as authApi from '../../api/auth'
 import { toast } from 'react-toastify'

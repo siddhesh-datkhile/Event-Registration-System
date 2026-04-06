@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { Users, UserCheck, UserPlus, CalendarDays, MapPin, ClipboardList } from 'lucide-react'
 import { getAllEvents } from '../../api/events'
 import { getAllUsers } from '../../api/auth'

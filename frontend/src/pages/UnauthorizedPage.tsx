@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router'
 import { ShieldAlert, ArrowLeft, Home } from 'lucide-react'
 
 export default function UnauthorizedPage() {

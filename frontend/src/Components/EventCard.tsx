@@ -1,5 +1,5 @@
 import type {  Event  } from '../model'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import type {} from '../api/events'
 import React from 'react'
 

@@ -1,5 +1,5 @@
 
-import { Link, useParams, useNavigate } from 'react-router-dom'
+import { Link, useParams, useNavigate } from 'react-router'
 import { getEventById } from '../api/events'
 import { createRegistration, getMyRegistrations } from '../api/registrations'
 import { useAuth } from '../contexts/AuthContext'

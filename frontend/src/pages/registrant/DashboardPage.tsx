@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { jwtDecode } from 'jwt-decode'
 import { getMyRegistrations } from '../../api/registrations'
 import { useQuery } from '@tanstack/react-query'

@@ -1,5 +1,5 @@
 import type {  RegistrationResponse, UserProfileResponse  } from '../../model'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link } from 'react-router'
 import { getEventRegistrations } from '../../api/registrations'
 import { getEventById } from '../../api/events'
 import { fetchUserProfile } from '../../api/auth'

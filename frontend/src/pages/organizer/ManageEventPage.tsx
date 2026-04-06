@@ -1,6 +1,6 @@
 import type { EventStatus } from '../../model'
 import { useEffect } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router'
 import { toast } from 'react-toastify'
 import { getEventById, createEvent, updateEvent, deleteEvent } from '../../api/events'
 import { getAllVenues } from '../../api/venues'

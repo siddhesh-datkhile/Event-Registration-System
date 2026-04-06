@@ -1,6 +1,6 @@
 import type {  Event  } from '../../model'
 import { useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { getMyRegistrations, cancelRegistration } from '../../api/registrations'
 import { getAllEvents } from '../../api/events'
 import { RegistrationCard } from '../../Components/RegistrationCard'
