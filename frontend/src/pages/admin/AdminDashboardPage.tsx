@@ -41,7 +41,7 @@ export default function AdminDashboardPage() {
       </div>
 
       <div className='mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4'>
-        <Link to='/admin/users' className='rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm hover:ring-2 ring-violet-600 transition-all'>
+        <Link to='../users' relative='path' className='rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm hover:ring-2 ring-violet-600 transition-all'>
           <div className='flex items-center gap-3'>
             <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-violet-50 text-violet-600'>
               <Users className='h-5 w-5' />
@@ -50,7 +50,7 @@ export default function AdminDashboardPage() {
           </div>
           <p className='mt-4 text-3xl font-bold text-slate-900'>{stats.totalUsers}</p>
         </Link>
-        <Link to='/admin/users' className='rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm hover:ring-2 ring-violet-600 transition-all'>
+        <Link to='../users' relative='path' className='rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm hover:ring-2 ring-violet-600 transition-all'>
           <div className='flex items-center gap-3'>
             <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-violet-50 text-violet-600'>
               <UserCheck className='h-5 w-5' />
@@ -59,7 +59,7 @@ export default function AdminDashboardPage() {
           </div>
           <p className='mt-4 text-3xl font-bold text-slate-900'>{stats.organizers}</p>
         </Link>
-        <Link to='/admin/users' className='rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm hover:ring-2 ring-violet-600 transition-all'>
+        <Link to='../users' relative='path' className='rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm hover:ring-2 ring-violet-600 transition-all'>
           <div className='flex items-center gap-3'>
             <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600'>
               <UserPlus className='h-5 w-5' />
@@ -68,7 +68,7 @@ export default function AdminDashboardPage() {
           </div>
           <p className='mt-4 text-3xl font-bold text-slate-900'>{stats.registrants}</p>
         </Link>
-        <Link to='/admin/events' className='rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm hover:ring-2 ring-violet-600 transition-all'>
+        <Link to='../events' relative='path' className='rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm hover:ring-2 ring-violet-600 transition-all'>
           <div className='flex items-center gap-3'>
             <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-sky-50 text-sky-600'>
               <CalendarDays className='h-5 w-5' />
@@ -77,7 +77,7 @@ export default function AdminDashboardPage() {
           </div>
           <p className='mt-4 text-3xl font-bold text-slate-900'>{stats.events}</p>
         </Link>
-        <Link to='/admin/venues' className='rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm hover:ring-2 ring-violet-600 transition-all'>
+        <Link to='../venues' relative='path' className='rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm hover:ring-2 ring-violet-600 transition-all'>
           <div className='flex items-center gap-3'>
             <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-600'>
               <MapPin className='h-5 w-5' />
@@ -86,7 +86,7 @@ export default function AdminDashboardPage() {
           </div>
           <p className='mt-4 text-3xl font-bold text-slate-900'>{stats.venues}</p>
         </Link>
-        <Link to='/admin/registrations' className='rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm hover:ring-2 ring-violet-600 transition-all sm:col-span-2 lg:col-span-4'>
+        <Link to='../registrations' relative='path' className='rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm hover:ring-2 ring-violet-600 transition-all sm:col-span-2 lg:col-span-4'>
           <div className='flex items-center gap-3'>
             <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-rose-50 text-rose-600'>
               <ClipboardList className='h-5 w-5' />

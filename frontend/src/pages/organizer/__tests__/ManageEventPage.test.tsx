@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { MemoryRouter, Route, Routes } from 'react-router'
+import { RouterProvider, createMemoryRouter } from 'react-router'
 import { AuthProvider } from '../../../contexts/AuthContext'
 import ManageEventPage from '../ManageEventPage'
 import * as eventApi from '../../../api/events'
@@ -36,14 +36,15 @@ describe('ManageEventPage Component', () => {
 
   const renderComponent = (isEditing = false) => render(
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <MemoryRouter initialEntries={isEditing ? ['/organizer/events/1/edit'] : ['/organizer/events/new']}>
-          <Routes>
-            <Route path='/organizer/events/new' element={<ManageEventPage />} />
-            <Route path='/organizer/events/:id/edit' element={<ManageEventPage />} />
-          </Routes>
-        </MemoryRouter>
-      </AuthProvider>
+      <RouterProvider
+        router={createMemoryRouter([
+          { path: '/organizer/events/new', element: <AuthProvider><ManageEventPage /></AuthProvider> },
+          { path: '/organizer/events/:id/edit', element: <AuthProvider><ManageEventPage /></AuthProvider> },
+          { path: '/organizer/events', element: <div>Organizer Events</div> },
+        ], {
+          initialEntries: [isEditing ? '/organizer/events/1/edit' : '/organizer/events/new'],
+        })}
+      />
     </QueryClientProvider>
   )
 

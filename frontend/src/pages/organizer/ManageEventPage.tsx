@@ -25,6 +25,7 @@ export default function ManageEventPage() {
   const { id } = useParams<{ id: string }>()
   const isEditing = Boolean(id)
   const navigate = useNavigate()
+  const backToEvents = isEditing ? '../..' : '..'
 
   const queryClient = useQueryClient()
   const { user } = useAuth()
@@ -84,7 +85,7 @@ export default function ManageEventPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['events'] })
       toast.success(isEditing ? 'Event updated successfully!' : 'Event created successfully!')
-      navigate('/organizer/events')
+      navigate(backToEvents, { relative: 'path' })
     },
     onError: (err: any) => {
       toast.error(err.response?.data?.message || 'Failed to save event')
@@ -96,7 +97,7 @@ export default function ManageEventPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['events'] })
       toast.success('Event deleted')
-      navigate('/organizer/events')
+      navigate(backToEvents, { relative: 'path' })
     },
     onError: () => {
       toast.error('Could not delete event. It may have existing registrations.')
@@ -119,7 +120,7 @@ export default function ManageEventPage() {
   return (
     <div className='mx-auto max-w-3xl px-4 py-8'>
       <div className='mb-6 flex items-center gap-4'>
-        <Link to='/organizer/events' className='text-sm font-medium text-slate-500 hover:text-slate-900'>
+        <Link to={backToEvents} relative='path' className='text-sm font-medium text-slate-500 hover:text-slate-900'>
           &larr; Back to Events
         </Link>
       </div>

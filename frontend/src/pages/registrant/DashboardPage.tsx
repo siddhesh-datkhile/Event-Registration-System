@@ -69,7 +69,7 @@ function DashboardPage() {
             </div>
             <div className='divide-y divide-slate-100'>
               <Link
-                to='/dashboard/registrations'
+                to='registrations'
                 className='block px-6 py-4 hover:bg-white'
               >
                 <div className='flex items-center justify-between'>

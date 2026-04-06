@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { BrowserRouter } from 'react-router'
+import { RouterProvider, createMemoryRouter } from 'react-router'
 import { AuthProvider } from '../../contexts/AuthContext'
 import LoginPage from '../LoginPage'
 import * as authApi from '../../api/auth'
@@ -25,11 +25,11 @@ jest.mock('../../api/auth', () => ({
 jest.mock('react-toastify', () => ({ toast: { success: jest.fn(), error: jest.fn() } }))
 
 const renderWithProviders = (ui: React.ReactElement) => {
-  return render(
-    <BrowserRouter>
-      <AuthProvider>{ui}</AuthProvider>
-    </BrowserRouter>
-  )
+  const router = createMemoryRouter([{ path: '*', element: <AuthProvider>{ui}</AuthProvider> }], {
+    initialEntries: ['/login'],
+  })
+
+  return render(<RouterProvider router={router} />)
 }
 
 describe('LoginPage edge cases', () => {

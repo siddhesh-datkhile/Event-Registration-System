@@ -44,7 +44,7 @@ export default function EventAttendeesPage() {
   return (
     <div className='mx-auto max-w-4xl px-4 py-8'>
       <div className='mb-6'>
-        <Link to='/organizer/events' className='text-sm font-medium text-slate-500 hover:text-slate-900'>
+        <Link to='../..' relative='path' className='text-sm font-medium text-slate-500 hover:text-slate-900'>
           &larr; Back to Events
         </Link>
         <h1 className='mt-4 text-3xl font-bold text-slate-900'>Attendees</h1>

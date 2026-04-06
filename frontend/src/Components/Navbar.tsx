@@ -36,7 +36,7 @@ function Navbar({ variant = 'default' }: NavbarProps) {
             ER
           </div>
           <div className='leading-tight'>
-            <div className='font-semibold'>Event Registration</div>
+            <div className='font-semibold'>Eventra</div>
             <div className='text-sm text-slate-600'>Fast, organized, and simple</div>
           </div>
         </Link>

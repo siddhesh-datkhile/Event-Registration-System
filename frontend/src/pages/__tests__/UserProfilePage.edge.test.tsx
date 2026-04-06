@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { BrowserRouter } from 'react-router'
+import { RouterProvider, createMemoryRouter } from 'react-router'
 import { AuthProvider } from '../../contexts/AuthContext'
 import UserProfilePage from '../UserProfilePage'
 import * as authApi from '../../api/auth'
@@ -17,11 +17,13 @@ jest.mock('react-toastify', () => ({ toast: { success: jest.fn(), error: jest.fn
 let queryClient: QueryClient
 
 const renderWithProviders = (ui: React.ReactElement) => {
+  const router = createMemoryRouter([{ path: '*', element: <AuthProvider>{ui}</AuthProvider> }], {
+    initialEntries: ['/profile'],
+  })
+
   return render(
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <AuthProvider>{ui}</AuthProvider>
-      </BrowserRouter>
+      <RouterProvider router={router} />
     </QueryClientProvider>
   )
 }

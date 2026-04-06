@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { BrowserRouter } from 'react-router'
+import { RouterProvider, createMemoryRouter } from 'react-router'
 import RegisterPage from '../RegisterPage'
 import * as authApi from '../../api/auth'
 import { toast } from 'react-toastify'
@@ -8,17 +8,28 @@ jest.mock('../../api/auth', () => ({ register: jest.fn() }))
 jest.mock('react-toastify', () => ({ toast: { success: jest.fn(), error: jest.fn() } }))
 
 describe('RegisterPage Component', () => {
+  const renderWithRouter = () => {
+    const router = createMemoryRouter([
+      { path: '/register', element: <RegisterPage /> },
+      { path: '/login', element: <div>Login</div> },
+    ], {
+      initialEntries: ['/register'],
+    })
+
+    return render(<RouterProvider router={router} />)
+  }
+
   beforeEach(() => { jest.clearAllMocks() })
 
   it('should render register form fields correctly', () => {
-    render(<BrowserRouter><RegisterPage /></BrowserRouter>)
+    renderWithRouter()
     expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/Email/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/Password/i)).toBeInTheDocument()
   })
 
   it('should show Zod validation errors on invalid inputs', async () => {
-    render(<BrowserRouter><RegisterPage /></BrowserRouter>)
+    renderWithRouter()
     fireEvent.click(screen.getByRole('button', { name: /Create account/i }))
 
     await waitFor(() => {
@@ -30,7 +41,7 @@ describe('RegisterPage Component', () => {
   it('should successfully submit and show success toast', async () => {
     ;(authApi.register as jest.Mock).mockResolvedValueOnce({})
 
-    render(<BrowserRouter><RegisterPage /></BrowserRouter>)
+    renderWithRouter()
 
     fireEvent.change(screen.getByLabelText(/Full name/i), { target: { value: 'Jane Doe' } })
     fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'jane@example.com' } })

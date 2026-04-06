@@ -26,7 +26,8 @@ export default function OrganizerDashboard() {
           <p className='mt-2 text-slate-600'>Welcome back. Here is an overview of your events.</p>
         </div>
         <Link
-          to='/organizer/events'
+          to='../events'
+          relative='path'
           className='inline-flex items-center justify-center rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-700'
         >
           Manage External Events &rarr;

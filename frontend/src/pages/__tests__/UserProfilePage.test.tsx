@@ -1,5 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { RouterProvider, createMemoryRouter } from 'react-router'
 import { AuthProvider } from '../../contexts/AuthContext'
 import UserProfilePage from '../UserProfilePage'
 import * as authApi from '../../api/auth'
@@ -26,13 +27,19 @@ describe('UserProfilePage', () => {
     ;(authApi.fetchUserProfile as jest.Mock).mockResolvedValue(mockProfile)
   })
 
-  const renderComponent = () => render(
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <UserProfilePage />
-      </AuthProvider>
-    </QueryClientProvider>
-  )
+  const renderComponent = () => {
+    const router = createMemoryRouter([
+      { path: '*', element: <AuthProvider><UserProfilePage /></AuthProvider> }
+    ], {
+      initialEntries: ['/profile'],
+    })
+
+    return render(
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
+    )
+  }
 
   it('should display loading state initially', () => {
     renderComponent()
