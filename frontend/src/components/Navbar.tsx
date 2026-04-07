@@ -1,7 +1,9 @@
-
 import { Link, NavLink, useNavigate } from 'react-router'
 import { UserCircle } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import { buttonVariants } from "@/components/ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+
 
 type NavbarProps = {
   variant?: 'default' | 'sticky'
@@ -55,55 +57,33 @@ function Navbar({ variant = 'default' }: NavbarProps) {
           </NavLink>
 
           {loggedIn ? (
-            <>
-              <NavLink
-                to={dashboardPath}
-                className={({ isActive }) =>
-                  [
-                    'text-slate-600 hover:text-slate-900',
-                    isActive ? 'font-bold text-slate-900' : '',
-                  ].join(' ')
-                }
-              >
-                Dashboard
-              </NavLink>
-              <Link to='/profile' className='text-slate-600 hover:text-violet-600 transition-colors' title='User Profile'>
-                <UserCircle className='w-6 h-6' />
-              </Link>
-              <button
-                onClick={handleLogout}
-                className='text-slate-600 hover:text-slate-900'
-              >
-                Logout
-              </button>
-            </>
+            <div className="flex items-center gap-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger className={buttonVariants({ variant: "ghost", size: "icon" }) + " text-slate-600 hover:text-violet-600 transition-colors cursor-pointer"}>
+                  <UserCircle className="w-6 h-6" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => navigate(dashboardPath)}>
+                    Dashboard
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/profile')}>
+                    Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout}>
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           ) : (
-            <>
-              <NavLink
-                to='/login'
-                className={({ isActive }) =>
-                  [
-                    'text-slate-600 hover:text-slate-900',
-                    isActive ? 'text-slate-900' : ''
-                  ].join(' ')
-                }
-              >
+            <div className="flex items-center gap-2">
+              <NavLink to='/login' className={buttonVariants({ variant: "ghost" })}>
                 Login
               </NavLink>
-              <NavLink
-                to='/register'
-                className={({ isActive }) =>
-                  [
-                    'inline-flex items-center justify-center rounded-lg px-4 py-2',
-                    isActive
-                      ? 'bg-violet-700 text-white'
-                      : 'bg-violet-600 text-white hover:bg-violet-700'
-                  ].join(' ')
-                }
-              >
+              <NavLink to='/register' className={buttonVariants({ variant: "default" }) + " bg-violet-600 text-white hover:bg-violet-700"}>
                 Create Account
               </NavLink>
-            </>
+            </div>
           )}
         </nav>
       </div>

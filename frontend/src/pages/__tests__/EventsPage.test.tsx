@@ -8,7 +8,7 @@ jest.mock('../../api/events', () => ({
   getAllEvents: jest.fn(),
 }))
 
-jest.mock('../../Components/EventCard', () => ({
+jest.mock('../../components/EventCard', () => ({
   EventCard: ({ event }: { event: { title: string } }) => <div data-testid='event-card'>{event.title}</div>,
 }))
 

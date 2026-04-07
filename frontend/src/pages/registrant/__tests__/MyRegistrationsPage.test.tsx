@@ -17,7 +17,7 @@ jest.mock('../../../api/payments', () => ({ createPaymentOrder: jest.fn() }))
 jest.mock('../../../api/receipts', () => ({ getReceiptHtml: jest.fn() }))
 jest.mock('react-toastify', () => ({ toast: { success: jest.fn(), error: jest.fn(), info: jest.fn() } }))
 
-jest.mock('../../../Components/RegistrationCard', () => ({
+jest.mock('../../../components/RegistrationCard', () => ({
   RegistrationCard: ({ registration, onCancel }: any) => (
     <div data-testid='reg-card'>
       <span>{registration.status}</span>
@@ -152,7 +152,7 @@ describe('MyRegistrationsPage', () => {
     ;(receiptsApi.getReceiptHtml as jest.Mock).mockResolvedValue('<p>Receipt Content</p>')
 
     // Override the RegistrationCard mock to expose onViewReceipt
-    jest.spyOn(require('../../../Components/RegistrationCard'), 'RegistrationCard').mockImplementation(
+    jest.spyOn(require('../../../components/RegistrationCard'), 'RegistrationCard').mockImplementation(
       ({ registration, onViewReceipt }: any) => (
         <div data-testid='reg-card'>
           <button onClick={() => onViewReceipt(registration.id)}>View Receipt</button>
@@ -174,7 +174,7 @@ describe('MyRegistrationsPage', () => {
     ;(eventsApi.getAllEvents as jest.Mock).mockResolvedValue([mockEvent])
     ;(receiptsApi.getReceiptHtml as jest.Mock).mockResolvedValue('<p>Receipt Content</p>')
 
-    jest.spyOn(require('../../../Components/RegistrationCard'), 'RegistrationCard').mockImplementation(
+    jest.spyOn(require('../../../components/RegistrationCard'), 'RegistrationCard').mockImplementation(
       ({ registration, onViewReceipt }: any) => (
         <div data-testid='reg-card'>
           <button onClick={() => onViewReceipt(registration.id)}>View Receipt</button>

@@ -1,7 +1,7 @@
 import type {  EventStatus  } from '../model'
 import { useState } from 'react'
 import { getAllEvents } from '../api/events'
-import { EventCard } from '../Components/EventCard'
+import { EventCard } from '../components/EventCard'
 import { useQuery } from '@tanstack/react-query'
 
 const ALL_STATUSES: EventStatus[] = ['OPEN', 'CLOSED']
