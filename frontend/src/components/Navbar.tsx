@@ -1,5 +1,5 @@
 import { Link, NavLink, useNavigate } from 'react-router'
-import { UserCircle } from 'lucide-react'
+import { UserCircle, Menu } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { buttonVariants } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -76,14 +76,31 @@ function Navbar({ variant = 'default' }: NavbarProps) {
               </DropdownMenu>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
-              <NavLink to='/login' className={buttonVariants({ variant: "ghost" })}>
-                Login
-              </NavLink>
-              <NavLink to='/register' className={buttonVariants({ variant: "default" }) + " bg-violet-600 text-white hover:bg-violet-700"}>
-                Create Account
-              </NavLink>
-            </div>
+            <>
+              <div className="hidden md:flex items-center gap-2">
+                <NavLink to='/login' className={buttonVariants({ variant: "ghost" })}>
+                  Login
+                </NavLink>
+                <NavLink to='/register' className={buttonVariants({ variant: "default" }) + " bg-violet-600 text-white hover:bg-violet-700"}>
+                  Create Account
+                </NavLink>
+              </div>
+              <div className="md:hidden flex items-center">
+                <DropdownMenu>
+                  <DropdownMenuTrigger className={buttonVariants({ variant: "ghost", size: "icon" }) + " text-slate-600 hover:text-violet-600 cursor-pointer"}>
+                    <Menu className="w-6 h-6" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => navigate('/login')}>
+                      Login
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/register')}>
+                      Create Account
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </>
           )}
         </nav>
       </div>
