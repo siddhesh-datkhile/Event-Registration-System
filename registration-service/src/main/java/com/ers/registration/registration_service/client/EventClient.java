@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-@FeignClient(name = "event-service")
+@FeignClient(name = "event-service", fallbackFactory = EventClientFallbackFactory.class)
 public interface EventClient {
 
     @GetMapping("/api/events/{id}")
