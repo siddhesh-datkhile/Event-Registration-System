@@ -37,6 +37,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final RegistrationRepository registrationRepository;
     private final EventClient eventClient;
     private final ReceiptRepository receiptRepository;
+    private final EmailService emailService;
 
     @Value("${razorpay.key.id}")
     private String keyId;
@@ -88,6 +89,10 @@ public class PaymentServiceImpl implements PaymentService {
             receipt = receiptRepository.save(receipt);
 
             log.info("Free event registration confirmed for registration ID: {}", registration.getId());
+
+            // Send confirmation email asynchronously
+            emailService.sendRegistrationConfirmationEmail(registration.getId());
+
             return PaymentResponse.builder()
                     .status("SUCCESS")
                     .message("Event is free. Registration confirmed.")
@@ -177,6 +182,9 @@ public class PaymentServiceImpl implements PaymentService {
                         .build();
                 receiptRepository.save(receipt);
                 log.info("Registration confirmed and receipt generated for registration ID: {}", registration.getId());
+
+                // Send confirmation email asynchronously
+                emailService.sendRegistrationConfirmationEmail(registration.getId());
 
             } else if ("payment.failed".equals(event)) {
                 log.warn("Payment failed for Razorpay order ID: {}, transaction ID: {}", razorpayOrderId,

@@ -15,5 +15,14 @@ module.exports = {
         types: ['jest', '@testing-library/jest-dom']
       }
     }]
-  }
+  },
+  collectCoverage: true,
+  coverageDirectory: 'coverage',
+  coverageReporters: ['json', 'json-summary', 'text', 'lcov'],
+  collectCoverageFrom: [
+    'src/**/*.{ts,tsx}',
+    '!src/**/*.d.ts',
+    '!src/main.tsx',
+    '!src/vite-env.d.ts'
+  ]
 }

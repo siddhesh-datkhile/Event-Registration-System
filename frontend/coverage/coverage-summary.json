@@ -1,0 +1,1048 @@
+{
+    "total": {
+        "lines": {
+            "total": 730,
+            "covered": 309,
+            "skipped": 0,
+            "pct": 42.32
+        },
+        "statements": {
+            "total": 758,
+            "covered": 319,
+            "skipped": 0,
+            "pct": 42.08
+        },
+        "functions": {
+            "total": 192,
+            "covered": 72,
+            "skipped": 0,
+            "pct": 37.5
+        },
+        "branches": {
+            "total": 615,
+            "covered": 247,
+            "skipped": 0,
+            "pct": 40.16
+        },
+        "branchesTrue": {
+            "total": 0,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 100
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/App.tsx": {
+        "lines": {
+            "total": 5,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "functions": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "statements": {
+            "total": 5,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "branches": {
+            "total": 0,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 100
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/router.tsx": {
+        "lines": {
+            "total": 28,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "functions": {
+            "total": 0,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 100
+        },
+        "statements": {
+            "total": 28,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "branches": {
+            "total": 0,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 100
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/Components/EventCard.tsx": {
+        "lines": {
+            "total": 13,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "functions": {
+            "total": 3,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "statements": {
+            "total": 15,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "branches": {
+            "total": 12,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/Components/Navbar.tsx": {
+        "lines": {
+            "total": 17,
+            "covered": 17,
+            "skipped": 0,
+            "pct": 100
+        },
+        "functions": {
+            "total": 6,
+            "covered": 6,
+            "skipped": 0,
+            "pct": 100
+        },
+        "statements": {
+            "total": 17,
+            "covered": 17,
+            "skipped": 0,
+            "pct": 100
+        },
+        "branches": {
+            "total": 53,
+            "covered": 48,
+            "skipped": 0,
+            "pct": 90.56
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/Components/ProtectedRoute.tsx": {
+        "lines": {
+            "total": 14,
+            "covered": 14,
+            "skipped": 0,
+            "pct": 100
+        },
+        "functions": {
+            "total": 3,
+            "covered": 3,
+            "skipped": 0,
+            "pct": 100
+        },
+        "statements": {
+            "total": 15,
+            "covered": 15,
+            "skipped": 0,
+            "pct": 100
+        },
+        "branches": {
+            "total": 18,
+            "covered": 15,
+            "skipped": 0,
+            "pct": 83.33
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/Components/RegistrationCard.tsx": {
+        "lines": {
+            "total": 9,
+            "covered": 8,
+            "skipped": 0,
+            "pct": 88.88
+        },
+        "functions": {
+            "total": 4,
+            "covered": 3,
+            "skipped": 0,
+            "pct": 75
+        },
+        "statements": {
+            "total": 9,
+            "covered": 8,
+            "skipped": 0,
+            "pct": 88.88
+        },
+        "branches": {
+            "total": 16,
+            "covered": 14,
+            "skipped": 0,
+            "pct": 87.5
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/api/auth.ts": {
+        "lines": {
+            "total": 62,
+            "covered": 41,
+            "skipped": 0,
+            "pct": 66.12
+        },
+        "functions": {
+            "total": 15,
+            "covered": 6,
+            "skipped": 0,
+            "pct": 40
+        },
+        "statements": {
+            "total": 63,
+            "covered": 42,
+            "skipped": 0,
+            "pct": 66.66
+        },
+        "branches": {
+            "total": 10,
+            "covered": 7,
+            "skipped": 0,
+            "pct": 70
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/api/axiosInstance.ts": {
+        "lines": {
+            "total": 29,
+            "covered": 6,
+            "skipped": 0,
+            "pct": 20.68
+        },
+        "functions": {
+            "total": 4,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "statements": {
+            "total": 29,
+            "covered": 6,
+            "skipped": 0,
+            "pct": 20.68
+        },
+        "branches": {
+            "total": 24,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/api/endpoints.ts": {
+        "lines": {
+            "total": 6,
+            "covered": 4,
+            "skipped": 0,
+            "pct": 66.66
+        },
+        "functions": {
+            "total": 5,
+            "covered": 3,
+            "skipped": 0,
+            "pct": 60
+        },
+        "statements": {
+            "total": 6,
+            "covered": 4,
+            "skipped": 0,
+            "pct": 66.66
+        },
+        "branches": {
+            "total": 0,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 100
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/api/events.ts": {
+        "lines": {
+            "total": 16,
+            "covered": 16,
+            "skipped": 0,
+            "pct": 100
+        },
+        "functions": {
+            "total": 5,
+            "covered": 5,
+            "skipped": 0,
+            "pct": 100
+        },
+        "statements": {
+            "total": 16,
+            "covered": 16,
+            "skipped": 0,
+            "pct": 100
+        },
+        "branches": {
+            "total": 0,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 100
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/api/payments.ts": {
+        "lines": {
+            "total": 5,
+            "covered": 5,
+            "skipped": 0,
+            "pct": 100
+        },
+        "functions": {
+            "total": 1,
+            "covered": 1,
+            "skipped": 0,
+            "pct": 100
+        },
+        "statements": {
+            "total": 5,
+            "covered": 5,
+            "skipped": 0,
+            "pct": 100
+        },
+        "branches": {
+            "total": 0,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 100
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/api/receipts.ts": {
+        "lines": {
+            "total": 5,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "functions": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "statements": {
+            "total": 5,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "branches": {
+            "total": 0,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 100
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/api/registrations.ts": {
+        "lines": {
+            "total": 17,
+            "covered": 17,
+            "skipped": 0,
+            "pct": 100
+        },
+        "functions": {
+            "total": 5,
+            "covered": 5,
+            "skipped": 0,
+            "pct": 100
+        },
+        "statements": {
+            "total": 17,
+            "covered": 17,
+            "skipped": 0,
+            "pct": 100
+        },
+        "branches": {
+            "total": 0,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 100
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/api/venues.ts": {
+        "lines": {
+            "total": 8,
+            "covered": 8,
+            "skipped": 0,
+            "pct": 100
+        },
+        "functions": {
+            "total": 2,
+            "covered": 2,
+            "skipped": 0,
+            "pct": 100
+        },
+        "statements": {
+            "total": 8,
+            "covered": 8,
+            "skipped": 0,
+            "pct": 100
+        },
+        "branches": {
+            "total": 0,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 100
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/contexts/AuthContext.tsx": {
+        "lines": {
+            "total": 26,
+            "covered": 25,
+            "skipped": 0,
+            "pct": 96.15
+        },
+        "functions": {
+            "total": 7,
+            "covered": 7,
+            "skipped": 0,
+            "pct": 100
+        },
+        "statements": {
+            "total": 29,
+            "covered": 28,
+            "skipped": 0,
+            "pct": 96.55
+        },
+        "branches": {
+            "total": 2,
+            "covered": 1,
+            "skipped": 0,
+            "pct": 50
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/lib/schemas.ts": {
+        "lines": {
+            "total": 7,
+            "covered": 7,
+            "skipped": 0,
+            "pct": 100
+        },
+        "functions": {
+            "total": 0,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 100
+        },
+        "statements": {
+            "total": 7,
+            "covered": 7,
+            "skipped": 0,
+            "pct": 100
+        },
+        "branches": {
+            "total": 0,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 100
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/pages/ErrorPage.tsx": {
+        "lines": {
+            "total": 6,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "functions": {
+            "total": 2,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "statements": {
+            "total": 6,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "branches": {
+            "total": 0,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 100
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/pages/EventDetailPage.tsx": {
+        "lines": {
+            "total": 62,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "functions": {
+            "total": 16,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "statements": {
+            "total": 63,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "branches": {
+            "total": 73,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/pages/EventsPage.tsx": {
+        "lines": {
+            "total": 23,
+            "covered": 23,
+            "skipped": 0,
+            "pct": 100
+        },
+        "functions": {
+            "total": 9,
+            "covered": 9,
+            "skipped": 0,
+            "pct": 100
+        },
+        "statements": {
+            "total": 23,
+            "covered": 23,
+            "skipped": 0,
+            "pct": 100
+        },
+        "branches": {
+            "total": 17,
+            "covered": 17,
+            "skipped": 0,
+            "pct": 100
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/pages/HomeLayout.tsx": {
+        "lines": {
+            "total": 4,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "functions": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "statements": {
+            "total": 4,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "branches": {
+            "total": 0,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 100
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/pages/LandingPage.tsx": {
+        "lines": {
+            "total": 6,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "functions": {
+            "total": 4,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "statements": {
+            "total": 6,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "branches": {
+            "total": 0,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 100
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/pages/LoginPage.tsx": {
+        "lines": {
+            "total": 27,
+            "covered": 27,
+            "skipped": 0,
+            "pct": 100
+        },
+        "functions": {
+            "total": 3,
+            "covered": 3,
+            "skipped": 0,
+            "pct": 100
+        },
+        "statements": {
+            "total": 28,
+            "covered": 28,
+            "skipped": 0,
+            "pct": 100
+        },
+        "branches": {
+            "total": 60,
+            "covered": 55,
+            "skipped": 0,
+            "pct": 91.66
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/pages/RegisterPage.tsx": {
+        "lines": {
+            "total": 17,
+            "covered": 15,
+            "skipped": 0,
+            "pct": 88.23
+        },
+        "functions": {
+            "total": 3,
+            "covered": 3,
+            "skipped": 0,
+            "pct": 100
+        },
+        "statements": {
+            "total": 18,
+            "covered": 16,
+            "skipped": 0,
+            "pct": 88.88
+        },
+        "branches": {
+            "total": 33,
+            "covered": 14,
+            "skipped": 0,
+            "pct": 42.42
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/pages/UnauthorizedPage.tsx": {
+        "lines": {
+            "total": 6,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "functions": {
+            "total": 2,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "statements": {
+            "total": 6,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "branches": {
+            "total": 0,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 100
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/pages/UserProfilePage.tsx": {
+        "lines": {
+            "total": 37,
+            "covered": 35,
+            "skipped": 0,
+            "pct": 94.59
+        },
+        "functions": {
+            "total": 9,
+            "covered": 8,
+            "skipped": 0,
+            "pct": 88.88
+        },
+        "statements": {
+            "total": 39,
+            "covered": 37,
+            "skipped": 0,
+            "pct": 94.87
+        },
+        "branches": {
+            "total": 76,
+            "covered": 42,
+            "skipped": 0,
+            "pct": 55.26
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/pages/admin/AdminDashboardPage.tsx": {
+        "lines": {
+            "total": 19,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "functions": {
+            "total": 3,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "statements": {
+            "total": 19,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "branches": {
+            "total": 10,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/pages/admin/AdminEventsPage.tsx": {
+        "lines": {
+            "total": 10,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "functions": {
+            "total": 2,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "statements": {
+            "total": 10,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "branches": {
+            "total": 5,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/pages/admin/AdminLayout.tsx": {
+        "lines": {
+            "total": 6,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "functions": {
+            "total": 3,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "statements": {
+            "total": 6,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "branches": {
+            "total": 2,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/pages/admin/AdminRegistrationsPage.tsx": {
+        "lines": {
+            "total": 21,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "functions": {
+            "total": 8,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "statements": {
+            "total": 23,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "branches": {
+            "total": 27,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/pages/admin/AdminUsersPage.tsx": {
+        "lines": {
+            "total": 23,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "functions": {
+            "total": 7,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "statements": {
+            "total": 24,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "branches": {
+            "total": 23,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/pages/admin/AdminVenuesPage.tsx": {
+        "lines": {
+            "total": 23,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "functions": {
+            "total": 6,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "statements": {
+            "total": 24,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "branches": {
+            "total": 19,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/pages/organizer/EventAttendeesPage.tsx": {
+        "lines": {
+            "total": 23,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "functions": {
+            "total": 7,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "statements": {
+            "total": 23,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "branches": {
+            "total": 31,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/pages/organizer/ManageEventPage.tsx": {
+        "lines": {
+            "total": 49,
+            "covered": 41,
+            "skipped": 0,
+            "pct": 83.67
+        },
+        "functions": {
+            "total": 13,
+            "covered": 8,
+            "skipped": 0,
+            "pct": 61.53
+        },
+        "statements": {
+            "total": 51,
+            "covered": 42,
+            "skipped": 0,
+            "pct": 82.35
+        },
+        "branches": {
+            "total": 57,
+            "covered": 34,
+            "skipped": 0,
+            "pct": 59.64
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/pages/organizer/OrganizerDashboard.tsx": {
+        "lines": {
+            "total": 11,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "functions": {
+            "total": 3,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "statements": {
+            "total": 12,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "branches": {
+            "total": 5,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/pages/organizer/OrganizerEventsPage.tsx": {
+        "lines": {
+            "total": 13,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "functions": {
+            "total": 3,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "statements": {
+            "total": 14,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "branches": {
+            "total": 9,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/pages/organizer/OrganizerLayout.tsx": {
+        "lines": {
+            "total": 5,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "functions": {
+            "total": 3,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "statements": {
+            "total": 5,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "branches": {
+            "total": 4,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/pages/registrant/DashboardPage.tsx": {
+        "lines": {
+            "total": 18,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "functions": {
+            "total": 3,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "statements": {
+            "total": 19,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "branches": {
+            "total": 7,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/pages/registrant/MyRegistrationsPage.tsx": {
+        "lines": {
+            "total": 49,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "functions": {
+            "total": 17,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "statements": {
+            "total": 56,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "branches": {
+            "total": 18,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        }
+    },
+    "/home/josh/IdeaProjects/event-Registration-System/frontend/src/pages/registrant/RegistrantLayout.tsx": {
+        "lines": {
+            "total": 5,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "functions": {
+            "total": 3,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "statements": {
+            "total": 5,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        },
+        "branches": {
+            "total": 4,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+        }
+    }
+}

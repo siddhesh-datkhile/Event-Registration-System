@@ -31,7 +31,7 @@ const renderWithProviders = (ui: React.ReactElement) => {
 
 void renderWithProviders
 
-describe.skip('ManageEventPage edge cases', () => {
+describe('ManageEventPage edge cases', () => {
   const mockVenue = { id: 1, name: 'Venue A', address: 'Addr', city: 'City' }
 
   beforeEach(() => {
@@ -39,4 +39,9 @@ describe.skip('ManageEventPage edge cases', () => {
     queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
     ;(venuesApi.getAllVenues as jest.Mock).mockResolvedValue([mockVenue])
   })
+
+  it.todo('renders loading skeleton when venues are being fetched')
+  it.todo('shows error toast when event create fails')
+  it.todo('shows error toast when event update fails')
 })
+
